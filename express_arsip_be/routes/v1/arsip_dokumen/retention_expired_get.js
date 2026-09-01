@@ -65,8 +65,16 @@ const getRetentionExpiredDocuments = async (req, res) => {
         "DATE_ADD(d.tanggal, INTERVAL rs.tahun_retensi YEAR) <= NOW()"
       );
 
-    // Multi-tenancy filter
-    applyMultiTenantFilter(oQuery, req, 'u');
+    // Multi-tenancy filter (Direct branch filter with fallback for legacy docs)
+    const fCabang = req.headers["x-filter-cabang"];
+    if (fCabang && fCabang !== "null" && fCabang !== "undefined") {
+      const vaCabangIds = String(fCabang).split(",").map(Number);
+      oQuery.where((builder) => {
+        builder.whereIn("d.id_cabang", vaCabangIds).orWhere(function () {
+          this.whereNull("d.id_cabang").whereIn("u.id_cabang", vaCabangIds);
+        });
+      });
+    }
 
     if (cKodeKategoriDokumen) {
       oQuery.andWhere("d.kode_kategori_dokumen", cKodeKategoriDokumen);

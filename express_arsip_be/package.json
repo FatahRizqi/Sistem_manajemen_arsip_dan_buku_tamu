@@ -8,8 +8,7 @@
     "dev": "nodemon --legacy-watch server.js --ignore temp/ --ignore uploads/ --ignore logs/ --ignore '*.log'",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "build": " nodemon --legacy-watch server.js"
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [],
   "author": "",

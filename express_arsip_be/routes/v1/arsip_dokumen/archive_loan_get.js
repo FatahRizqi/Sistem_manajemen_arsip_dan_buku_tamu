@@ -50,7 +50,7 @@ const getArchiveLoans = async (req, res) => {
         "l.disetujui_oleh",
         "l.disetujui_pada",
         "l.catatan_persetujuan",
-        "l.terlambat",
+        DB.raw("CASE WHEN l.status = 'borrowed' AND l.tanggal_pengembalian < NOW() THEN 1 ELSE l.terlambat END as terlambat"),
         "l.created_at",
         "l.updated_at",
       )
