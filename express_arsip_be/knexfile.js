@@ -38,7 +38,13 @@ const knexConfig = {
       min: 2,
       max: 10,
       idleTimeoutMillis: 30000,
-    } : undefined
+    } : {
+      afterCreate: function (conn, done) {
+        conn.query('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,"ONLY_FULL_GROUP_BY",""))', function (err) {
+          done(err, conn);
+        });
+      }
+    }
   },
   production: {
     client: process.env.DB_DBMS || "mysql",
@@ -54,7 +60,13 @@ const knexConfig = {
       min: 2,
       max: 10,
       idleTimeoutMillis: 30000,
-    } : undefined
+    } : {
+      afterCreate: function (conn, done) {
+        conn.query('SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,"ONLY_FULL_GROUP_BY",""))', function (err) {
+          done(err, conn);
+        });
+      }
+    }
   },
 };
 export default knexConfig;
