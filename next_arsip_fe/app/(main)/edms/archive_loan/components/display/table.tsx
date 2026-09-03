@@ -43,8 +43,7 @@ const Table = ({
 
     const sessionUser = state.session?.user as any;
     const roleKey = String(sessionUser?.role || sessionUser?.roleCode || '').toLowerCase();
-    const roleId = Number(sessionUser?.roleId || 0);
-    const canApproveLoan = canApprove || ['superadmin', 'administrator', 'admin', 'adm'].includes(roleKey) || [1, 2].includes(roleId);
+    const canApproveLoan = canApprove || ['superadmin', 'sa'].includes(roleKey);
 
     const statusBodyTemplate = (rowData: LoanData) => {
         let bg = '#f59e0b';

@@ -6,6 +6,7 @@ import formUpload from "@/lib/axios/formData";
 import getData from "@/lib/axios/getData";
 import postData from "@/lib/axios/postData";
 import { showError, showSuccess } from "@/lib/tools/generalTools";
+import { usePermissions } from "@/hooks/usePermissions";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { Toast } from "primereact/toast";
@@ -39,10 +40,10 @@ const Page = () => {
     const [previewUrl, setPreviewUrl] = useState('');
     const [isPreviewVisible, setIsPreviewVisible] = useState(false);
 
+    const permissions = usePermissions();
     const sessionUser = session?.user as any;
     const roleKey = String(sessionUser?.role || sessionUser?.roleCode || '').toLowerCase();
-    const roleId = Number(sessionUser?.roleId || 0);
-    const canApproveVersion = ['superadmin', 'administrator', 'admin', 'adm', 'pimpinan', 'pmn'].includes(roleKey) || [1, 2].includes(roleId);
+    const canApproveVersion = permissions.canApprove || ['superadmin', 'sa'].includes(roleKey);
 
     const highestVersionNumber = useMemo(() => {
         return Math.max(...(detailData?.versions || []).map((version) => version.nomor_versi), 0);
