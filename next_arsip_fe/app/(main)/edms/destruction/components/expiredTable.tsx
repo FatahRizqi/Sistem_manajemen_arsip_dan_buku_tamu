@@ -8,6 +8,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
+import { usePermissions } from '@/hooks/usePermissions';
 import { showError, showSuccess } from '@/lib/tools/generalTools';
 
 interface ExpiredTableProps {
@@ -29,6 +30,7 @@ export default function ExpiredTable({
     proposeDestruction, 
     refreshProposals 
 }: ExpiredTableProps) {
+    const { canCreate } = usePermissions();
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [searchVal, setSearchVal] = useState<string>('');
     const [dialogVisible, setDialogVisible] = useState<boolean>(false);
@@ -113,6 +115,7 @@ export default function ExpiredTable({
                 size="small"
                 outlined
                 severity="danger"
+                disabled={!canCreate}
                 className="p-button-sm py-1 font-semibold text-xs"
                 onClick={() => {
                     setSelectedDoc(rowData);
