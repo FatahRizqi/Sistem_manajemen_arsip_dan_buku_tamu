@@ -19,7 +19,7 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
 
     const deleteFooterTemplate = (
         <div className="flex justify-content-center gap-2">
-            
+            <Button type="button" label="Batal" icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={hideDialog} />
             <Button type="button" label="Ya, Hapus" icon="pi pi-trash" severity="danger" loading={state?.load} disabled={state?.load} onClick={handleDelete} />
         </div>
     );

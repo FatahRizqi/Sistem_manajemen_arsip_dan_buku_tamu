@@ -11,7 +11,7 @@ const router = express.Router();
 
 const deleteTemplateSurat = async (req, res) => {
   const { id } = req.params;
-  const nama_pengguna = req?.auth?.nama_pengguna || "";
+  const nama_pengguna = "dummy";
 
   try {
     const updated = await DB("mst_template_surat")
@@ -35,6 +35,7 @@ const deleteTemplateSurat = async (req, res) => {
       datetime: formatDateSystem(),
     });
   } catch (error) {
+    console.error("MY ERROR IS:", error);
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Sistem sedang maintenance harap tunggu sebentar",
