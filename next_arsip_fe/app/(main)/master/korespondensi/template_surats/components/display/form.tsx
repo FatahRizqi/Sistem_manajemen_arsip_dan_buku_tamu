@@ -58,7 +58,7 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
   }, [formik.values.isi_template]);
 
   const handleCancel = () => {
-    setState((p: any) => ({ ...p, add: false, edit: false, activeStep: 0 }));
+    setState((p: any) => ({ ...p, add: false, edit: false, delete: false, activeStep: 0 }));
     formik.resetForm();
   };
 
@@ -223,16 +223,20 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
             className="p-button-secondary text-sm"
             onClick={handleCancel}
           />
-          {state.activeStep < 1 ? (
+          {state.activeStep < 1 && (
             <Button
               type="button"
               label="Selanjutnya"
               icon="pi pi-arrow-right"
               iconPos="right"
               className="text-sm px-4 p-button-primary"
-              onClick={() => setState((p: any) => ({ ...p, activeStep: p.activeStep + 1 }))}
+              onClick={(e) => {
+                e.preventDefault();
+                setState((p: any) => ({ ...p, activeStep: p.activeStep + 1 }));
+              }}
             />
-          ) : (
+          )}
+          {state.activeStep >= 1 && (
             <Button
               type="submit"
               label={state.edit ? "Perbarui Data" : "Simpan Data"}

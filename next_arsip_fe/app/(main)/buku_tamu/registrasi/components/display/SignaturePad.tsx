@@ -4,10 +4,11 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 
 interface SignaturePadProps {
+    value?: string | null;
     onChange: (base64Image: string | null) => void;
 }
 
-export default function SignaturePad({ onChange }: SignaturePadProps) {
+export default function SignaturePad({ value, onChange }: SignaturePadProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [isEmpty, setIsEmpty] = useState(true);
@@ -28,9 +29,21 @@ export default function SignaturePad({ onChange }: SignaturePadProps) {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        // Redraw check to set clean background
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.lineJoin = 'round';
+
+        if (value) {
+            const img = new Image();
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0);
+            };
+            img.src = value;
+            setIsEmpty(false);
+        } else {
+            // Redraw check to set clean background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {

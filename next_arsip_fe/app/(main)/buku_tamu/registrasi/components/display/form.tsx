@@ -317,7 +317,10 @@ export default function RegistrasiForm({
                                 </div>
 
                                 <div className="col-12 flex flex-column gap-1 mb-2">
-                                    <SignaturePad onChange={(val) => handleChange('signature_data', val)} />
+                                    <SignaturePad 
+                                        value={formData.signature_data}
+                                        onChange={(val) => handleChange('signature_data', val)} 
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -595,16 +598,21 @@ export default function RegistrasiForm({
                             />
                         )}
 
-                        {activeIndex === 0 ? (
+                        {activeIndex === 0 && (
                             <Button
                                 type="button"
                                 label="Selanjutnya"
                                 icon="pi pi-arrow-right"
                                 iconPos="right"
                                 className="p-button-primary px-4"
-                                onClick={() => setActiveIndex(1)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setActiveIndex(1);
+                                }}
                             />
-                        ) : (
+                        )}
+
+                        {activeIndex > 0 && (
                             <Button
                                 type="submit"
                                 label="Simpan & Check-In"

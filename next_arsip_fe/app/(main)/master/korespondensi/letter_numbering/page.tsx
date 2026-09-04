@@ -9,7 +9,6 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
@@ -73,6 +72,8 @@ const Page = () => {
   const [tokens, setTokens] = useState<string[]>([]);
   const [load, setLoad] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [deleteVisible, setDeleteVisible] = useState(false);
+  const [deleteRow, setDeleteRow] = useState<any>(null);
   const [searchVal, setSearchVal] = useState('');
   const [preview, setPreview] = useState('');
   const [filters, setFilters] = useState({ global: { value: null as string | null, matchMode: FilterMatchMode.CONTAINS } });
@@ -171,27 +172,33 @@ const Page = () => {
   };
 
   const confirmDelete = (row: any) => {
-    confirmDialog({
-      header: 'Konfirmasi Nonaktifkan',
-      message: `Nonaktifkan penomoran ${row.nama_penomoran}?`,
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Nonaktifkan',
-      rejectLabel: 'Batal',
-      acceptClassName: 'p-button-danger',
-      accept: async () => {
-        setLoad(true);
-        try {
-          await deleteData(`${apiEndpoint}/${row.id_penomoran_surat}`, { updated_by: userId });
-          showSuccess(toast, 'Penomoran surat berhasil dinonaktifkan');
-          await getData();
-        } catch (error: any) {
-          showError(toast, error?.response?.data?.message || 'Penomoran surat gagal dinonaktifkan');
-        } finally {
-          setLoad(false);
-        }
-      },
-    });
+    setDeleteRow(row);
+    setDeleteVisible(true);
   };
+
+  const handleDelete = async () => {
+    if (!deleteRow) return;
+    setLoad(true);
+    try {
+      await deleteData(`${apiEndpoint}/${deleteRow.id_penomoran_surat}`, { updated_by: userId });
+      showSuccess(toast, 'Penomoran surat berhasil dinonaktifkan');
+      setDeleteVisible(false);
+      setDeleteRow(null);
+      await getData();
+    } catch (error: any) {
+      showError(toast, error?.response?.data?.message || 'Penomoran surat gagal dinonaktifkan');
+      setDeleteVisible(false);
+    } finally {
+      setLoad(false);
+    }
+  };
+
+  const deleteFooterTemplate = (
+    <div className="flex justify-content-center gap-2">
+      <Button type="button" label="Batal" icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={() => setDeleteVisible(false)} />
+      <Button type="button" label="Ya, Nonaktifkan" icon="pi pi-trash" severity="danger" loading={load} disabled={load} onClick={handleDelete} />
+    </div>
+  );
 
   const insertToken = (token: string) => {
     formik.setFieldValue('format_nomor', `${formik.values.format_nomor || ''}${token}`);
@@ -237,7 +244,6 @@ const Page = () => {
     <>
 
       <Toast ref={toast} position="top-right" />
-      <ConfirmDialog />
 
       <div className="card shadow-2 border-round-lg p-4 bg-white">
         <div className="flex justify-content-between align-align-items-center gap-3 mb-4 flex-wrap">
@@ -453,6 +459,16 @@ const Page = () => {
             <Button type="submit" label={formik.values.id_penomoran_surat ? 'Perbarui' : 'Simpan'} className="w-full p-button-primary" loading={load} disabled={load} />
           </div>
         </form>
+      </Dialog>
+
+      <Dialog header="Konfirmasi Nonaktifkan" visible={deleteVisible} onHide={() => setDeleteVisible(false)} modal style={{ width: '25rem' }} footer={deleteFooterTemplate}>
+        <div className="flex flex-column align-items-center text-center gap-4 py-4">
+            <i className="pi pi-exclamation-triangle text-red-500 text-6xl" />
+            <div>
+                <h3 className="font-bold mb-2">Nonaktifkan data ini?</h3>
+                <p className="text-color-secondary">Tindakan ini akan menonaktifkan penomoran <b>{deleteRow?.nama_penomoran}</b>.</p>
+            </div>
+        </div>
       </Dialog>
     </>
   );
