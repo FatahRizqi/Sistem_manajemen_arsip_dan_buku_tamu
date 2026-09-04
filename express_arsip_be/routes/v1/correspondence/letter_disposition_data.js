@@ -101,8 +101,27 @@ const letterDispositionData = async (req, res) => {
       });
     }
 
-    // Multi-tenancy filter: filter berdasarkan cabang penerima disposisi
-    applyMultiTenantFilter(oQuery, req, 'kepada_pengguna');
+    // Multi-tenancy filter: filter berdasarkan cabang penerima ATAU pengirim disposisi
+    // (Agar pengirim/Superadmin tetap bisa melacak status disposisi yang dikirimnya)
+    if (req.context) {
+      const fCabang = req.headers['x-filter-cabang'];
+      if (fCabang && fCabang !== 'null' && fCabang !== 'undefined') {
+        const branchIds = String(fCabang).split(",").map(Number);
+        oQuery.where(function () {
+          this.whereIn("kepada_pengguna.id_cabang", branchIds)
+              .orWhereIn("dari_pengguna.id_cabang", branchIds);
+        });
+      }
+
+      // Secondary filters: Drill-down opsional (berlaku untuk penerima disposisi)
+      const fDepartemen = req.headers['x-filter-departemen'];
+      const fDivisi = req.headers['x-filter-divisi'];
+      const fUnitKerja = req.headers['x-filter-unit-kerja'];
+
+      if (fDepartemen && fDepartemen !== 'null') oQuery.where("kepada_pengguna.id_departemen", fDepartemen);
+      if (fDivisi && fDivisi !== 'null') oQuery.where("kepada_pengguna.id_divisi", fDivisi);
+      if (fUnitKerja && fUnitKerja !== 'null') oQuery.where("kepada_pengguna.id_unit_kerja", fUnitKerja);
+    }
     const vaData = await oQuery;
     return res.status(200).json({
       status: status.SUKSES,
