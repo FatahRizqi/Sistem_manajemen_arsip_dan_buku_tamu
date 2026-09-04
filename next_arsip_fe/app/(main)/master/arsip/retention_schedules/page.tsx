@@ -109,16 +109,20 @@ const Page = () => {
     const handleDelete = async () => {
         setState((p) => ({ ...p, load: true }));
         try {
-            if (state.selectedData.length < 1) return;
+            if (state.selectedData.length < 1) {
+                setState((p) => ({ ...p, delete: false, load: false }));
+                return;
+            }
             for (const item of state.selectedData) {
                 const cEndPoint = `${apiEndpointDelete}/${item.id_jadwal_retensi}`;
                 await deleteData(cEndPoint);
             }
             showSuccess(toast, 'Berhasil Menghapus Data');
             setState((p) => ({ ...p, selectedData: [], delete: false }));
-            getData(apiEndpointGet);
+            await getData(apiEndpointGet);
         } catch (error: any) {
             showError(toast, error?.response?.data?.message || 'Terjadi Kesalahan');
+            setState((p) => ({ ...p, delete: false }));
         } finally {
             setState((p) => ({ ...p, load: false }));
         }
@@ -157,7 +161,7 @@ const Page = () => {
 
             <Toast ref={toast} position="top-right" />
             <Table state={state} toast={toast} setState={setState} formik={formik} getData={getData} handleDelete={handleDelete} />
-            <Form formik={formik} state={state} setState={setState} />
+            <Form formik={formik} state={state} setState={setState} handleDelete={handleDelete} />
         </>
     );
 };
