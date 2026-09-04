@@ -30,6 +30,7 @@ const getTemplateSurat = async (req, res) => {
         "mts.created_at",
         "mts.updated_at"
       )
+      .whereNot("mts.status", "inactive")
       .orderBy("mts.updated_at", "desc");
 
     return res.status(200).json({
