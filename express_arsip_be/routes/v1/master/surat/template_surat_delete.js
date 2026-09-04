@@ -11,7 +11,7 @@ const router = express.Router();
 
 const deleteTemplateSurat = async (req, res) => {
   const { id } = req.params;
-  const nama_pengguna = "dummy";
+  const nama_pengguna = req?.auth?.nama_pengguna || "";
 
   try {
     const updated = await DB("mst_template_surat")
