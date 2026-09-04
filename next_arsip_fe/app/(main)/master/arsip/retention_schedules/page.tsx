@@ -157,7 +157,7 @@ const Page = () => {
 
             <Toast ref={toast} position="top-right" />
             <Table state={state} toast={toast} setState={setState} formik={formik} getData={getData} handleDelete={handleDelete} />
-            <Form formik={formik} state={state} setState={setState} />
+            <Form formik={formik} state={state} setState={setState} handleDelete={handleDelete} />
         </>
     );
 };
