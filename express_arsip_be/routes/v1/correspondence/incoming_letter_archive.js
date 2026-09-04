@@ -107,6 +107,7 @@ const incomingLetterArchive = async (req, res) => {
         tanggal_kedaluwarsa: null,
         nama_pic: oPayload.nama_pic || req?.context?.nama_pengguna || oLetter.nama_pengirim || "Sekretariat",
         lokasi_fisik: oPayload.lokasi_fisik || null,
+        id_cabang: oLetter.id_cabang || (req.context ? req.context.id_cabang : null),
         qr_code: `DOC-${uuidv4()}`,
         status: "active",
         created_at: dNow,
