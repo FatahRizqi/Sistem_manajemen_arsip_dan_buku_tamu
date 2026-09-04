@@ -17,7 +17,7 @@ const deleteTemplateSurat = async (req, res) => {
     const updated = await DB("mst_template_surat")
       .where("id_template", Number(id))
       .update({
-        status: "inactive",
+        status: "nonactive",
         updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
       });
 
