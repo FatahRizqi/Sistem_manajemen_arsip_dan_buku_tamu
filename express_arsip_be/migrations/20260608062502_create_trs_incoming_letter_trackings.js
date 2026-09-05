@@ -38,15 +38,15 @@ export async function up(knex) {
 
     table
       .foreign("from_nama_pengguna")
-      .references("nama_pengguna")
+      .references("id_pengguna")
       .inTable("mst_pengguna");
     table
       .foreign("to_nama_pengguna")
-      .references("nama_pengguna")
+      .references("id_pengguna")
       .inTable("mst_pengguna");
     table
       .foreign("created_by")
-      .references("nama_pengguna")
+      .references("id_pengguna")
       .inTable("mst_pengguna");
   });
 }

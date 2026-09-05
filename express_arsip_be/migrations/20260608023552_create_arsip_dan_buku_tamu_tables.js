@@ -255,7 +255,7 @@ export async function up(knex) {
 
   // 5. Master Users & User perans (Paling akhir karena bergantung pada cabang, divisi, dll)
   await knex.schema.createTable("mst_pengguna", (table) => {
-    table.increments("nama_pengguna").primary();
+    table.increments("id_pengguna").primary();
     table.string("nama_lengkap", 45).notNullable();
     table.string("nama_pengguna", 45).notNullable().unique();
     table.string("surel", 45).nullable();
@@ -317,7 +317,7 @@ export async function up(knex) {
       .integer("nama_pengguna")
       .unsigned()
       .notNullable()
-      .references("nama_pengguna")
+      .references("id_pengguna")
       .inTable("mst_pengguna")
       .onDelete("NO ACTION")
       .onUpdate("NO ACTION");
