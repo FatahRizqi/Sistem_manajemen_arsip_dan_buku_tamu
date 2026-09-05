@@ -545,11 +545,11 @@ export async function up(knex) {
         .inTable("mst_confidentiality_levels");
       table
         .foreign("created_by")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
       table
         .foreign("updated_by")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
     });
   }
@@ -567,11 +567,11 @@ export async function up(knex) {
         .inTable("trx_letter_dispositions");
       table
         .foreign("from_nama_pengguna")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
       table
         .foreign("to_nama_pengguna")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
       table
         .foreign("disposition_instruction_id")
@@ -579,11 +579,11 @@ export async function up(knex) {
         .inTable("mst_disposition_instructions");
       table
         .foreign("created_by")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
       table
         .foreign("updated_by")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
     });
   }
@@ -597,7 +597,7 @@ export async function up(knex) {
         .onDelete("CASCADE");
       table
         .foreign("uploaded_by")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
     });
   }
@@ -615,15 +615,15 @@ export async function up(knex) {
         .inTable("trx_letter_dispositions");
       table
         .foreign("from_nama_pengguna")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
       table
         .foreign("to_nama_pengguna")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
       table
         .foreign("created_by")
-        .references("nama_pengguna")
+        .references("id_pengguna")
         .inTable("mst_pengguna");
     });
   }

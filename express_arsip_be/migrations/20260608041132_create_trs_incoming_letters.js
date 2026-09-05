@@ -73,11 +73,11 @@ export async function up(knex) {
       .inTable("mst_confidentiality_levels");
     table
       .foreign("created_by")
-      .references("nama_pengguna")
+      .references("id_pengguna")
       .inTable("mst_pengguna");
     table
       .foreign("updated_by")
-      .references("nama_pengguna")
+      .references("id_pengguna")
       .inTable("mst_pengguna");
   });
 

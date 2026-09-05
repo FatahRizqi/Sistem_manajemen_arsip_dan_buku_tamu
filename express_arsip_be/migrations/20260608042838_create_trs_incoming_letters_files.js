@@ -30,7 +30,7 @@ export async function up(knex) {
 
     table
       .foreign("uploaded_by")
-      .references("nama_pengguna")
+      .references("id_pengguna")
       .inTable("mst_pengguna");
   });
 }
