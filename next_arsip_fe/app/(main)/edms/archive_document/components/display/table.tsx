@@ -16,6 +16,7 @@ import { Html5Qrcode } from "html5-qrcode";
 import { DocumentData, LoanData, TableProps } from "../interfaces";
 import { formatDateCalendar } from "@/lib/tools/dateTools";
 import { OverlayPanel } from "primereact/overlaypanel";
+import { Calendar } from "primereact/calendar";
 import postData from "@/lib/axios/postData";
 import { showError, showSuccess } from "@/lib/tools/generalTools";
 import { apiEndpointDocumentUpdate } from "../endpoints";
@@ -44,6 +45,7 @@ const Table = ({
     const [cameraActive, setCameraActive] = useState(false);
     const [cameraErr, setCameraErr] = useState<string | null>(null);
     const html5QrRef = useRef<Html5Qrcode | null>(null);
+    const filterPanelRef = useRef<OverlayPanel>(null);
 
     const startCameraScanner = async () => {
         setCameraErr(null);
@@ -241,20 +243,6 @@ const Table = ({
     const headerTemplate = (
         <div className="flex flex-wrap align-items-center justify-content-between gap-2">
             <span className="font-semibold text-color text-sm">Daftar Dokumen</span>
-            <span className="p-input-icon-left">
-                <i className="pi pi-search" />
-                <InputText
-                    value={state.searchVal}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        const filters = { ...state.filters };
-                        filters.global.value = value;
-                        setState((p) => ({ ...p, searchVal: value, filters }));
-                    }}
-                    placeholder="Cari dokumen..."
-                    className="text-sm"
-                    style={{ height: '2.25rem' }} />
-            </span>
         </div>
     );
 
@@ -389,97 +377,145 @@ const Table = ({
             </div>
 
             {/* Filter Panel */}
-            <div className="card border-1 surface-border border-round-xl p-3 mb-4 surface-card flex flex-column gap-3">
-                <div className="flex align-items-center justify-content-between">
-                    <div className="flex align-items-center gap-2 font-bold text-sm text-800">
-                        <i className="pi pi-filter text-primary" />
-                        <span>Filter Dokumen</span>
-                    </div>
-                    {(state.filterClassification || state.filterCategory || state.filterType || state.filterConfidentiality) && (
-                        <Button label="Bersihkan Filter"
+            <div className="flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                {/* Left: Date Pickers */}
+                <div className="flex align-items-center gap-2">
+                    <Calendar 
+                        value={state.startDate || undefined} 
+                        onChange={(e) => setState(p => ({ ...p, startDate: e.value as Date }))} 
+                        placeholder="Tanggal Awal" 
+                        showIcon 
+                        className="p-inputtext-sm w-12rem"
+                        dateFormat="yy-mm-dd" />
+                    <span className="text-sm font-semibold text-600">s.d</span>
+                    <Calendar 
+                        value={state.endDate || undefined} 
+                        onChange={(e) => setState(p => ({ ...p, endDate: e.value as Date }))} 
+                        placeholder="Tanggal Akhir" 
+                        showIcon 
+                        className="p-inputtext-sm w-12rem"
+                        dateFormat="yy-mm-dd" />
+                </div>
+
+                {/* Right: Filters & Search */}
+                <div className="flex align-items-center gap-2">
+                    <Button 
+                        type="button" 
+                        label="Filter" 
+                        icon="pi pi-filter" 
+                        outlined 
+                        className="p-button-sm bg-white" 
+                        onClick={(e) => filterPanelRef.current?.toggle(e)} />
+                    
+                    <OverlayPanel ref={filterPanelRef} className="w-25rem">
+                        <div className="flex flex-column gap-3 p-2">
+                            <span className="font-bold text-sm text-800 border-bottom-1 surface-border pb-2">Filter Lanjutan</span>
+                            <div className="flex flex-column gap-1">
+                                <label className="text-xs font-semibold text-color-secondary">Klasifikasi</label>
+                                <Dropdown
+                                    value={state.filterClassification}
+                                    options={[
+                                        { label: 'Semua Klasifikasi', value: '' },
+                                        ...state.classifications.map((item: any) => ({
+                                            label: `${item.kode_klasifikasi} - ${item.nama_klasifikasi}`,
+                                            value: item.kode_klasifikasi
+                                        }))
+                                    ]}
+                                    onChange={(e) => setState(p => ({ ...p, filterClassification: e.value || '', filterCategory: '' }))}
+                                    placeholder="Pilih Klasifikasi"
+                                    className="w-full text-xs p-inputtext-sm"
+                                    filter
+                                    showClear />
+                            </div>
+                            <div className="flex flex-column gap-1">
+                                <label className="text-xs font-semibold text-color-secondary">Kategori</label>
+                                <Dropdown
+                                    value={state.filterCategory}
+                                    options={[
+                                        { label: 'Semua Kategori', value: '' },
+                                        ...state.categories
+                                            .filter((item: any) => !state.filterClassification || item.kode_klasifikasi === state.filterClassification)
+                                            .map((item: any) => ({
+                                                label: `${item.kode_kategori_dokumen} - ${item.nama_kategori_dokumen}`,
+                                                value: item.kode_kategori_dokumen
+                                            }))
+                                    ]}
+                                    onChange={(e) => setState(p => ({ ...p, filterCategory: e.value || '' }))}
+                                    placeholder="Pilih Kategori"
+                                    className="w-full text-xs p-inputtext-sm"
+                                    filter
+                                    showClear
+                                    disabled={!state.filterClassification} />
+                            </div>
+                            <div className="flex flex-column gap-1">
+                                <label className="text-xs font-semibold text-color-secondary">Tipe Dokumen</label>
+                                <Dropdown
+                                    value={state.filterType}
+                                    options={[
+                                        { label: 'Semua Tipe', value: '' },
+                                        ...(state.documentTypes || []).map((item: any) => ({
+                                            label: `${item.kode_jenis_dokumen} - ${item.nama_jenis_dokumen}`,
+                                            value: item.kode_jenis_dokumen
+                                        }))
+                                    ]}
+                                    onChange={(e) => setState(p => ({ ...p, filterType: e.value || '' }))}
+                                    placeholder="Pilih Tipe Dokumen"
+                                    className="w-full text-xs p-inputtext-sm"
+                                    filter
+                                    showClear />
+                            </div>
+                            <div className="flex flex-column gap-1">
+                                <label className="text-xs font-semibold text-color-secondary">Tingkat Kerahasiaan</label>
+                                <Dropdown
+                                    value={state.filterConfidentiality}
+                                    options={[
+                                        { label: 'Semua Kerahasiaan', value: '' },
+                                        ...state.confidentialities.map((item: any) => ({
+                                            label: `${item.kode_tingkat_kerahasiaan} - ${item.nama_tingkat_kerahasiaan}`,
+                                            value: item.kode_tingkat_kerahasiaan
+                                        }))
+                                    ]}
+                                    onChange={(e) => setState(p => ({ ...p, filterConfidentiality: e.value || '' }))}
+                                    placeholder="Pilih Kerahasiaan"
+                                    className="w-full text-xs p-inputtext-sm"
+                                    filter
+                                    showClear />
+                            </div>
+                        </div>
+                    </OverlayPanel>
+                    
+                    <span className="p-input-icon-left">
+                        <i className="pi pi-search" />
+                        <InputText
+                            value={state.searchVal}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                const filters = { ...state.filters };
+                                filters.global.value = value;
+                                setState((p) => ({ ...p, searchVal: value, filters }));
+                            }}
+                            placeholder="Cari Data..."
+                            className="p-inputtext-sm w-15rem" />
+                    </span>
+                    
+                    {(state.filterClassification || state.filterCategory || state.filterType || state.filterConfidentiality || state.startDate || state.endDate || state.searchVal) && (
+                        <Button 
                             icon="pi pi-filter-slash"
-                            className="p-button-text p-button-sm text-xs p-0 text-primary"
+                            className="p-button-danger p-button-outlined p-button-sm bg-white"
+                            tooltip="Bersihkan Semua Filter"
+                            tooltipOptions={{ position: 'top' }}
                             onClick={() => setState(p => ({
                                 ...p,
                                 filterClassification: '',
                                 filterCategory: '',
                                 filterType: '',
-                                filterConfidentiality: ''
+                                filterConfidentiality: '',
+                                startDate: null,
+                                endDate: null,
+                                searchVal: '',
+                                filters: { global: { value: null, matchMode: 'contains' as any } }
                             }))} />
                     )}
-                </div>
-                <div className="grid">
-                    <div className="col-12 md:col-3 flex flex-column gap-1">
-                        <label className="text-xs font-semibold text-color-secondary">Klasifikasi</label>
-                        <Dropdown
-                            value={state.filterClassification}
-                            options={[
-                                { label: 'Semua Klasifikasi', value: '' },
-                                ...state.classifications.map((item: any) => ({
-                                    label: `${item.kode_klasifikasi} - ${item.nama_klasifikasi}`,
-                                    value: item.kode_klasifikasi
-                                }))
-                            ]}
-                            onChange={(e) => setState(p => ({ ...p, filterClassification: e.value || '', filterCategory: '' }))}
-                            placeholder="Pilih Klasifikasi"
-                            className="w-full text-xs p-inputtext-sm"
-                            filter
-                            showClear />
-                    </div>
-                    <div className="col-12 md:col-3 flex flex-column gap-1">
-                        <label className="text-xs font-semibold text-color-secondary">Kategori</label>
-                        <Dropdown
-                            value={state.filterCategory}
-                            options={[
-                                { label: 'Semua Kategori', value: '' },
-                                ...state.categories
-                                    .filter((item: any) => !state.filterClassification || item.kode_klasifikasi === state.filterClassification)
-                                    .map((item: any) => ({
-                                        label: `${item.kode_kategori_dokumen} - ${item.nama_kategori_dokumen}`,
-                                        value: item.kode_kategori_dokumen
-                                    }))
-                            ]}
-                            onChange={(e) => setState(p => ({ ...p, filterCategory: e.value || '' }))}
-                            placeholder="Pilih Kategori"
-                            className="w-full text-xs p-inputtext-sm"
-                            filter
-                            showClear
-                            disabled={!state.filterClassification} />
-                    </div>
-                    <div className="col-12 md:col-3 flex flex-column gap-1">
-                        <label className="text-xs font-semibold text-color-secondary">Tipe Dokumen</label>
-                        <Dropdown
-                            value={state.filterType}
-                            options={[
-                                { label: 'Semua Tipe', value: '' },
-                                ...(state.documentTypes || []).map((item: any) => ({
-                                    label: `${item.kode_jenis_dokumen} - ${item.nama_jenis_dokumen}`,
-                                    value: item.kode_jenis_dokumen
-                                }))
-                            ]}
-                            onChange={(e) => setState(p => ({ ...p, filterType: e.value || '' }))}
-                            placeholder="Pilih Tipe Dokumen"
-                            className="w-full text-xs p-inputtext-sm"
-                            filter
-                            showClear />
-                    </div>
-                    <div className="col-12 md:col-3 flex flex-column gap-1">
-                        <label className="text-xs font-semibold text-color-secondary">Tingkat Kerahasiaan</label>
-                        <Dropdown
-                            value={state.filterConfidentiality}
-                            options={[
-                                { label: 'Semua Kerahasiaan', value: '' },
-                                ...state.confidentialities.map((item: any) => ({
-                                    label: `${item.kode_tingkat_kerahasiaan} - ${item.nama_tingkat_kerahasiaan}`,
-                                    value: item.kode_tingkat_kerahasiaan
-                                }))
-                            ]}
-                            onChange={(e) => setState(p => ({ ...p, filterConfidentiality: e.value || '' }))}
-                            placeholder="Pilih Kerahasiaan"
-                            className="w-full text-xs p-inputtext-sm"
-                            filter
-                            showClear />
-                    </div>
                 </div>
             </div>
 
