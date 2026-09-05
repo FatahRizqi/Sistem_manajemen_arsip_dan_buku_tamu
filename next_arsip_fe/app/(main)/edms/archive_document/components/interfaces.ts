@@ -156,6 +156,8 @@ export interface State {
     filterType?: string
     filterCategory?: string
     filterConfidentiality?: string
+    startDate?: Date | null
+    endDate?: Date | null
 
     // QR & Tracking States
     qrDialog: boolean
