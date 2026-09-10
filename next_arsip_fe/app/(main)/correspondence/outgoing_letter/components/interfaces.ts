@@ -101,6 +101,8 @@ export interface State {
     jenisSuratFilter: number | null;
     tanggalMulai: string;
     tanggalAkhir: string;
+    startDate?: string | null;
+    endDate?: string | null;
     filters: {
         global: {
             value: string | null;

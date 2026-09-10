@@ -1,6 +1,7 @@
 'use client'
 
 import { DataTable } from "primereact/datatable";
+import { FilterMatchMode } from "primereact/api";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -10,18 +11,35 @@ import { Divider } from "primereact/divider";
 import { Card } from "primereact/card";
 import { Avatar } from "primereact/avatar";
 import { Dropdown } from "primereact/dropdown";
-import { useEffect, useState, useRef } from "react";
+import { Calendar } from "primereact/calendar";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Html5Qrcode } from "html5-qrcode";
 import { DocumentData, LoanData, TableProps } from "../interfaces";
 import { formatDateCalendar } from "@/lib/tools/dateTools";
 import { OverlayPanel } from "primereact/overlaypanel";
-import { Calendar } from "primereact/calendar";
 import postData from "@/lib/axios/postData";
 import { showError, showSuccess } from "@/lib/tools/generalTools";
 import { apiEndpointDocumentUpdate } from "../endpoints";
 import Form from "./form";
 import { usePermissions } from '@/hooks/usePermissions';
+
+const parseDateStr = (dateStr?: string | null) => {
+    if (!dateStr) return null;
+    const parts = String(dateStr).slice(0, 10).split('-');
+    if (parts.length === 3) {
+        return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+    return new Date(dateStr);
+};
+
+const formatDateStr = (dateVal?: Date | null) => {
+    if (!dateVal) return '';
+    const y = dateVal.getFullYear();
+    const m = String(dateVal.getMonth() + 1).padStart(2, '0');
+    const d = String(dateVal.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
 
 const Table = ({
     state,
@@ -41,11 +59,30 @@ const Table = ({
     const { canCreate, canUpdate, canDelete } = permissions;
     const router = useRouter();
 
+    const filterOverlayRef = useRef<OverlayPanel>(null);
     const [scanMode, setScanMode] = useState<'camera' | 'manual'>('manual');
     const [cameraActive, setCameraActive] = useState(false);
     const [cameraErr, setCameraErr] = useState<string | null>(null);
     const html5QrRef = useRef<Html5Qrcode | null>(null);
     const filterPanelRef = useRef<OverlayPanel>(null);
+
+    const filteredData = useMemo(() => {
+        return (state.data || []).filter((item) => {
+            if (state.startDate) {
+                const itemDate = item.tanggal ? String(item.tanggal).slice(0, 10) : '';
+                if (itemDate && itemDate < state.startDate) return false;
+            }
+            if (state.endDate) {
+                const itemDate = item.tanggal ? String(item.tanggal).slice(0, 10) : '';
+                if (itemDate && itemDate > state.endDate) return false;
+            }
+            if (state.filterClassification && item.kode_klasifikasi !== state.filterClassification) return false;
+            if (state.filterCategory && item.kode_kategori_dokumen !== state.filterCategory) return false;
+            if (state.filterType && item.kode_jenis_dokumen !== state.filterType) return false;
+            if (state.filterConfidentiality && item.kode_tingkat_kerahasiaan !== state.filterConfidentiality) return false;
+            return true;
+        });
+    }, [state.data, state.startDate, state.endDate, state.filterClassification, state.filterCategory, state.filterType, state.filterConfidentiality]);
 
     const startCameraScanner = async () => {
         setCameraErr(null);
@@ -240,9 +277,84 @@ const Table = ({
             disabled={!rowData.file_path} />
     );
 
-    const headerTemplate = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-            <span className="font-semibold text-color text-sm">Daftar Dokumen</span>
+    const renderHeader = () => (
+        <div className="flex flex-column md:flex-row align-items-stretch md:align-items-center justify-content-between gap-3">
+            {/* Left: Date Range Filter (Tanggal s.d Tanggal) */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.startDate)}
+                        onChange={(e) => setState(p => ({ ...p, startDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
+                <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.endDate)}
+                        onChange={(e) => setState(p => ({ ...p, endDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
+            </div>
+
+            {/* Right: Filter Button, Search Bar, Reset Button */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <Button
+                    type="button"
+                    icon="pi pi-filter"
+                    label="Filter"
+                    outlined
+                    severity="secondary"
+                    size="small"
+                    onClick={(e) => filterOverlayRef.current?.toggle(e)}
+                    className="text-xs px-3"
+                />
+
+                <div className="p-input-icon-left flex-1 sm:w-16rem">
+                    <i className="pi pi-search text-xs" />
+                    <InputText
+                        value={state.searchVal}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            const filters = { ...state.filters };
+                            filters.global.value = value;
+                            setState((p) => ({ ...p, searchVal: value, filters }));
+                        }}
+                        placeholder="Cari Data..."
+                        className="text-xs p-inputtext-sm w-full"
+                    />
+                </div>
+
+                <Button
+                    type="button"
+                    icon="pi pi-filter-slash"
+                    outlined
+                    severity="danger"
+                    size="small"
+                    tooltip="Reset Filter"
+                    tooltipOptions={{ position: 'top' }}
+                    onClick={() => setState(p => ({
+                        ...p,
+                        startDate: '',
+                        endDate: '',
+                        filterClassification: '',
+                        filterCategory: '',
+                        filterType: '',
+                        filterConfidentiality: '',
+                        searchVal: '',
+                        filters: { global: { value: null, matchMode: FilterMatchMode.CONTAINS } }
+                    }))}
+                />
+            </div>
         </div>
     );
 
@@ -288,7 +400,7 @@ const Table = ({
                                         id_dokumen: null,
                                         nama_dokumen: '',
                                         nomor_dokumen: '',
-                                        tanggal: '',
+                                        tanggal: formatDateInput(new Date().toISOString()),
                                         tanggal_kedaluwarsa: '',
                                         nama_pic: name,
                                         kode_jenis_dokumen: '',
@@ -298,23 +410,26 @@ const Table = ({
                                         tanggal_transaksi: '',
                                         lokasi_fisik: '',
                                         kode_retensi: '',
+                                        file: null,
                                     }
                                 });
-                                setState(p => ({ ...p, add: true, edit: false, delete: false }));
+                                setState((p) => ({ ...p, add: true, edit: false, delete: false, selectedDocuments: [] }));
                             }} />
                     )}
-                    {canCreate && canDelete && <Divider layout="vertical" className="hidden sm:inline" />}
                     {canDelete && (
-                        <Button type="button"
-                            size="small"
-                            label={`Hapus${state.selectedDocuments.length > 0 ? ` (${state.selectedDocuments.length})` : ''}`}
-                            icon="pi pi-trash"
-                            severity="danger"
-                            outlined
-                            disabled={state.selectedDocuments.length === 0}
-                            onClick={() => setState((p) => ({ ...p, delete: true }))} />
+                        <>
+                            <Divider layout="vertical" className="hidden sm:inline" />
+                            <Button type="button"
+                                size="small"
+                                label={`Hapus${state.selectedDocuments.length > 0 ? ` (${state.selectedDocuments.length})` : ''}`}
+                                icon="pi pi-trash"
+                                severity="danger"
+                                outlined
+                                disabled={state.selectedDocuments.length === 0}
+                                onClick={() => setState((p) => ({ ...p, delete: true }))} />
+                        </>
                     )}
-                    {(canCreate || canDelete) && <Divider layout="vertical" className="hidden sm:inline" />}
+                    <Divider layout="vertical" className="hidden sm:inline" />
                     <Button type="button"
                         size="small"
                         label="Refresh"
@@ -376,151 +491,105 @@ const Table = ({
                 </div>
             </div>
 
-            {/* Filter Panel */}
-            <div className="flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-                {/* Left: Date Pickers */}
-                <div className="flex align-items-center gap-2">
-                    <Calendar 
-                        value={state.startDate || undefined} 
-                        onChange={(e) => setState(p => ({ ...p, startDate: e.value as Date }))} 
-                        placeholder="Tanggal Awal" 
-                        showIcon 
-                        className="p-inputtext-sm w-12rem"
-                        dateFormat="yy-mm-dd" />
-                    <span className="text-sm font-semibold text-600">s.d</span>
-                    <Calendar 
-                        value={state.endDate || undefined} 
-                        onChange={(e) => setState(p => ({ ...p, endDate: e.value as Date }))} 
-                        placeholder="Tanggal Akhir" 
-                        showIcon 
-                        className="p-inputtext-sm w-12rem"
-                        dateFormat="yy-mm-dd" />
-                </div>
+            {/* Filter OverlayPanel */}
+            <OverlayPanel ref={filterOverlayRef} showCloseIcon style={{ width: '360px' }}>
+                <div className="flex flex-column gap-3 p-1">
+                    <div className="font-bold text-sm text-900 border-bottom-1 surface-border pb-2 flex align-items-center justify-content-between">
+                        <span><i className="pi pi-filter text-primary mr-2" />Filter Spesifik Dokumen</span>
+                        {(state.filterClassification || state.filterCategory || state.filterType || state.filterConfidentiality) && (
+                            <Button label="Bersihkan"
+                                icon="pi pi-times"
+                                text
+                                severity="danger"
+                                size="small"
+                                className="p-0 text-xs"
+                                onClick={() => setState(p => ({
+                                    ...p,
+                                    filterClassification: '',
+                                    filterCategory: '',
+                                    filterType: '',
+                                    filterConfidentiality: ''
+                                }))} />
+                        )}
+                    </div>
 
-                {/* Right: Filters & Search */}
-                <div className="flex align-items-center gap-2">
-                    <Button 
-                        type="button" 
-                        label="Filter" 
-                        icon="pi pi-filter" 
-                        outlined 
-                        className="p-button-sm bg-white" 
-                        onClick={(e) => filterPanelRef.current?.toggle(e)} />
-                    
-                    <OverlayPanel ref={filterPanelRef} className="w-25rem">
-                        <div className="flex flex-column gap-3 p-2">
-                            <span className="font-bold text-sm text-800 border-bottom-1 surface-border pb-2">Filter Lanjutan</span>
-                            <div className="flex flex-column gap-1">
-                                <label className="text-xs font-semibold text-color-secondary">Klasifikasi</label>
-                                <Dropdown
-                                    value={state.filterClassification}
-                                    options={[
-                                        { label: 'Semua Klasifikasi', value: '' },
-                                        ...state.classifications.map((item: any) => ({
-                                            label: `${item.kode_klasifikasi} - ${item.nama_klasifikasi}`,
-                                            value: item.kode_klasifikasi
-                                        }))
-                                    ]}
-                                    onChange={(e) => setState(p => ({ ...p, filterClassification: e.value || '', filterCategory: '' }))}
-                                    placeholder="Pilih Klasifikasi"
-                                    className="w-full text-xs p-inputtext-sm"
-                                    filter
-                                    showClear />
-                            </div>
-                            <div className="flex flex-column gap-1">
-                                <label className="text-xs font-semibold text-color-secondary">Kategori</label>
-                                <Dropdown
-                                    value={state.filterCategory}
-                                    options={[
-                                        { label: 'Semua Kategori', value: '' },
-                                        ...state.categories
-                                            .filter((item: any) => !state.filterClassification || item.kode_klasifikasi === state.filterClassification)
-                                            .map((item: any) => ({
-                                                label: `${item.kode_kategori_dokumen} - ${item.nama_kategori_dokumen}`,
-                                                value: item.kode_kategori_dokumen
-                                            }))
-                                    ]}
-                                    onChange={(e) => setState(p => ({ ...p, filterCategory: e.value || '' }))}
-                                    placeholder="Pilih Kategori"
-                                    className="w-full text-xs p-inputtext-sm"
-                                    filter
-                                    showClear
-                                    disabled={!state.filterClassification} />
-                            </div>
-                            <div className="flex flex-column gap-1">
-                                <label className="text-xs font-semibold text-color-secondary">Tipe Dokumen</label>
-                                <Dropdown
-                                    value={state.filterType}
-                                    options={[
-                                        { label: 'Semua Tipe', value: '' },
-                                        ...(state.documentTypes || []).map((item: any) => ({
-                                            label: `${item.kode_jenis_dokumen} - ${item.nama_jenis_dokumen}`,
-                                            value: item.kode_jenis_dokumen
-                                        }))
-                                    ]}
-                                    onChange={(e) => setState(p => ({ ...p, filterType: e.value || '' }))}
-                                    placeholder="Pilih Tipe Dokumen"
-                                    className="w-full text-xs p-inputtext-sm"
-                                    filter
-                                    showClear />
-                            </div>
-                            <div className="flex flex-column gap-1">
-                                <label className="text-xs font-semibold text-color-secondary">Tingkat Kerahasiaan</label>
-                                <Dropdown
-                                    value={state.filterConfidentiality}
-                                    options={[
-                                        { label: 'Semua Kerahasiaan', value: '' },
-                                        ...state.confidentialities.map((item: any) => ({
-                                            label: `${item.kode_tingkat_kerahasiaan} - ${item.nama_tingkat_kerahasiaan}`,
-                                            value: item.kode_tingkat_kerahasiaan
-                                        }))
-                                    ]}
-                                    onChange={(e) => setState(p => ({ ...p, filterConfidentiality: e.value || '' }))}
-                                    placeholder="Pilih Kerahasiaan"
-                                    className="w-full text-xs p-inputtext-sm"
-                                    filter
-                                    showClear />
-                            </div>
-                        </div>
-                    </OverlayPanel>
-                    
-                    <span className="p-input-icon-left">
-                        <i className="pi pi-search" />
-                        <InputText
-                            value={state.searchVal}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                const filters = { ...state.filters };
-                                filters.global.value = value;
-                                setState((p) => ({ ...p, searchVal: value, filters }));
-                            }}
-                            placeholder="Cari Data..."
-                            className="p-inputtext-sm w-15rem" />
-                    </span>
-                    
-                    {(state.filterClassification || state.filterCategory || state.filterType || state.filterConfidentiality || state.startDate || state.endDate || state.searchVal) && (
-                        <Button 
-                            icon="pi pi-filter-slash"
-                            className="p-button-danger p-button-outlined p-button-sm bg-white"
-                            tooltip="Bersihkan Semua Filter"
-                            tooltipOptions={{ position: 'top' }}
-                            onClick={() => setState(p => ({
-                                ...p,
-                                filterClassification: '',
-                                filterCategory: '',
-                                filterType: '',
-                                filterConfidentiality: '',
-                                startDate: null,
-                                endDate: null,
-                                searchVal: '',
-                                filters: { global: { value: null, matchMode: 'contains' as any } }
-                            }))} />
-                    )}
+                    <div className="flex flex-column gap-1">
+                        <label className="text-xs font-semibold text-700">Klasifikasi Dokumen</label>
+                        <Dropdown
+                            value={state.filterClassification}
+                            options={[
+                                { label: 'Semua Klasifikasi', value: '' },
+                                ...(state.classifications || []).map((item: any) => ({
+                                    label: `${item.kode_klasifikasi} - ${item.nama_klasifikasi}`,
+                                    value: item.kode_klasifikasi
+                                }))
+                            ]}
+                            onChange={(e) => setState(p => ({ ...p, filterClassification: e.value || '' }))}
+                            placeholder="Pilih Klasifikasi"
+                            className="w-full text-xs p-inputtext-sm"
+                            filter
+                            showClear />
+                    </div>
+
+                    <div className="flex flex-column gap-1">
+                        <label className="text-xs font-semibold text-700">Kategori Dokumen</label>
+                        <Dropdown
+                            value={state.filterCategory}
+                            options={[
+                                { label: 'Semua Kategori', value: '' },
+                                ...(state.categories || []).map((item: any) => ({
+                                    label: `${item.kode_kategori_dokumen} - ${item.nama_kategori_dokumen}`,
+                                    value: item.kode_kategori_dokumen
+                                }))
+                            ]}
+                            onChange={(e) => setState(p => ({ ...p, filterCategory: e.value || '' }))}
+                            placeholder="Pilih Kategori Dokumen"
+                            className="w-full text-xs p-inputtext-sm"
+                            filter
+                            showClear />
+                    </div>
+
+                    <div className="flex flex-column gap-1">
+                        <label className="text-xs font-semibold text-700">Tipe Dokumen</label>
+                        <Dropdown
+                            value={state.filterType}
+                            options={[
+                                { label: 'Semua Tipe', value: '' },
+                                ...(state.documentTypes || []).map((item: any) => ({
+                                    label: `${item.kode_jenis_dokumen} - ${item.nama_jenis_dokumen}`,
+                                    value: item.kode_jenis_dokumen
+                                }))
+                            ]}
+                            onChange={(e) => setState(p => ({ ...p, filterType: e.value || '' }))}
+                            placeholder="Pilih Tipe Dokumen"
+                            className="w-full text-xs p-inputtext-sm"
+                            filter
+                            showClear />
+                    </div>
+
+                    <div className="flex flex-column gap-1">
+                        <label className="text-xs font-semibold text-700">Tingkat Kerahasiaan</label>
+                        <Dropdown
+                            value={state.filterConfidentiality}
+                            options={[
+                                { label: 'Semua Kerahasiaan', value: '' },
+                                ...state.confidentialities.map((item: any) => ({
+                                    label: `${item.kode_tingkat_kerahasiaan} - ${item.nama_tingkat_kerahasiaan}`,
+                                    value: item.kode_tingkat_kerahasiaan
+                                }))
+                            ]}
+                            onChange={(e) => setState(p => ({ ...p, filterConfidentiality: e.value || '' }))}
+                            placeholder="Pilih Kerahasiaan"
+                            className="w-full text-xs p-inputtext-sm"
+                            filter
+                            showClear />
+                    </div>
                 </div>
-            </div>
+            </OverlayPanel>
 
             <DataTable
-                value={state.data}
+                value={filteredData}
+                header={renderHeader()}
                 selection={state.selectedDocuments}
                 onSelectionChange={(e: any) => setState((p) => ({ ...p, selectedDocuments: e.value as DocumentData[] }))}
                 selectionMode="multiple"
@@ -530,11 +599,10 @@ const Table = ({
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 loading={state.load}
                 emptyMessage="Tidak ada dokumen ditemukan."
-                header={headerTemplate}
                 filters={state.filters}
                 globalFilterFields={['nomor_dokumen', 'nama_dokumen', 'nama_pic', 'lokasi_fisik']}
                 responsiveLayout="scroll"
-                className="p-datatable-sm border-round-xl border-1 surface-border overflow-hidden"
+                className="p-datatable-sm"
                 stripedRows>
                 <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} />
                 <Column body={statusBodyTemplate} header="" style={{ width: '3.5rem', textAlign: 'center' }} />

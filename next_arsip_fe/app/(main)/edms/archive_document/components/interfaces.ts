@@ -152,12 +152,12 @@ export interface State {
     retentions: any[]
 
     // Filters
+    startDate?: string | null
+    endDate?: string | null
     filterClassification?: string
     filterType?: string
     filterCategory?: string
     filterConfidentiality?: string
-    startDate?: Date | null
-    endDate?: Date | null
 
     // QR & Tracking States
     qrDialog: boolean

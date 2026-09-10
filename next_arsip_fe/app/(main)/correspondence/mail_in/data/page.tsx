@@ -63,6 +63,8 @@ const Page = () => {
         filters: { global: { value: null, matchMode: FilterMatchMode.CONTAINS } },
         session: null,
         submittedData: null,
+        startDate: "",
+        endDate: "",
     });
 
     const formik = useFormik({

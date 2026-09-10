@@ -17,11 +17,28 @@ import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Message } from "primereact/message";
 import { Tag } from "primereact/tag";
-import { useEffect, useState } from "react";
+import { Calendar } from "primereact/calendar";
+import { OverlayPanel } from "primereact/overlaypanel";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { apiEndpointGet } from "../endpoints";
 import { IncomingLetterFile, IncomingLetterStatus, TableData, TableProps } from "../interfaces";
 import Form from "./form";
 import { usePermissions } from '@/hooks/usePermissions';
+
+const parseDateStr = (dateStr?: string | null) => {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+};
+
+const formatDateStr = (date: Date | null) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
 
 const statusOptions = [
     { label: "Semua Status", value: "" },
@@ -65,6 +82,36 @@ const Table = ({
     const { canCreate, canUpdate, canDelete } = permissions;
     const router = useRouter();
     const [previewFile, setPreviewFile] = useState<{ url: string; mimeType: string; fileName: string } | null>(null);
+    const filterOverlayRef = useRef<any>(null);
+
+    const filteredData = useMemo(() => {
+        return state.data.filter((item) => {
+            const rawDate = item.tanggal_diterima || item.tanggal_surat || item.created_at;
+            const itemDate = rawDate ? String(rawDate).slice(0, 10) : '';
+
+            if (state.startDate && itemDate && itemDate < state.startDate) return false;
+            if (state.endDate && itemDate && itemDate > state.endDate) return false;
+
+            if (state.statusFilter) {
+                const s = String(item.status || '').toLowerCase();
+                if (state.statusFilter !== s) return false;
+            }
+
+            const query = state.searchVal?.toLowerCase() || '';
+            if (query) {
+                const match =
+                    item.nomor_agenda?.toLowerCase().includes(query) ||
+                    item.nomor_surat?.toLowerCase().includes(query) ||
+                    item.nama_pengirim?.toLowerCase().includes(query) ||
+                    item.instansi_pengirim?.toLowerCase().includes(query) ||
+                    item.perihal?.toLowerCase().includes(query) ||
+                    item.nama_jenis_surat?.toLowerCase().includes(query);
+                if (!match) return false;
+            }
+
+            return true;
+        });
+    }, [state.data, state.searchVal, state.statusFilter, state.startDate, state.endDate]);
 
     const buildPayload = () => ({ keyword: state.searchVal || "", status: state.statusFilter || "" });
     const refreshData = () => getData(apiEndpointGet, buildPayload());
@@ -254,36 +301,7 @@ const Table = ({
         </div>
     );
 
-    const headerTemplate = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-            <span className="font-semibold text-color text-sm">Daftar Surat Masuk</span>
-            <div className="flex flex-wrap gap-2 align-items-center">
-                <span className="p-input-icon-left">
-                    <i className="pi pi-search" />
-                    <InputText
-                        value={state.searchVal}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setState((p) => ({ ...p, searchVal: value, filters: { global: { value, matchMode: FilterMatchMode.CONTAINS } } }));
-                        }}
-                        onKeyDown={(e) => { if (e.key === "Enter") refreshData(); }}
-                        placeholder="Cari surat..."
-                        className="text-sm" style={{ height: "2.25rem" }} />
-                </span>
-                <Dropdown
-                    value={state.statusFilter}
-                    options={statusOptions}
-                    onChange={(e) => setState((p) => ({ ...p, statusFilter: e.value }))}
-                    placeholder="Filter Status"
-                    style={{ minWidth: "10rem", height: "2.25rem" }} />
-                <Button icon="pi pi-filter"
-                    outlined size="small"
-                    onClick={refreshData}
-                    tooltip="Terapkan filter"
-                    style={{ height: "2.25rem" }} />
-            </div>
-        </div>
-    );
+
 
     useEffect(() => {
         getData(apiEndpointGet);
@@ -297,6 +315,73 @@ const Table = ({
     const detailLetter = state.detailData?.surat || state.detailData?.letter || null;
     const detailFiles = state.detailData?.files || [];
     const archivedDocument = state.detailData?.archived_document || null;
+
+
+    const renderHeader = () => (
+        <div className="flex flex-column md:flex-row align-items-stretch md:align-items-center justify-content-between gap-3">
+            {/* Left: Date Range Filter (Tanggal Terima / Tanggal Surat) */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.startDate)}
+                        onChange={(e) => setState(p => ({ ...p, startDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
+                <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.endDate)}
+                        onChange={(e) => setState(p => ({ ...p, endDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
+            </div>
+
+            {/* Right: Filter Button, Search Bar, Reset Button */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <Button
+                    type="button"
+                    icon="pi pi-filter"
+                    label="Filter"
+                    outlined
+                    severity="secondary"
+                    size="small"
+                    onClick={(e) => filterOverlayRef.current?.toggle(e)}
+                    className="text-xs px-3"
+                />
+
+                <div className="p-input-icon-left flex-1 sm:w-16rem">
+                    <i className="pi pi-search text-xs" />
+                    <InputText
+                        value={state.searchVal || ''}
+                        onChange={(e) => setState(p => ({ ...p, searchVal: e.target.value }))}
+                        placeholder="Cari Data..."
+                        className="text-xs p-inputtext-sm w-full"
+                    />
+                </div>
+
+                <Button
+                    type="button"
+                    icon="pi pi-filter-slash"
+                    outlined
+                    severity="danger"
+                    size="small"
+                    tooltip="Reset Filter"
+                    tooltipOptions={{ position: 'top' }}
+                    onClick={() => setState(p => ({ ...p, searchVal: '', statusFilter: '', startDate: '', endDate: '' }))}
+                />
+            </div>
+        </div>
+    );
 
     return (
         <>
@@ -324,7 +409,7 @@ const Table = ({
                     {canDelete && (
                         <>
                             <Button size="small"
-                                label={`Hapus${state.selectedLetters.length> 0 ? ` (${state.selectedLetters.length})` : ""}`}
+                                label={`Hapus${state.selectedLetters.length > 0 ? ` (${state.selectedLetters.length})` : ""}`}
                                 icon="pi pi-trash"
                                 severity="danger"
                                 outlined
@@ -367,12 +452,38 @@ const Table = ({
                     </div>
                 </div>
 
+                <OverlayPanel ref={filterOverlayRef} showCloseIcon style={{ width: '300px' }}>
+                    <div className="flex flex-column gap-3 p-1">
+                        <div className="font-bold text-sm text-900 border-bottom-1 surface-border pb-2 flex align-items-center justify-content-between">
+                            <span><i className="pi pi-filter text-primary mr-2" />Filter Status Surat</span>
+                            {state.statusFilter && (
+                                <Button label="Bersihkan"
+                                    icon="pi pi-times"
+                                    text
+                                    severity="danger"
+                                    size="small"
+                                    className="p-0 text-xs"
+                                    onClick={() => setState(p => ({ ...p, statusFilter: '' }))} />
+                            )}
+                        </div>
+                        <div className="flex flex-column gap-1">
+                            <label className="text-xs font-semibold text-700">Status Surat</label>
+                            <Dropdown
+                                value={state.statusFilter}
+                                options={statusOptions}
+                                onChange={(e) => setState(p => ({ ...p, statusFilter: e.value }))}
+                                placeholder="Pilih Status"
+                                className="w-full text-xs p-inputtext-sm" />
+                        </div>
+                    </div>
+                </OverlayPanel>
+
                 <DataTable
-                    value={state.data}
+                    value={filteredData}
+                    header={renderHeader()}
                     paginator
                     selectionMode="multiple"
                     rows={10}
-                    header={headerTemplate}
                     globalFilterFields={["nomor_agenda", "nomor_surat", "nama_pengirim", "instansi_pengirim", "perihal", "status"]}
                     filters={state.filters}
                     loading={state.load}

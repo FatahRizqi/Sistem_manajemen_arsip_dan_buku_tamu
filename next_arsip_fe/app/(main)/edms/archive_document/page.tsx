@@ -58,12 +58,12 @@ const Page = () => {
         categories: [],
         confidentialities: [],
         retentions: [],
+        startDate: '',
+        endDate: '',
         filterClassification: '',
         filterType: '',
         filterCategory: '',
         filterConfidentiality: '',
-        startDate: null,
-        endDate: null,
         qrDialog: false,
         qrData: null,
         qrLoad: false,
@@ -147,14 +147,10 @@ const Page = () => {
             if (state.filterCategory) params.kode_kategori_dokumen = state.filterCategory;
             if (state.filterConfidentiality) params.kode_tingkat_kerahasiaan = state.filterConfidentiality;
             if (state.startDate) {
-                const start = new Date(state.startDate);
-                start.setHours(0, 0, 0, 0);
-                params.date_from = start.toISOString().replace('T', ' ').substring(0, 19);
+                params.date_from = `${state.startDate} 00:00:00`;
             }
             if (state.endDate) {
-                const end = new Date(state.endDate);
-                end.setHours(23, 59, 59, 999);
-                params.date_to = end.toISOString().replace('T', ' ').substring(0, 19);
+                params.date_to = `${state.endDate} 23:59:59`;
             }
 
             const res = await getData(apiEndpointDocumentGet, params);

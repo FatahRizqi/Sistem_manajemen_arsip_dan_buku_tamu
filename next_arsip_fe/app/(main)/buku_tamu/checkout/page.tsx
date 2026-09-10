@@ -24,7 +24,9 @@ const CheckoutPage = () => {
         showCheckoutDialog: false,
         checkoutToken: '',
         checkoutNotes: '',
-        detailRecord: null
+        detailRecord: null,
+        startDate: '',
+        endDate: ''
     });
     const [selectedId, setSelectedId] = useState<string | number>('');
     const [showScanDialog, setShowScanDialog] = useState(false);

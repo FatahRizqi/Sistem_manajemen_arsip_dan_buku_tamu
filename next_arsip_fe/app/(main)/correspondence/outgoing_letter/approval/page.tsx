@@ -26,6 +26,8 @@ interface State {
     searchVal: string;
     statusFilter: string;
     jenisSuratFilter: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
     filters: any;
     session: any;
     config?: {

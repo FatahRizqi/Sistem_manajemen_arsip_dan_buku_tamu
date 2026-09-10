@@ -28,6 +28,7 @@ const MonitoringPage: React.FC = () => {
         try {
             const currentRange = overrideRange || timeRange;
             const response = await postData(apiEndpointMonitoring, { time_range: currentRange });
+            console.log("MONITORING RES:", response?.data);
             if (response?.data?.data) {
                 setStats(response.data.data);
             }

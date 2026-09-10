@@ -10,7 +10,10 @@ import { Divider } from "primereact/divider";
 import { Card } from "primereact/card";
 import { Avatar } from "primereact/avatar";
 import { Chip } from "primereact/chip";
-import { useEffect, useState } from "react";
+import { Calendar } from "primereact/calendar";
+import { OverlayPanel } from "primereact/overlaypanel";
+import { Dropdown } from "primereact/dropdown";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { LoanData, TableProps } from "../interfaces";
 import { formatDateCalendar } from "@/lib/tools/dateTools";
 import Form from "./form";
@@ -19,6 +22,21 @@ import { usePermissions } from '@/hooks/usePermissions';
 const formatDateOnly = (value?: string | Date | null) => {
     if (!value) return '-';
     return formatDateCalendar(value, 'yyyy-MM-dd') || '-';
+};
+
+const parseDateStr = (dateStr?: string | null) => {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+};
+
+const formatDateStr = (date: Date | null) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
 };
 
 const Table = ({
@@ -33,6 +51,8 @@ const Table = ({
 }: TableProps) => {
     const permissions = usePermissions();
     const { canCreate, canUpdate, canDelete, canApprove } = permissions;
+
+    const filterOverlayRef = useRef<any>(null);
 
     const [detailDialog, setDetailDialog] = useState(false);
     const [selectedDetail, setSelectedDetail] = useState<LoanData | null>(null);
@@ -146,127 +166,206 @@ const Table = ({
         );
     };
 
-    const headerTemplate = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-            <span className="font-semibold text-color text-sm">Daftar Peminjaman</span>
-            <span className="p-input-icon-left">
-                <i className="pi pi-search" />
-                <InputText
-                    value={state.searchVal || ''}
-                    onChange={(e) => setState(p => ({ ...p, searchVal: e.target.value }))}
-                    placeholder="Cari peminjam atau dokumen..."
-                    className="text-sm"
-                    style={{ height: '2.25rem' }} />
-            </span>
-        </div>
-    );
+    const filteredData = useMemo(() => {
+        return state.data.filter((item) => {
+            if (state.startDate) {
+                const itemDate = item.tanggal_pinjam ? String(item.tanggal_pinjam).slice(0, 10) : '';
+                if (itemDate && itemDate < state.startDate) return false;
+            }
+            if (state.endDate) {
+                const itemDate = item.tanggal_pinjam ? String(item.tanggal_pinjam).slice(0, 10) : '';
+                if (itemDate && itemDate > state.endDate) return false;
+            }
 
-    const filteredData = state.data.filter((item) => {
-        const query = state.searchVal?.toLowerCase() || '';
-        const matchSearch =
-            item.nama_peminjam?.toLowerCase().includes(query) ||
-            item.nama_dokumen?.toLowerCase().includes(query) ||
-            item.nomor_dokumen?.toLowerCase().includes(query) ||
-            item.keperluan?.toLowerCase().includes(query);
-        if (!matchSearch) return false;
-        const tab = state.activeTab;
-        if (tab === 'all') return true;
-        if (tab === 'pending') return item.status === 'pending';
-        if (tab === 'borrowed') return item.status === 'borrowed' && item.terlambat !== 1;
-        if (tab === 'returned') return item.status === 'returned';
-        if (tab === 'overdue') return item.terlambat === 1 && item.status === 'borrowed';
-        return true;
-    });
+            const query = state.searchVal?.toLowerCase() || '';
+            const matchSearch =
+                item.nama_peminjam?.toLowerCase().includes(query) ||
+                item.nama_dokumen?.toLowerCase().includes(query) ||
+                item.nomor_dokumen?.toLowerCase().includes(query) ||
+                item.keperluan?.toLowerCase().includes(query);
+            if (!matchSearch) return false;
 
-    const tabs: { label: string; value: typeof state.activeTab; icon: string; severity: 'success' | 'danger' | 'warning' | 'info' | 'secondary' }[] = [
-        { label: 'Semua', value: 'all', icon: 'pi pi-list', severity: 'secondary' },
-        { label: 'Pending', value: 'pending', icon: 'pi pi-clock', severity: 'warning' },
-        { label: 'Dipinjam', value: 'borrowed', icon: 'pi pi-info-circle', severity: 'info' },
-        { label: 'Dikembalikan', value: 'returned', icon: 'pi pi-check-circle', severity: 'success' },
-        { label: 'Terlambat', value: 'overdue', icon: 'pi pi-exclamation-circle', severity: 'danger' },
-    ];
-
-    const tabCounts: Record<string, number> = {
-        all: state.data.length,
-        pending: state.data.filter(d => d.status === 'pending').length,
-        borrowed: state.data.filter(d => d.status === 'borrowed' && d.terlambat !== 1).length,
-        returned: state.data.filter(d => d.status === 'returned').length,
-        overdue: state.data.filter(d => d.terlambat === 1 && d.status === 'borrowed').length,
-    };
+            const tab = state.activeTab;
+            if (tab === 'all') return true;
+            if (tab === 'pending') return item.status === 'pending';
+            if (tab === 'borrowed') return item.status === 'borrowed' && item.terlambat !== 1;
+            if (tab === 'returned') return item.status === 'returned';
+            if (tab === 'overdue') return item.terlambat === 1 && item.status === 'borrowed';
+        });
+    }, [state.data, state.searchVal, state.activeTab, state.startDate, state.endDate]);
 
     useEffect(() => { getLoans(); }, []);
 
-    return <>
-        <Card className="shadow-1 border-round-2xl border-none">
-            {/* Page Header */}
-            <div className="mb-3">
-                                <h2 className="m-0 text-900 font-bold text-2xl mb-1">Archive Loans</h2>
-                <p className="m-0 text-color-secondary text-sm font-medium">Kelola peminjaman dokumen fisik arsip dan monitor keterlambatan pengembalian.</p>
+    const renderHeader = () => (
+        <div className="flex flex-column md:flex-row align-items-stretch md:align-items-center justify-content-between gap-3">
+            {/* Left: Date Range Filter (Tanggal s.d Tanggal) */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.startDate)}
+                        onChange={(e) => setState(p => ({ ...p, startDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
+                <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.endDate)}
+                        onChange={(e) => setState(p => ({ ...p, endDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
             </div>
 
-            <div className="flex flex-row flex-wrap align-items-center gap-2 mb-3">
-                {canCreate && (
-                    <>
-                        <Button size="small"
-                            label="Pinjam Dokumen"
+            {/* Right: Filter Button, Search Bar, Reset Button */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <Button
+                    type="button"
+                    icon="pi pi-filter"
+                    label="Filter"
+                    outlined
+                    severity="secondary"
+                    size="small"
+                    onClick={(e) => filterOverlayRef.current?.toggle(e)}
+                    className="text-xs px-3"
+                />
+
+                <div className="p-input-icon-left flex-1 sm:w-16rem">
+                    <i className="pi pi-search text-xs" />
+                    <InputText
+                        value={state.searchVal || ''}
+                        onChange={(e) => setState(p => ({ ...p, searchVal: e.target.value }))}
+                        placeholder="Cari Data..."
+                        className="text-xs p-inputtext-sm w-full"
+                    />
+                </div>
+
+                <Button
+                    type="button"
+                    icon="pi pi-filter-slash"
+                    outlined
+                    severity="danger"
+                    size="small"
+                    tooltip="Reset Filter"
+                    tooltipOptions={{ position: 'top' }}
+                    onClick={() => setState(p => ({ ...p, startDate: '', endDate: '', searchVal: '', activeTab: 'all' }))}
+                />
+            </div>
+        </div>
+    );
+
+    return (
+        <>
+            <Card className="shadow-1 border-round-2xl border-none">
+                {/* Page Header */}
+                <div className="mb-3">
+                    <h2 className="m-0 text-900 font-bold text-2xl mb-1">Peminjaman & Pengembalian Arsip</h2>
+                    <p className="m-0 text-color-secondary text-sm font-medium">Kelola sirkulasi peminjaman berkas fisik, konfirmasi pengembalian, dan lacak status keterlambatan.</p>
+                </div>
+
+                <div className="flex flex-row flex-wrap align-items-center gap-2 mb-3">
+                    {canCreate && (
+                        <Button type="button"
+                            size="small"
+                            label="Form Peminjaman Baru"
                             icon="pi pi-plus"
                             outlined
                            
-                            onClick={() => { formik.resetForm(); setState(p => ({ ...p, add: true })); }} />
-                        <Divider layout="vertical" />
-                    </>
-                )}
-                <Button size="small"
-                    label="Refresh"
-                    icon="pi pi-refresh"
-                    outlined
-                    onClick={getLoans}
-                    loading={state.load} />
-            </div>
-
-            {/* Status Tabs */}
-            <div className="flex flex-wrap gap-2 mb-3">
-                {tabs.map((tab) => (
-                    <Button key={tab.value}
-                        icon={tab.icon}
-                        label={`${tab.label} (${tabCounts[tab.value]})`}
+                            onClick={() => setState((p) => ({ ...p, add: true, edit: false, selectedLoan: null }))} />
+                    )}
+                    {canCreate && <Divider layout="vertical" />}
+                    <Button type="button"
                         size="small"
-                        severity={state.activeTab === tab.value ? tab.severity : 'secondary'}
-                        outlined={state.activeTab !== tab.value}
-                        className="text-xs border-round-3xl"
-                        style={{ padding: '0.4rem 0.85rem' }}
-                        onClick={() => setState(p => ({ ...p, activeTab: tab.value }))} />
-                ))}
-            </div>
+                        label="Scan QR Code Peminjaman"
+                        icon="pi pi-qrcode"
+                        outlined
+                        severity="info"
+                        onClick={() => setState(p => ({ ...p, scanDialog: true, scanCode: '', scanResult: null }))} />
+                    <Divider layout="vertical" />
+                    <Button type="button"
+                        size="small"
+                        label="Refresh"
+                        icon="pi pi-refresh"
+                        outlined
+                        loading={state.load}
+                        onClick={getLoans} />
+                </div>
 
-            {/* KETERANGAN STATUS BAR */}
-            <div className="flex flex-wrap align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1" style={{ width: 'fit-content' }}>
-                <div className="flex align-items-center gap-2 font-bold text-xs text-700 uppercase tracking-wider">
-                    <i className="pi pi-info-circle text-primary text-base"></i> KETERANGAN STATUS:
+                {/* Status Legend Bar */}
+                <div className="flex flex-wrap align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1" style={{ width: 'fit-content' }}>
+                    <div className="flex align-items-center gap-2 font-bold text-xs text-700 uppercase tracking-wider">
+                        <i className="pi pi-info-circle text-primary text-base"></i> KETERANGAN STATUS:
+                    </div>
+                    <div className="flex align-items-center gap-2 text-xs font-semibold">
+                        <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#f97316', borderRadius: '3px' }}></span>
+                        <span className="text-700">Pending</span>
+                    </div>
+                    <div className="flex align-items-center gap-2 text-xs font-semibold">
+                        <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#3b82f6', borderRadius: '3px' }}></span>
+                        <span className="text-700">Dipinjam</span>
+                    </div>
+                    <div className="flex align-items-center gap-2 text-xs font-semibold">
+                        <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#22c55e', borderRadius: '3px' }}></span>
+                        <span className="text-700">Dikembalikan</span>
+                    </div>
+                    <div className="flex align-items-center gap-2 text-xs font-semibold">
+                        <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#ef4444', borderRadius: '3px' }}></span>
+                        <span className="text-700">Terlambat</span>
+                    </div>
                 </div>
-                <div className="flex align-items-center gap-2 text-xs font-semibold">
-                    <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#f59e0b', borderRadius: '3px' }}></span>
-                    <span className="text-700">Menunggu</span>
-                </div>
-                <div className="flex align-items-center gap-2 text-xs font-semibold">
-                    <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#3b82f6', borderRadius: '3px' }}></span>
-                    <span className="text-700">Dipinjam</span>
-                </div>
-                <div className="flex align-items-center gap-2 text-xs font-semibold">
-                    <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#22c55e', borderRadius: '3px' }}></span>
-                    <span className="text-700">Dikembalikan</span>
-                </div>
-                <div className="flex align-items-center gap-2 text-xs font-semibold">
-                    <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#ef4444', borderRadius: '3px' }}></span>
-                    <span className="text-700">Terlambat / Ditolak</span>
-                </div>
-            </div>
 
-            <DataTable
-                value={filteredData}
+                <OverlayPanel ref={filterOverlayRef} style={{ width: '300px' }}>
+                    <div className="flex flex-column gap-3 p-2">
+                        <span className="font-bold text-sm text-900 border-bottom-1 surface-border pb-2">Filter Data</span>
+                        <div className="flex flex-column gap-2">
+                            <label className="text-xs font-semibold text-700">Status Peminjaman</label>
+                            <Dropdown
+                                value={state.activeTab}
+                                options={[
+                                    { label: 'Semua Status', value: 'all' },
+                                    { label: 'Pending (Menunggu)', value: 'pending' },
+                                    { label: 'Dipinjam', value: 'borrowed' },
+                                    { label: 'Dikembalikan', value: 'returned' },
+                                    { label: 'Terlambat', value: 'overdue' }
+                                ]}
+                                onChange={(e) => setState(p => ({ ...p, activeTab: e.value }))}
+                                placeholder="Pilih Status"
+                                className="w-full text-sm"
+                            />
+                        </div>
+                        <div className="flex justify-content-end gap-2 mt-2">
+                            <Button
+                                label="Reset"
+                                size="small"
+                                severity="secondary"
+                                outlined
+                                onClick={() => {
+                                    setState(p => ({ ...p, activeTab: 'all', startDate: '', endDate: '' }));
+                                    filterOverlayRef.current?.hide();
+                                }}
+                            />
+                            <Button
+                                label="Terapkan"
+                                size="small"
+                                onClick={() => filterOverlayRef.current?.hide()}
+                            />
+                        </div>
+                    </div>
+                </OverlayPanel>
+
+                <DataTable
+                    value={filteredData}
+                    header={renderHeader()}
                 paginator
                 rows={10}
-                header={headerTemplate}
                 loading={state.load}
                 dataKey="id_peminjaman"
                 emptyMessage={
@@ -480,6 +579,7 @@ const Table = ({
             </div>
         </Dialog>
     </>
-}
+    );
+};
 
-export default Table
+export default Table;

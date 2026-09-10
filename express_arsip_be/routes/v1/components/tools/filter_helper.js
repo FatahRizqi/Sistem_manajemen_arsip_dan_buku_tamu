@@ -11,8 +11,10 @@
  * - Filter ini cukup menerapkan x-filter-cabang yang sudah disiapkan middleware.
  * - Filter tambahan (departemen/divisi/unit kerja) bersifat OPSIONAL untuk drill-down.
  */
-export const applyMultiTenantFilter = (queryBuilder, req, userTableAlias = 'mst_pengguna') => {
+export const applyMultiTenantFilter = (queryBuilder, req, userTableAlias = 'mst_pengguna', deptTableAlias = null) => {
     if (!req.context) return queryBuilder;
+
+    const aliasForDept = deptTableAlias || userTableAlias;
 
     // Primary filter: Cabang (sudah di-expand oleh middleware untuk semua role)
     const fCabang = req.headers['x-filter-cabang'];
@@ -26,9 +28,9 @@ export const applyMultiTenantFilter = (queryBuilder, req, userTableAlias = 'mst_
     const fDivisi = req.headers['x-filter-divisi'];
     const fUnitKerja = req.headers['x-filter-unit-kerja'];
 
-    if (fDepartemen && fDepartemen !== 'null') queryBuilder.where(`${userTableAlias}.id_departemen`, fDepartemen);
-    if (fDivisi && fDivisi !== 'null') queryBuilder.where(`${userTableAlias}.id_divisi`, fDivisi);
-    if (fUnitKerja && fUnitKerja !== 'null') queryBuilder.where(`${userTableAlias}.id_unit_kerja`, fUnitKerja);
+    if (fDepartemen && fDepartemen !== 'null') queryBuilder.where(`${aliasForDept}.id_departemen`, fDepartemen);
+    if (fDivisi && fDivisi !== 'null') queryBuilder.where(`${aliasForDept}.id_divisi`, fDivisi);
+    if (fUnitKerja && fUnitKerja !== 'null') queryBuilder.where(`${aliasForDept}.id_unit_kerja`, fUnitKerja);
 
     return queryBuilder;
 };

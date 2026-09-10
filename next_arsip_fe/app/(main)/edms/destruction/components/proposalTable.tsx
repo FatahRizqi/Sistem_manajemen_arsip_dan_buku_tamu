@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -7,7 +7,9 @@ import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
+import { OverlayPanel } from 'primereact/overlaypanel';
 import { Tag } from 'primereact/tag';
+import { Calendar } from 'primereact/calendar';
 import { usePermissions } from '@/hooks/usePermissions';
 import { showError } from '@/lib/tools/generalTools';
 
@@ -19,6 +21,21 @@ interface ProposalTableProps {
     reviewProposal: (id: number, status: string, notes: string) => Promise<boolean>;
     executeProposal: (id: number, file: string) => Promise<boolean>;
 }
+
+const parseDateStr = (dateStr?: string | null) => {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+};
+
+const formatDateStr = (date: Date | null) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
 
 export default function ProposalTable({ 
     toast, 
@@ -32,6 +49,8 @@ export default function ProposalTable({
 
     const [searchVal, setSearchVal] = useState<string>('');
     const [statusFilter, setStatusFilter] = useState<string>('');
+    const [startDate, setStartDate] = useState<string>('');
+    const [endDate, setEndDate] = useState<string>('');
 
     // Review Dialog States
     const [reviewDialog, setReviewDialog] = useState<boolean>(false);
@@ -48,6 +67,15 @@ export default function ProposalTable({
     useEffect(() => {
         fetchProposals(statusFilter);
     }, [statusFilter, fetchProposals]);
+
+    const filteredData = useMemo(() => {
+        return data.filter((item) => {
+            const itemDate = item.tanggal_usulan ? String(item.tanggal_usulan).slice(0, 10) : (item.created_at ? String(item.created_at).slice(0, 10) : '');
+            if (startDate && itemDate && itemDate < startDate) return false;
+            if (endDate && itemDate && itemDate > endDate) return false;
+            return true;
+        });
+    }, [data, startDate, endDate]);
 
     const handleReviewSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -194,29 +222,103 @@ export default function ProposalTable({
         { label: 'Telah Dimusnahkan', value: 'executed' }
     ];
 
+    const filterOverlayRef = React.useRef<any>(null);
+
     const renderHeader = () => {
         return (
-            <div className="flex flex-wrap align-items-center justify-content-between gap-3 text-sm">
-                <span className="font-bold text-color">Daftar Usulan Pemusnahan</span>
-                <div className="flex gap-2 align-items-center">
-                    <Dropdown
-                        value={statusFilter}
-                        options={proposalStatusFilterOptions}
-                        onChange={(e) => setStatusFilter(e.value)}
-                        placeholder="Filter Status"
-                        showClear
-                        className="text-xs"
-                        style={{ minWidth: '15rem', height: '2.25rem' }} />
-                    <span className="p-input-icon-left">
-                        <i className="pi pi-search" />
+            <div className="flex flex-column md:flex-row align-items-stretch md:align-items-center justify-content-between gap-3">
+                {/* Left: Date Range Filter */}
+                <div className="flex align-items-center gap-2 flex-wrap">
+                    <div className="p-inputgroup flex-1 sm:w-14rem">
+                        <Calendar
+                            value={parseDateStr(startDate)}
+                            onChange={(e) => setStartDate(formatDateStr(e.value as Date))}
+                            dateFormat="yy-mm-dd"
+                            placeholder="YYYY-MM-DD"
+                            showIcon
+                            icon="pi pi-calendar"
+                            className="text-xs w-full p-inputtext-sm"
+                        />
+                    </div>
+                    <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
+                    <div className="p-inputgroup flex-1 sm:w-14rem">
+                        <Calendar
+                            value={parseDateStr(endDate)}
+                            onChange={(e) => setEndDate(formatDateStr(e.value as Date))}
+                            dateFormat="yy-mm-dd"
+                            placeholder="YYYY-MM-DD"
+                            showIcon
+                            icon="pi pi-calendar"
+                            className="text-xs w-full p-inputtext-sm"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex align-items-center gap-2 flex-wrap">
+                    <Button
+                        type="button"
+                        icon="pi pi-filter"
+                        label="Filter"
+                        outlined
+                        severity="secondary"
+                        size="small"
+                        onClick={(e) => filterOverlayRef.current?.toggle(e)}
+                        className="text-xs px-3"
+                    />
+
+                    <div className="p-input-icon-left flex-1 sm:w-16rem">
+                        <i className="pi pi-search text-xs" />
                         <InputText
                             value={searchVal}
                             onChange={(e) => setSearchVal(e.target.value)}
-                            placeholder="Cari..."
-                            className="text-sm"
-                            style={{ height: '2.25rem' }} />
-                    </span>
+                            placeholder="Cari Data..."
+                            className="text-xs p-inputtext-sm w-full"
+                        />
+                    </div>
+
+                    <Button
+                        type="button"
+                        icon="pi pi-filter-slash"
+                        outlined
+                        severity="danger"
+                        size="small"
+                        tooltip="Reset Filter"
+                        tooltipOptions={{ position: 'top' }}
+                        onClick={() => {
+                            setStatusFilter('');
+                            setSearchVal('');
+                            setStartDate('');
+                            setEndDate('');
+                        }}
+                    />
                 </div>
+
+                <OverlayPanel ref={filterOverlayRef} showCloseIcon style={{ width: '320px' }}>
+                    <div className="flex flex-column gap-3 p-1">
+                        <div className="font-bold text-sm text-900 border-bottom-1 surface-border pb-2 flex align-items-center justify-content-between">
+                            <span><i className="pi pi-filter text-primary mr-2" />Filter Status Usulan</span>
+                            {statusFilter && (
+                                <Button label="Bersihkan"
+                                    icon="pi pi-times"
+                                    text
+                                    severity="danger"
+                                    size="small"
+                                    className="p-0 text-xs"
+                                    onClick={() => setStatusFilter('')} />
+                            )}
+                        </div>
+                        <div className="flex flex-column gap-1">
+                            <label className="text-xs font-semibold text-700">Status Permohonan</label>
+                            <Dropdown
+                                value={statusFilter}
+                                options={proposalStatusFilterOptions}
+                                onChange={(e) => setStatusFilter(e.value || '')}
+                                placeholder="Pilih Status"
+                                className="w-full text-xs p-inputtext-sm"
+                                showClear />
+                        </div>
+                    </div>
+                </OverlayPanel>
             </div>
         );
     };
@@ -247,7 +349,7 @@ export default function ProposalTable({
             </div>
 
             <DataTable
-                value={data}
+                value={filteredData}
                 paginator
                 rows={10}
                 header={renderHeader()}

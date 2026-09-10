@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Card } from 'primereact/card';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -8,6 +8,8 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
+import { Calendar } from 'primereact/calendar';
+import { OverlayPanel } from 'primereact/overlaypanel';
 import { State } from "@/app/(main)/buku_tamu/checkout/components/interfaces";
 import { formatDateCalendar } from "@/lib/tools/dateTools";
 import { usePermissions } from '@/hooks/usePermissions';
@@ -25,6 +27,21 @@ interface TableProps {
     onCheckin: (row: any) => void;
     onScanQR: () => void;
 }
+
+const parseDateStr = (dateStr?: string | null) => {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+};
+
+const formatDateStr = (date: Date | null) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
 
 export default function GuestDataTable({
     state,
@@ -49,6 +66,30 @@ export default function GuestDataTable({
 
     const permissions = usePermissions();
     const { canUpdate, canApprove } = permissions;
+    const filterOverlayRef = useRef<any>(null);
+
+    const filteredData = useMemo(() => {
+        return state.data.filter((item) => {
+            const rawDate = item.waktu_masuk || item.created_at || item.tanggal_kunjungan;
+            const itemDate = rawDate && rawDate !== '0000-00-00 00:00:00' ? String(rawDate).slice(0, 10) : '';
+
+            if (state.startDate && itemDate && itemDate < state.startDate) return false;
+            if (state.endDate && itemDate && itemDate > state.endDate) return false;
+
+            const query = state.searchVal?.toLowerCase() || '';
+            if (query) {
+                const match =
+                    item.nama_tamu?.toLowerCase().includes(query) ||
+                    item.instansi_tamu?.toLowerCase().includes(query) ||
+                    item.nomor_telepon?.toLowerCase().includes(query) ||
+                    item.VisitPurposeName?.toLowerCase().includes(query) ||
+                    item.BranchName?.toLowerCase().includes(query);
+                if (!match) return false;
+            }
+
+            return true;
+        });
+    }, [state.data, state.searchVal, state.startDate, state.endDate]);
 
     const actionBodyTemplate = (rowData: any) => {
         return (
@@ -102,44 +143,92 @@ export default function GuestDataTable({
         return <Tag severity={severity} value={statusLabel} />;
     };
 
-    const header = (
-        <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
-            <h5 className="m-0 font-bold">Riwayat Kunjungan Tamu</h5>
-            <div className="flex flex-column sm:flex-row gap-2">
-                <Button type="button"
+    const renderHeader = () => (
+        <div className="flex flex-column lg:flex-row align-items-stretch lg:align-items-center justify-content-between gap-3">
+            {/* Left: Date Range Filter (Check In Date Range) */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.startDate)}
+                        onChange={(e) => setState(p => ({ ...p, startDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
+                <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.endDate)}
+                        onChange={(e) => setState(p => ({ ...p, endDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
+            </div>
+
+            {/* Right: Scan QR, Filter Button, Search Bar, Reset Button */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <Button
+                    type="button"
                     label="Scan QR"
                     icon="pi pi-qrcode"
-                    className="p-button-sm px-3 text-white"
+                    className="p-button-sm px-3 text-white text-xs"
                     style={{ background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', border: 'none' }}
-                    onClick={onScanQR} />
+                    onClick={onScanQR}
+                />
 
-                <Dropdown
-                    value={state.statusFilter}
-                    options={statusOptions}
-                    onChange={(e) => onFilterStatus(e.value)}
-                    placeholder="Filter Status"
-                    className="w-full sm:w-12rem p-inputtext-sm" />
-                <span className="p-input-icon-left w-full sm:w-auto">
-                    <i className="pi pi-search" />
-                    <InputText
-                        type="search"
-                        value={state.searchVal}
-                        onChange={(e) => setState((p: State) => ({ ...p, searchVal: e.target.value }))}
-                        placeholder="Cari Nama Tamu..."
-                        className="w-full sm:w-auto p-inputtext-sm" />
-                </span>
-                <Button type="button"
-                    icon="pi pi-refresh"
-                    severity="secondary"
+                <Button
+                    type="button"
+                    icon="pi pi-filter"
+                    label="Filter"
                     outlined
-                    className="p-button-sm px-3 bg-white"
-                    onClick={onRefresh} />
+                    severity="secondary"
+                    size="small"
+                    onClick={(e) => filterOverlayRef.current?.toggle(e)}
+                    className="text-xs px-3"
+                />
+
+                <div className="p-input-icon-left flex-1 sm:w-16rem">
+                    <i className="pi pi-search text-xs" />
+                    <InputText
+                        value={state.searchVal || ''}
+                        onChange={(e) => setState(p => ({ ...p, searchVal: e.target.value }))}
+                        placeholder="Cari Nama Tamu..."
+                        className="text-xs p-inputtext-sm w-full"
+                    />
+                </div>
+
+                <Button
+                    type="button"
+                    icon="pi pi-filter-slash"
+                    outlined
+                    severity="danger"
+                    size="small"
+                    tooltip="Reset Filter"
+                    tooltipOptions={{ position: 'top' }}
+                    onClick={() => {
+                        onFilterStatus('');
+                        setState(p => ({ ...p, searchVal: '', startDate: '', endDate: '' }));
+                    }}
+                />
             </div>
         </div>
     );
 
     return (
         <div className="card shadow-2 border-round p-4">
+            {/* Page Header */}
+            <div className="mb-3">
+                <h2 className="m-0 text-900 font-bold text-2xl mb-1">Riwayat Kunjungan Tamu</h2>
+                <p className="m-0 text-color-secondary text-sm font-medium">Pantau data kehadiran tamu, proses check-in / check-out, serta persetujuan permohonan kunjungan.</p>
+            </div>
+
             {/* KETERANGAN STATUS BAR */}
             <div className="flex align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1" style={{ width: 'fit-content' }}>
                 <div className="flex align-items-center gap-2 font-bold text-xs text-700 uppercase tracking-wider">
@@ -155,7 +244,33 @@ export default function GuestDataTable({
                 </div>
             </div>
 
-            <DataTable value={state.data} loading={state.load} paginator rows={10} header={header} responsiveLayout="scroll" emptyMessage="Data kunjungan tamu kosong">
+            <OverlayPanel ref={filterOverlayRef} showCloseIcon style={{ width: '300px' }}>
+                <div className="flex flex-column gap-3 p-1">
+                    <div className="font-bold text-sm text-900 border-bottom-1 surface-border pb-2 flex align-items-center justify-content-between">
+                        <span><i className="pi pi-filter text-primary mr-2" />Filter Status Kunjungan</span>
+                        {state.statusFilter && (
+                            <Button label="Bersihkan"
+                                icon="pi pi-times"
+                                text
+                                severity="danger"
+                                size="small"
+                                className="p-0 text-xs"
+                                onClick={() => onFilterStatus('')} />
+                        )}
+                    </div>
+                    <div className="flex flex-column gap-1">
+                        <label className="text-xs font-semibold text-700">Status Kunjungan</label>
+                        <Dropdown
+                            value={state.statusFilter}
+                            options={statusOptions}
+                            onChange={(e) => onFilterStatus(e.value)}
+                            placeholder="Pilih Status"
+                            className="w-full text-xs p-inputtext-sm" />
+                    </div>
+                </div>
+            </OverlayPanel>
+
+            <DataTable value={filteredData} header={renderHeader()} loading={state.load} paginator rows={10} responsiveLayout="scroll" emptyMessage="Data kunjungan tamu kosong">
                 <Column body={statusBodyTemplate} header="" style={{ width: '3.5rem', textAlign: 'center' }} />
                 <Column field="nama_tamu" header="Nama Tamu" sortable />
                 {isSuperadmin && <Column field="BranchName" header="Kantor Cabang" sortable />}

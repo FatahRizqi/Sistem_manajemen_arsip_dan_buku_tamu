@@ -126,6 +126,8 @@ export interface State {
     };
     session: Session | null;
     submittedData: initValue | null;
+    startDate?: string | null;
+    endDate?: string | null;
 }
 
 export interface TableProps {

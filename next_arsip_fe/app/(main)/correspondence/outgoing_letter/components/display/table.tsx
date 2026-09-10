@@ -12,11 +12,28 @@ import { Divider } from "primereact/divider";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag";
+import { Calendar } from "primereact/calendar";
+import { OverlayPanel } from "primereact/overlaypanel";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { apiEndpointGet } from "../endpoints";
 
 import { TableData, TableProps } from "../interfaces";
 import Form, { extractIsiSuratFromFinal } from "./form";
+
+const parseDateStr = (dateStr?: string | null) => {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+};
+
+const formatDateStr = (date: Date | null) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
 
 const statusOptions = [
     { label: "Semua Status", value: "" },
@@ -113,6 +130,7 @@ const Table = ({
     const [archiving, setArchiving] = useState(false);
     const [letterTypeOptions, setLetterTypeOptions] = useState<any[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const filterOverlayRef = useRef<any>(null);
 
     const onFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -190,13 +208,26 @@ const Table = ({
     const filteredData = useMemo(() => {
         let list = state.data || [];
 
+        const startDate = state.startDate;
+        const endDate = state.endDate;
+
+        if (startDate || endDate) {
+            list = list.filter((item) => {
+                const rawDate = item.tanggal_surat || item.tanggal_kirim || item.created_at;
+                const itemDate = rawDate ? String(rawDate).slice(0, 10) : '';
+                if (startDate && itemDate && itemDate < startDate) return false;
+                if (endDate && itemDate && itemDate > endDate) return false;
+                return true;
+            });
+        }
+
         if (state.statusFilter) {
             list = list.filter(
                 (item) => String(item.status || "").toLowerCase() === String(state.statusFilter).toLowerCase()
             );
         }
 
-        if (state.jenisSuratFilter && Number(state.jenisSuratFilter)> 0) {
+        if (state.jenisSuratFilter && Number(state.jenisSuratFilter) > 0) {
             list = list.filter(
                 (item) => Number(item.id_jenis_surat) === Number(state.jenisSuratFilter)
             );
@@ -220,15 +251,20 @@ const Table = ({
         }
 
         return list;
-    }, [state.data, state.statusFilter, state.jenisSuratFilter, state.searchVal]);
+    }, [state.data, state.statusFilter, state.jenisSuratFilter, state.searchVal, state.startDate, state.endDate]);
 
     const fetchLetterTypes = async () => {
-        if (getLetterTypeOptions) {
-            const data = await getLetterTypeOptions();
-            setLetterTypeOptions([
-                { jenis_surat_id: 0, nama_jenis_surat: "Semua Jenis" },
-                ...data,
-            ]);
+        const fn = getLetterTypeOptions || apiGetLetterTypes;
+        if (fn) {
+            try {
+                const data = await fn();
+                setLetterTypeOptions([
+                    { jenis_surat_id: 0, nama_jenis_surat: "Semua Jenis" },
+                    ...(Array.isArray(data) ? data : []),
+                ]);
+            } catch (error) {
+                console.error("Gagal mengambil jenis surat:", error);
+            }
         }
     };
 
@@ -392,68 +428,68 @@ const Table = ({
         </div>
     );
 
-    const headerTemplate = (
-        <div className="flex flex-column xl:flex-row xl:align-items-center justify-content-between gap-3 w-full">
-            <div className="flex align-items-center gap-2" style={{ minWidth: "11rem", flexShrink: 0 }}>
-                <i className="pi pi-list text-primary text-sm" />
-                <span className="font-semibold text-color text-sm white-space-nowrap">Daftar Surat Keluar</span>
+    const renderHeader = () => (
+        <div className="flex flex-column md:flex-row align-items-stretch md:align-items-center justify-content-between gap-3">
+            {/* Left: Date Range Filter */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.startDate)}
+                        onChange={(e) => setState(p => ({ ...p, startDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
+                <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
+                <div className="p-inputgroup flex-1 sm:w-14rem">
+                    <Calendar
+                        value={parseDateStr(state.endDate)}
+                        onChange={(e) => setState(p => ({ ...p, endDate: formatDateStr(e.value as Date) }))}
+                        dateFormat="yy-mm-dd"
+                        placeholder="YYYY-MM-DD"
+                        showIcon
+                        icon="pi pi-calendar"
+                        className="text-xs w-full p-inputtext-sm"
+                    />
+                </div>
             </div>
 
-            <div className="flex flex-column md:flex-row flex-wrap gap-2 align-items-stretch md:align-items-center w-full xl:justify-content-end">
-                <span
-                    className="p-input-icon-left w-full"
-                    style={{ flex: "1 1 14rem", minWidth: "14rem", maxWidth: "22rem" }}>
-                    <i className="pi pi-search" />
+            {/* Right: Filter Button, Search Bar, Reset Button */}
+            <div className="flex align-items-center gap-2 flex-wrap">
+                <Button
+                    type="button"
+                    icon="pi pi-filter"
+                    label="Filter"
+                    outlined
+                    severity="secondary"
+                    size="small"
+                    onClick={(e) => filterOverlayRef.current?.toggle(e)}
+                    className="text-xs px-3"
+                />
+
+                <div className="p-input-icon-left flex-1 sm:w-16rem">
+                    <i className="pi pi-search text-xs" />
                     <InputText
-                        value={state.searchVal}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setState((p) => ({
-                                ...p,
-                                searchVal: value,
-                                filters: { global: { value, matchMode: p.filters.global.matchMode } },
-                            }));
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") refreshData();
-                        }}
-                        placeholder="Cari surat..."
-                        className="text-sm w-full"
-                        style={{ height: "2.5rem" }} />
-                </span>
-
-                <div className="w-full" style={{ flex: "1 1 11rem", minWidth: "11rem", maxWidth: "15rem" }}>
-                    <Dropdown
-                        value={state.statusFilter}
-                        options={statusOptions}
-                        onChange={(e) => setState((p) => ({ ...p, statusFilter: e.value }))}
-                        placeholder="Filter Status"
-                        className="w-full text-sm"
-                        panelClassName="text-sm"
-                        style={{ height: "2.5rem" }} />
+                        value={state.searchVal || ''}
+                        onChange={(e) => setState(p => ({ ...p, searchVal: e.target.value }))}
+                        placeholder="Cari Data..."
+                        className="text-xs p-inputtext-sm w-full"
+                    />
                 </div>
 
-                <div className="w-full" style={{ flex: "1 1 11rem", minWidth: "11rem", maxWidth: "15rem" }}>
-                    <Dropdown
-                        value={state.jenisSuratFilter || 0}
-                        options={letterTypeOptions}
-                        optionLabel="nama_jenis_surat"
-                        optionValue="jenis_surat_id"
-                        onChange={(e) => setState((p) => ({ ...p, jenisSuratFilter: e.value || null }))}
-                        placeholder="Filter Jenis"
-                        className="w-full text-sm"
-                        panelClassName="text-sm"
-                        style={{ height: "2.5rem" }} />
-                </div>
-
-                <Button icon="pi pi-filter"
-                    aria-label="Terapkan filter"
+                <Button
+                    type="button"
+                    icon="pi pi-filter-slash"
+                    severity="danger"
                     outlined
                     size="small"
-                    onClick={refreshData}
-                    tooltip="Terapkan filter"
-                    className="align-self-start md:align-self-auto"
-                    style={{ width: "2.5rem", height: "2.5rem", flex: "0 0 auto" }} />
+                    onClick={() => setState(p => ({ ...p, startDate: null, endDate: null, statusFilter: '', jenisSuratFilter: null, searchVal: '' }))}
+                    tooltip="Reset Filter"
+                    className="p-button-icon-only"
+                />
             </div>
         </div>
     );
@@ -538,13 +574,41 @@ const Table = ({
                     </div>
                 </div>
 
+                <OverlayPanel ref={filterOverlayRef} dismissable className="p-3">
+                    <div className="flex flex-column gap-3 w-16rem">
+                        <div className="font-bold text-sm text-900 border-bottom-1 surface-border pb-2">Filter Surat Keluar</div>
+                        <div>
+                            <label className="block text-xs font-medium text-700 mb-1">Status Surat</label>
+                            <Dropdown
+                                value={state.statusFilter || ''}
+                                options={statusOptions}
+                                onChange={(e) => setState(p => ({ ...p, statusFilter: e.value }))}
+                                placeholder="Pilih Status"
+                                className="w-full text-xs p-inputtext-sm"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-700 mb-1">Jenis Surat</label>
+                            <Dropdown
+                                value={state.jenisSuratFilter || 0}
+                                options={letterTypeOptions}
+                                optionLabel="nama_jenis_surat"
+                                optionValue="jenis_surat_id"
+                                onChange={(e) => setState(p => ({ ...p, jenisSuratFilter: e.value || null }))}
+                                placeholder="Pilih Jenis"
+                                className="w-full text-xs p-inputtext-sm"
+                            />
+                        </div>
+                    </div>
+                </OverlayPanel>
+
                 <DataTable
                     value={filteredData}
                     paginator
                     selectionMode="multiple"
                     rows={10}
                     rowsPerPageOptions={[10, 25, 50]}
-                    header={headerTemplate}
+                    header={renderHeader()}
                     globalFilterFields={["nomor_surat", "nomor_agenda", "perihal", "tujuan", "instansi_tujuan", "status", "nama_file"]}
                     filters={state.filters}
                     loading={state.load}

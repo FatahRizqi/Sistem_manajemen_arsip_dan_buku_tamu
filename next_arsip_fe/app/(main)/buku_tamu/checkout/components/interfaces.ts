@@ -10,4 +10,6 @@ export interface State {
     checkoutToken: string;
     checkoutNotes: string;
     detailRecord: any | null;
+    startDate?: string | null;
+    endDate?: string | null;
 }

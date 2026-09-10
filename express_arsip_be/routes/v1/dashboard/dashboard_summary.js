@@ -21,6 +21,7 @@ const pickColumn = (columns, candidates) => {
  * Mengambil ringkasan data dashboard: metric cards, chart mingguan, dan audit log.
  */
 const getDashboardSummary = async (req, res) => {
+  const { startDate, endDate } = req.query;
   try {
     const auditColumns = await getTableColumns("mst_riwayat_audit");
     const auditUserColumn = pickColumn(auditColumns, ["nama_pengguna", "username"]);
@@ -40,9 +41,13 @@ const getDashboardSummary = async (req, res) => {
     // Metric 2: Tamu Berkunjung Hari Ini
     const qTamuHariIni = DB("trx_kunjungan as t")
       .leftJoin("mst_pengguna as u", "t.id_user_host", "u.id_pengguna")
-      .count("* as total")
-      .whereRaw("DATE(t.created_at) = CURDATE()")
-      .first();
+      .count("* as total");
+    if (startDate && endDate) {
+      qTamuHariIni.whereRaw("DATE(t.created_at) >= ? AND DATE(t.created_at) <= ?", [startDate, endDate]);
+    } else {
+      qTamuHariIni.whereRaw("DATE(t.created_at) = CURDATE()");
+    }
+    qTamuHariIni.first();
     const fCabangTamu = req.headers['x-filter-cabang'];
     if (fCabangTamu && fCabangTamu !== 'null' && fCabangTamu !== 'undefined') {
       const bIds = String(fCabangTamu).split(',').map(Number);
@@ -56,8 +61,11 @@ const getDashboardSummary = async (req, res) => {
     const qDisposisi = DB("trx_disposisi_surat as tld")
       .leftJoin("mst_pengguna as u", `tld.${disposisiToUserCol}`, "u.id_pengguna")
       .count("* as total")
-      .where("tld.status", "baru")
-      .first();
+      .where("tld.status", "baru");
+    if (startDate && endDate) {
+      qDisposisi.whereRaw("DATE(tld.created_at) >= ? AND DATE(tld.created_at) <= ?", [startDate, endDate]);
+    }
+    qDisposisi.first();
     applyMultiTenantFilter(qDisposisi, req, 'u');
 
     // Metric 4: Retensi Expired

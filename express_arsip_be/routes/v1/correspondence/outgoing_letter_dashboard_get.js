@@ -13,22 +13,38 @@ const outgoingLetterDashboardStats = async (req, res) => {
   try {
     const qTerkirim = DB("trx_surat_keluar as tsk")
       .leftJoin("mst_pengguna as u", "tsk.created_by", "u.id_pengguna")
-      .count("* as total").whereIn("tsk.status", ["terkirim", "selesai"]).first();
+      .count("* as total").whereIn("tsk.status", ["terkirim", "selesai"]);
+    if (startDate && endDate) {
+      qTerkirim.whereRaw("DATE(tsk.created_at) >= ? AND DATE(tsk.created_at) <= ?", [startDate, endDate]);
+    }
+    qTerkirim.first();
     applyMultiTenantFilter(qTerkirim, req, 'u');
 
     const qDisetujui = DB("trx_surat_keluar as tsk")
       .leftJoin("mst_pengguna as u", "tsk.created_by", "u.id_pengguna")
-      .count("* as total").where("tsk.status", "disetujui").first();
+      .count("* as total").where("tsk.status", "disetujui");
+    if (startDate && endDate) {
+      qDisetujui.whereRaw("DATE(tsk.created_at) >= ? AND DATE(tsk.created_at) <= ?", [startDate, endDate]);
+    }
+    qDisetujui.first();
     applyMultiTenantFilter(qDisetujui, req, 'u');
 
     const qDitolak = DB("trx_surat_keluar as tsk")
       .leftJoin("mst_pengguna as u", "tsk.created_by", "u.id_pengguna")
-      .count("* as total").where("tsk.status", "ditolak").first();
+      .count("* as total").where("tsk.status", "ditolak");
+    if (startDate && endDate) {
+      qDitolak.whereRaw("DATE(tsk.created_at) >= ? AND DATE(tsk.created_at) <= ?", [startDate, endDate]);
+    }
+    qDitolak.first();
     applyMultiTenantFilter(qDitolak, req, 'u');
 
     const qMenunggu = DB("trx_surat_keluar as tsk")
       .leftJoin("mst_pengguna as u", "tsk.created_by", "u.id_pengguna")
-      .count("* as total").where("tsk.status", "menunggu_approval").first();
+      .count("* as total").where("tsk.status", "menunggu_approval");
+    if (startDate && endDate) {
+      qMenunggu.whereRaw("DATE(tsk.created_at) >= ? AND DATE(tsk.created_at) <= ?", [startDate, endDate]);
+    }
+    qMenunggu.first();
     applyMultiTenantFilter(qMenunggu, req, 'u');
 
     const [oTerkirim, oDisetujui, oDitolak, oMenunggu] = await Promise.all([

@@ -40,7 +40,9 @@ const Page = () => {
         session: null,
         submittedData: null,
         searchVal: '',
-        activeTab: 'all'
+        activeTab: 'all',
+        startDate: '',
+        endDate: ''
     });
 
     const formik = useFormik<initValue>({

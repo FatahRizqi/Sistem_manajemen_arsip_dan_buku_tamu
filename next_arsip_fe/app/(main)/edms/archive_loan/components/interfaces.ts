@@ -52,6 +52,8 @@ export interface State {
     submittedData: initValue | null;
     searchVal: string;
     activeTab: 'all' | 'pending' | 'borrowed' | 'returned' | 'overdue';
+    startDate?: string | null;
+    endDate?: string | null;
 }
 
 export interface TableProps {

@@ -5,15 +5,16 @@ import { applyMultiTenantFilter } from "../components/tools/filter_helper.js";
 import { Logging } from "../components/tools/servertool.js";
 const router = express.Router();
 router.post("/", async (req, res) => {
+  const { startDate, endDate } = req.query.startDate ? req.query : req.body;
   try {
-    let qTotal = DB("trx_kunjungan").leftJoin("mst_pengguna", "trx_kunjungan.id_user_host", "mst_pengguna.id_pengguna").whereRaw("DATE(trx_kunjungan.created_at) = CURRENT_DATE()").count("trx_kunjungan.id_kunjungan as total");
-    applyMultiTenantFilter(qTotal, req, 'trx_kunjungan');
+    let qTotal = DB("trx_kunjungan").leftJoin("mst_pengguna", "trx_kunjungan.id_user_host", "mst_pengguna.id_pengguna").modify((qb) => {if (startDate && endDate) {qb.whereRaw("DATE(trx_kunjungan.created_at) >= ? AND DATE(trx_kunjungan.created_at) <= ?", [startDate, endDate]);} else {qb.whereRaw("DATE(trx_kunjungan.created_at) = CURRENT_DATE()");}}).count("trx_kunjungan.id_kunjungan as total");
+    applyMultiTenantFilter(qTotal, req, 'trx_kunjungan', 'mst_pengguna');
     const totalTamuHariIni = await qTotal.first();
-    let qSedang = DB("trx_kunjungan").leftJoin("mst_pengguna", "trx_kunjungan.id_user_host", "mst_pengguna.id_pengguna").whereRaw("DATE(trx_kunjungan.created_at) = CURRENT_DATE()").andWhere("trx_kunjungan.status", "in").count("trx_kunjungan.id_kunjungan as total");
-    applyMultiTenantFilter(qSedang, req, 'trx_kunjungan');
+    let qSedang = DB("trx_kunjungan").leftJoin("mst_pengguna", "trx_kunjungan.id_user_host", "mst_pengguna.id_pengguna").modify((qb) => {if (startDate && endDate) {qb.whereRaw("DATE(trx_kunjungan.created_at) >= ? AND DATE(trx_kunjungan.created_at) <= ?", [startDate, endDate]);} else {qb.whereRaw("DATE(trx_kunjungan.created_at) = CURRENT_DATE()");}}).andWhere("trx_kunjungan.status", "in").count("trx_kunjungan.id_kunjungan as total");
+    applyMultiTenantFilter(qSedang, req, 'trx_kunjungan', 'mst_pengguna');
     const sedangBerkunjung = await qSedang.first();
-    let qSelesai = DB("trx_kunjungan").leftJoin("mst_pengguna", "trx_kunjungan.id_user_host", "mst_pengguna.id_pengguna").whereRaw("DATE(trx_kunjungan.created_at) = CURRENT_DATE()").andWhere("trx_kunjungan.status", "out").count("trx_kunjungan.id_kunjungan as total");
-    applyMultiTenantFilter(qSelesai, req, 'trx_kunjungan');
+    let qSelesai = DB("trx_kunjungan").leftJoin("mst_pengguna", "trx_kunjungan.id_user_host", "mst_pengguna.id_pengguna").modify((qb) => {if (startDate && endDate) {qb.whereRaw("DATE(trx_kunjungan.created_at) >= ? AND DATE(trx_kunjungan.created_at) <= ?", [startDate, endDate]);} else {qb.whereRaw("DATE(trx_kunjungan.created_at) = CURRENT_DATE()");}}).andWhere("trx_kunjungan.status", "out").count("trx_kunjungan.id_kunjungan as total");
+    applyMultiTenantFilter(qSelesai, req, 'trx_kunjungan', 'mst_pengguna');
     const selesaiKunjungan = await qSelesai.first();
     const timeRange = req.body.time_range || 'this_week';
     
@@ -35,7 +36,7 @@ router.post("/", async (req, res) => {
       qRute = qRute.whereRaw("DATE(t.created_at) = CURRENT_DATE()");
     }
 
-    applyMultiTenantFilter(qRute, req, 't');
+    applyMultiTenantFilter(qRute, req, 't', 'mst_pengguna');
     const ruteTujuan = await qRute;
     const chart_tujuan_labels = ruteTujuan.map(item => item.nama_tujuan_kunjungan);
     const chart_tujuan_data = ruteTujuan.map(item => parseInt(item.total, 10));
@@ -43,7 +44,7 @@ router.post("/", async (req, res) => {
     let chart_trend_data = [];
 
     let qTrend = DB("trx_kunjungan as t").leftJoin("mst_pengguna", "t.id_user_host", "mst_pengguna.id_pengguna");
-    applyMultiTenantFilter(qTrend, req, 't');
+    applyMultiTenantFilter(qTrend, req, 't', 'mst_pengguna');
 
     if (timeRange === 'this_week' || timeRange === 'last_week') {
       chart_trend_labels = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];

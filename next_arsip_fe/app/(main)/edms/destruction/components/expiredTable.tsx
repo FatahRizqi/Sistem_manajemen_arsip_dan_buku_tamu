@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -7,7 +7,9 @@ import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
+import { OverlayPanel } from 'primereact/overlaypanel';
 import { Tag } from 'primereact/tag';
+import { Calendar } from 'primereact/calendar';
 import { usePermissions } from '@/hooks/usePermissions';
 import { showError, showSuccess } from '@/lib/tools/generalTools';
 
@@ -21,6 +23,21 @@ interface ExpiredTableProps {
     refreshProposals: () => void;
 }
 
+const parseDateStr = (dateStr?: string | null) => {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+};
+
+const formatDateStr = (date: Date | null) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
+
 export default function ExpiredTable({ 
     toast, 
     data, 
@@ -33,6 +50,8 @@ export default function ExpiredTable({
     const { canCreate } = usePermissions();
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [searchVal, setSearchVal] = useState<string>('');
+    const [startDate, setStartDate] = useState<string>('');
+    const [endDate, setEndDate] = useState<string>('');
     const [dialogVisible, setDialogVisible] = useState<boolean>(false);
     const [selectedDoc, setSelectedDoc] = useState<any>(null);
     const [reason, setReason] = useState<string>('');
@@ -41,6 +60,15 @@ export default function ExpiredTable({
     useEffect(() => {
         fetchExpiredData(selectedCategory);
     }, [selectedCategory, fetchExpiredData]);
+
+    const filteredData = useMemo(() => {
+        return data.filter((item) => {
+            const itemDate = item.tanggal ? String(item.tanggal).slice(0, 10) : (item.RetentionEndDate ? String(item.RetentionEndDate).slice(0, 10) : '');
+            if (startDate && itemDate && itemDate < startDate) return false;
+            if (endDate && itemDate && itemDate > endDate) return false;
+            return true;
+        });
+    }, [data, startDate, endDate]);
 
     const handleProposeDestruction = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -133,6 +161,8 @@ export default function ExpiredTable({
         });
     };
 
+    const filterOverlayRef = React.useRef<any>(null);
+
     const renderHeader = () => {
         return (
             <div className="flex flex-column gap-3">
@@ -159,28 +189,102 @@ export default function ExpiredTable({
                         <span className="text-700 font-medium text-xs">Ditolak</span>
                     </div>
                 </div>
-                <div className="flex flex-wrap align-items-center justify-content-between gap-3 text-sm">
-                    <span className="font-bold text-color">Dokumen Kedaluwarsa JRA</span>
-                    <div className="flex gap-2 align-items-center">
-                        <Dropdown
-                            value={selectedCategory}
-                            options={categories.map(c => ({ label: c.nama_kategori_dokumen, value: c.kode_kategori_dokumen }))}
-                            onChange={(e) => setSelectedCategory(e.value)}
-                            placeholder="Filter Kategori"
-                            showClear
-                            className="text-xs"
-                            style={{ minWidth: '15rem', height: '2.25rem' }} />
-                        <span className="p-input-icon-left">
-                            <i className="pi pi-search" />
+
+                <div className="flex flex-column md:flex-row align-items-stretch md:align-items-center justify-content-between gap-3">
+                    {/* Left: Date Range Filter */}
+                    <div className="flex align-items-center gap-2 flex-wrap">
+                        <div className="p-inputgroup flex-1 sm:w-14rem">
+                            <Calendar
+                                value={parseDateStr(startDate)}
+                                onChange={(e) => setStartDate(formatDateStr(e.value as Date))}
+                                dateFormat="yy-mm-dd"
+                                placeholder="YYYY-MM-DD"
+                                showIcon
+                                icon="pi pi-calendar"
+                                className="text-xs w-full p-inputtext-sm"
+                            />
+                        </div>
+                        <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
+                        <div className="p-inputgroup flex-1 sm:w-14rem">
+                            <Calendar
+                                value={parseDateStr(endDate)}
+                                onChange={(e) => setEndDate(formatDateStr(e.value as Date))}
+                                dateFormat="yy-mm-dd"
+                                placeholder="YYYY-MM-DD"
+                                showIcon
+                                icon="pi pi-calendar"
+                                className="text-xs w-full p-inputtext-sm"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex align-items-center gap-2 flex-wrap">
+                        <Button
+                            type="button"
+                            icon="pi pi-filter"
+                            label="Filter"
+                            outlined
+                            severity="secondary"
+                            size="small"
+                            onClick={(e) => filterOverlayRef.current?.toggle(e)}
+                            className="text-xs px-3"
+                        />
+
+                        <div className="p-input-icon-left flex-1 sm:w-16rem">
+                            <i className="pi pi-search text-xs" />
                             <InputText
                                 value={searchVal}
                                 onChange={(e) => setSearchVal(e.target.value)}
-                                placeholder="Cari dokumen..."
-                                className="text-sm"
-                                style={{ height: '2.25rem' }} />
-                        </span>
+                                placeholder="Cari Data..."
+                                className="text-xs p-inputtext-sm w-full"
+                            />
+                        </div>
+
+                        <Button
+                            type="button"
+                            icon="pi pi-filter-slash"
+                            outlined
+                            severity="danger"
+                            size="small"
+                            tooltip="Reset Filter"
+                            tooltipOptions={{ position: 'top' }}
+                            onClick={() => {
+                                setSelectedCategory('');
+                                setSearchVal('');
+                                setStartDate('');
+                                setEndDate('');
+                            }}
+                        />
                     </div>
                 </div>
+
+                <OverlayPanel ref={filterOverlayRef} showCloseIcon style={{ width: '320px' }}>
+                    <div className="flex flex-column gap-3 p-1">
+                        <div className="font-bold text-sm text-900 border-bottom-1 surface-border pb-2 flex align-items-center justify-content-between">
+                            <span><i className="pi pi-filter text-primary mr-2" />Filter Kategori</span>
+                            {selectedCategory && (
+                                <Button label="Bersihkan"
+                                    icon="pi pi-times"
+                                    text
+                                    severity="danger"
+                                    size="small"
+                                    className="p-0 text-xs"
+                                    onClick={() => setSelectedCategory('')} />
+                            )}
+                        </div>
+                        <div className="flex flex-column gap-1">
+                            <label className="text-xs font-semibold text-700">Kategori Dokumen</label>
+                            <Dropdown
+                                value={selectedCategory}
+                                options={categories.map(c => ({ label: `${c.kode_kategori_dokumen || ''} - ${c.nama_kategori_dokumen}`, value: c.kode_kategori_dokumen }))}
+                                onChange={(e) => setSelectedCategory(e.value || '')}
+                                placeholder="Pilih Kategori"
+                                className="w-full text-xs p-inputtext-sm"
+                                filter
+                                showClear />
+                        </div>
+                    </div>
+                </OverlayPanel>
             </div>
         );
     };
@@ -188,7 +292,7 @@ export default function ExpiredTable({
     return (
         <div className="px-3 pt-1 pb-3">
             <DataTable
-                value={data}
+                value={filteredData}
                 paginator
                 rows={10}
                 header={renderHeader()}
