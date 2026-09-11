@@ -177,7 +177,7 @@ router.post("/", async (req, res) => {
         id_departemen: Number(oPayload.id_departemen) || null,
         id_unit_kerja: Number(oPayload.id_unit_kerja) || null,
         created_at: formatDateSystem(),
-        updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: formatDateSystem(),
       });
 
       // 2. Masuk ke mst_pengguna_peran (Relasi Peran)
@@ -187,7 +187,7 @@ router.post("/", async (req, res) => {
         peran_utama: 1,
         status: "active",
         created_at: formatDateSystem(),
-        updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: formatDateSystem(),
       });
 
       // 3. Masuk ke navigasi_pengguna (Menu Spesifik)
@@ -196,12 +196,12 @@ router.post("/", async (req, res) => {
           id_pengguna: nNewUserId,
           menu: oNavigation.menu,
           created_at: formatDateSystem(),
-          updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: formatDateSystem(),
         })
         .onConflict("id_pengguna")
         .merge({
           menu: oNavigation.menu,
-          updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: formatDateSystem(),
         });
     });
 

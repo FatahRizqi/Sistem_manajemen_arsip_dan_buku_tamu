@@ -86,7 +86,7 @@ const outgoingLetterArchive = async (req, res) => {
         status: "active",
         created_at: dNow,
         updated_at: dNow
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
       });
       const cKodeDokumen = `${oLetter.nomor_agenda}-${nDocumentId}`;
       await trx("trx_dokumen").where("id_dokumen", nDocumentId).update({
@@ -105,7 +105,7 @@ const outgoingLetterArchive = async (req, res) => {
         tanggal_transaksi: dNow,
         created_at: dNow,
         updated_at: dNow
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
       });
       await trx("trx_tracking_surat_keluar").insert({
         id_surat_keluar: oLetter.id_surat_keluar,
@@ -116,7 +116,7 @@ const outgoingLetterArchive = async (req, res) => {
         dibuat_oleh: nActorId,
         created_at: dNow,
         updated_at: dNow
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
       });
       return {
         id_dokumen: nDocumentId,

@@ -51,7 +51,7 @@ router.post("/", async (req, res) => {
       updated_by: oPayload.updated_by || oPayload.created_by || null,
       created_at: dNow,
       updated_at: dNow
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+      , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
     });
     return res.status(201).json({
       status: status.SUKSES,

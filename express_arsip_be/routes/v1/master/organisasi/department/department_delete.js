@@ -16,14 +16,14 @@ router.post("/delete", async (req, res) => {
 
     await DB("mst_departemen")
       .whereIn("id_departemen", oPayload.id)
-      .update({ status: "deleted", updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
+      .update({ status: "deleted", updated_at: new Date() });
 
     // Cascade delete
     const divs = await DB("mst_divisi").whereIn("id_departemen", oPayload.id).select("id_divisi");
     const divIds = divs.map(d => d.id_divisi);
     if (divIds.length > 0) {
-      await DB("mst_divisi").whereIn("id_divisi", divIds).update({ status: 'deleted', updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
-      await DB("mst_unit_kerja").whereIn("id_divisi", divIds).update({ status: 'deleted', updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
+      await DB("mst_divisi").whereIn("id_divisi", divIds).update({ status: 'deleted', updated_at: new Date() });
+      await DB("mst_unit_kerja").whereIn("id_divisi", divIds).update({ status: 'deleted', updated_at: new Date() });
     }
 
     return res.status(200).json({ status: status.SUKSES, message: "Berhasil dihapus!", datetime: formatDateSystem() });

@@ -130,7 +130,7 @@ router.post("/", async (req, res) => {
       id_divisi: Number(oPayload.id_divisi) || null,
       id_departemen: Number(oPayload.id_departemen) || null,
       id_unit_kerja: Number(oPayload.id_unit_kerja) || null,
-      updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: formatDateSystem(),
     };
 
     if (oPayload.kata_sandi) {
@@ -157,7 +157,7 @@ router.post("/", async (req, res) => {
             id_peran: roleId,
             peran_utama: 1,
             status: "active",
-            updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+            updated_at: formatDateSystem(),
           });
         } else {
           await trx("mst_pengguna_peran").insert({
@@ -166,7 +166,7 @@ router.post("/", async (req, res) => {
             peran_utama: 1,
             status: "active",
             created_at: formatDateSystem(),
-            updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+            updated_at: formatDateSystem(),
           });
         }
       }
@@ -196,12 +196,12 @@ router.post("/", async (req, res) => {
             id_pengguna: nUserId,
             menu: navigation.menu,
             created_at: formatDateSystem(),
-            updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+            updated_at: formatDateSystem(),
           })
           .onConflict("id_pengguna")
           .merge({
             menu: navigation.menu,
-            updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+            updated_at: formatDateSystem(),
           });
       }
     });

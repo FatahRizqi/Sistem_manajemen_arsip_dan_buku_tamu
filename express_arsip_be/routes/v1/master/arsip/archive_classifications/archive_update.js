@@ -65,7 +65,7 @@ const updateArchiveClassification = async (req, res) => {
         nama_klasifikasi: oPayload.nama_klasifikasi,
         deskripsi: oPayload.deskripsi || null,
         status: oPayload.status || "active",
-        updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: new Date(),
       });
 
     if (!nUpdated)

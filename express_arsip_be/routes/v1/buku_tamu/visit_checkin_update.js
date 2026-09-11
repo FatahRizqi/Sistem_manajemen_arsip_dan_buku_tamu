@@ -37,7 +37,7 @@ router.put("/:id", async (req, res) => {
         status: "in",
         waktu_masuk: currentDateTime,
         updated_at: currentDateTime
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
       });
 
     // Kirim email notifikasi ke pegawai secara asinkron

@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
     await DB("mst_menu").where("id_menu", id_menu).update({
       ...menuData,
       updated_at: new Date()
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
     });
     await DB("mst_peran_menu").where("id_menu", id_menu).del();
     if (Array.isArray(id_peran) && id_peran.length > 0) {
@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
         id_peran: id,
         created_at: new Date(),
         updated_at: new Date()
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
       }));
       await DB("mst_peran_menu").insert(vaPeranMenu);
     }

@@ -278,7 +278,7 @@ const outgoingLetterCreate = async (req, res) => {
         created_by: nCreatedBy,
         updated_by: nUpdatedBy,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
 
       const nId = vaInserted[0];
@@ -291,7 +291,7 @@ const outgoingLetterCreate = async (req, res) => {
         tanggal: dNow,
         dibuat_oleh: nCreatedBy,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
 
       return nId;

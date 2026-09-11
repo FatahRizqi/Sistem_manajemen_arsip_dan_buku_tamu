@@ -151,7 +151,7 @@ const outgoingLetterUpdate = async (req, res) => {
       jabatan: oPayload.jabatan,
       status: oPayload.status,
       updated_by: oPayload.updated_by || null,
-      updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: dNow,
     };
 
     Object.keys(oUpdate).forEach((cKey) => {
@@ -173,7 +173,7 @@ const outgoingLetterUpdate = async (req, res) => {
         tanggal: dNow,
         dibuat_oleh: oPayload.updated_by || null,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
     });
 

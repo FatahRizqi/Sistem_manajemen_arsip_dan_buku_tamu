@@ -27,7 +27,7 @@ export const createNotification = async ({
       tautan,
       status_baca: 0,
       created_at: now,
-      updated_at: now, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: now,
     });
   } catch (error) {
     console.error("❌ [Notification Helper Error]:", error);

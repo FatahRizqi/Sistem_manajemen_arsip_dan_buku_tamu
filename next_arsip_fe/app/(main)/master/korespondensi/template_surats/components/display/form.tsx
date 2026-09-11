@@ -254,7 +254,7 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
             <i className="pi pi-exclamation-triangle text-red-500 text-6xl" />
             <div>
                 <h3 className="font-bold mb-2">Hapus data ini?</h3>
-                <p className="text-color-secondary">Tindakan ini tidak dapat dibatalkan.</p>
+                <p className="text-color-secondary">Data yang telah dihapus tidak dapat dikembalikan.</p>
             </div>
         </div>
       </Dialog>

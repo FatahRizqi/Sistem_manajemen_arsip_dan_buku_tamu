@@ -47,7 +47,7 @@ router.post("/update", async (req, res) => {
         telepon: oPayload.telepon || null,
         surel: oPayload.surel || null,
         status: oPayload.status || 'active',
-        updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: new Date(),
       });
 
     // Cascade update to nonactive
@@ -55,12 +55,12 @@ router.post("/update", async (req, res) => {
       const depts = await DB("mst_departemen").where("id_cabang", oPayload.id_cabang).select("id_departemen");
       const deptIds = depts.map(d => d.id_departemen);
       if (deptIds.length > 0) {
-        await DB("mst_departemen").whereIn("id_departemen", deptIds).update({ status: 'nonactive', updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
+        await DB("mst_departemen").whereIn("id_departemen", deptIds).update({ status: 'nonactive', updated_at: new Date() });
         const divs = await DB("mst_divisi").whereIn("id_departemen", deptIds).select("id_divisi");
         const divIds = divs.map(d => d.id_divisi);
         if (divIds.length > 0) {
-          await DB("mst_divisi").whereIn("id_divisi", divIds).update({ status: 'nonactive', updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
-          await DB("mst_unit_kerja").whereIn("id_divisi", divIds).update({ status: 'nonactive', updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
+          await DB("mst_divisi").whereIn("id_divisi", divIds).update({ status: 'nonactive', updated_at: new Date() });
+          await DB("mst_unit_kerja").whereIn("id_divisi", divIds).update({ status: 'nonactive', updated_at: new Date() });
         }
       }
     }

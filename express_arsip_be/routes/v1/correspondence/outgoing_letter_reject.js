@@ -69,7 +69,7 @@ const outgoingLetterReject = async (req, res) => {
         .update({
           status: "ditolak",
           updated_by: nActorId,
-          updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: dNow,
         });
 
       const cCatatan = oPayload.catatan || oPayload.alasan_penolakan || oPayload.alasan || oPayload.catatan_tinjauan || "Surat keluar ditolak";
@@ -83,7 +83,7 @@ const outgoingLetterReject = async (req, res) => {
         tanggal: dNow,
         dibuat_oleh: nActorId,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
     });
 

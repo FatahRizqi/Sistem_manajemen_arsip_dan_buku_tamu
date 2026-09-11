@@ -114,7 +114,7 @@ const createDocument = async (req, res) => {
       updated_by: nUserId,
       tz: cTz,
       created_at: dNow,
-      updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: dNow,
     };
 
     let createdKodeDokumen = "";
@@ -167,7 +167,7 @@ const createDocument = async (req, res) => {
           disetujui_pada: dNow,
           tanggal_transaksi: dNow,
           created_at: dNow,
-          updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: dNow,
         });
         firstVersionId = nVerId;
       }

@@ -109,7 +109,7 @@ const updateDocument = async (req, res) => {
       lokasi_fisik: cPhysicalLocation,
       updated_by: nUserId,
       tz: cTz,
-      updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: dNow,
     };
 
     await DB("trx_dokumen")

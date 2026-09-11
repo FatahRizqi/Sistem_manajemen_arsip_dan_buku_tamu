@@ -43,7 +43,7 @@ router.post("/update", async (req, res) => {
         nama_departemen: oPayload.nama_departemen || null,
         deskripsi: oPayload.deskripsi || null,
         status: oPayload.status || 'active',
-        updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: new Date(),
       });
 
     // Cascade update to nonactive
@@ -51,8 +51,8 @@ router.post("/update", async (req, res) => {
       const divs = await DB("mst_divisi").where("id_departemen", oPayload.id_departemen).select("id_divisi");
       const divIds = divs.map(d => d.id_divisi);
       if (divIds.length > 0) {
-        await DB("mst_divisi").whereIn("id_divisi", divIds).update({ status: 'nonactive', updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
-        await DB("mst_unit_kerja").whereIn("id_divisi", divIds).update({ status: 'nonactive', updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
+        await DB("mst_divisi").whereIn("id_divisi", divIds).update({ status: 'nonactive', updated_at: new Date() });
+        await DB("mst_unit_kerja").whereIn("id_divisi", divIds).update({ status: 'nonactive', updated_at: new Date() });
       }
     }
 

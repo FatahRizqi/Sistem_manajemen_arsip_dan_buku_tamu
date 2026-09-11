@@ -169,7 +169,7 @@ const incomingLetterCreate = async (req, res) => {
         created_by: nActorId,
         updated_by: oPayload.updated_by || nActorId,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
 
       const nId = vaInserted[0];
@@ -186,7 +186,7 @@ const incomingLetterCreate = async (req, res) => {
         processed_at: dNow,
         created_by: nActorId,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
 
       return nId;

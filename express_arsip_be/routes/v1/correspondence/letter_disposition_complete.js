@@ -81,7 +81,7 @@ const letterDispositionComplete = async (req, res) => {
           processed_at: oDisposition.processed_at || dNow,
           completed_at: dNow,
           updated_by: nActorId,
-          updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: dNow,
         });
 
       await insertIncomingLetterTracking(trx, {
@@ -96,7 +96,7 @@ const letterDispositionComplete = async (req, res) => {
         processed_at: dNow,
         created_by: nActorId,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
 
       const vaUnfinishedDispositions = await trx("trx_disposisi_surat")
@@ -111,7 +111,7 @@ const letterDispositionComplete = async (req, res) => {
           .update({
             status: "selesai",
             updated_by: nActorId,
-            updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+            updated_at: dNow,
           });
 
         await insertIncomingLetterTracking(trx, {
@@ -126,7 +126,7 @@ const letterDispositionComplete = async (req, res) => {
           processed_at: dNow,
           created_by: nActorId,
           created_at: dNow,
-          updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: dNow,
         });
       } else {
         await trx("trx_surat_masuk")
@@ -134,7 +134,7 @@ const letterDispositionComplete = async (req, res) => {
           .update({
             status: "diproses",
             updated_by: nActorId,
-            updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+            updated_at: dNow,
           });
       }
     });

@@ -11,7 +11,7 @@ router.post("/", async (req, res) => {
     await DB("mst_menu").whereIn("id_menu", IdMenu).update({
       status_aktif: 0,
       updated_at: new Date()
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
     });
 
     // Optional cache refresh

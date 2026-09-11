@@ -151,7 +151,7 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
                     <div className="flex flex-column gap-2">
                         <span className="font-bold text-xl text-900">Peringatan!</span>
                         <span className="text-600 line-height-3">
-                            Apakah Anda yakin ingin menghapus <b>{state.selectedData?.length}</b> data jadwal retensi yang dipilih? Tindakan ini tidak dapat dibatalkan.
+                            Apakah Anda yakin ingin menghapus <b>{state.selectedData?.length}</b> data jadwal retensi yang dipilih? Data yang telah dihapus tidak dapat dikembalikan.
                         </span>
                     </div>
                 </div>

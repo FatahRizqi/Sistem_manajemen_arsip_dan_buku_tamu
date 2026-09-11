@@ -47,7 +47,7 @@ router.put("/:id", async (req, res) => {
       ...oPayload,
       created_by: existing.created_by,
       updated_at: new Date()
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+      , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
     });
     return res.status(200).json({
       status: status.SUKSES,

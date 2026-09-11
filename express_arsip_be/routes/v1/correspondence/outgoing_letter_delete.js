@@ -17,6 +17,10 @@ const outgoingLetterDelete = async (req, res) => {
     ...(req.body || {}),
   };
 
+  if (oPayload.id_surat_keluar) {
+    oPayload.id_surat_keluar = Number(oPayload.id_surat_keluar);
+  }
+
   try {
     const oValidation = {
       id_surat_keluar: Joi.number().required(),
@@ -30,7 +34,7 @@ const outgoingLetterDelete = async (req, res) => {
     };
 
     const cValidate = await validatePayload(oValidation, oMessage, oPayload, {
-      allowUnknown: false,
+      allowUnknown: true,
     });
 
     if (cValidate) {
@@ -73,7 +77,7 @@ const outgoingLetterDelete = async (req, res) => {
         .update({
           status: "dihapus",
           updated_by: oPayload.updated_by || null,
-          updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: dNow,
         });
 
       await trx("trx_tracking_surat_keluar").insert({
@@ -84,7 +88,7 @@ const outgoingLetterDelete = async (req, res) => {
         tanggal: dNow,
         dibuat_oleh: oPayload.updated_by || null,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
     });
 
@@ -110,6 +114,9 @@ const outgoingLetterDelete = async (req, res) => {
   }
 };
 
+router.post("/:id_surat_keluar?", outgoingLetterDelete);
 router.delete("/:id_surat_keluar?", outgoingLetterDelete);
+router.post("/", outgoingLetterDelete);
+router.delete("/", outgoingLetterDelete);
 
 export default router;

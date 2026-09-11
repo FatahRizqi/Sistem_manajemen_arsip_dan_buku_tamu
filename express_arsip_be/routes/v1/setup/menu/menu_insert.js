@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
       ...dataMenu,
       created_at: new Date(),
       updated_at: new Date()
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
     });
     if (id_peran) {
       const peranArray = Array.isArray(id_peran) ? id_peran : [id_peran];
@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
           id_peran: peran,
           created_at: new Date(),
           updated_at: new Date()
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
         }));
         await DB("mst_peran_menu").insert(insertPeranMenu);
       }

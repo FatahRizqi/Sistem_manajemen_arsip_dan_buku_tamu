@@ -18,7 +18,7 @@ const deleteConfidentialityLevel = async (req, res) => {
   try {
     const nUpdated = await DB("mst_tingkat_kerahasiaan")
       .where("id_tingkat_kerahasiaan", cIdTingkatKerahasiaan)
-      .update({ status: "deleted", updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
+      .update({ status: "deleted", updated_at: new Date() });
 
     if (!nUpdated) {
       return res.status(404).json({

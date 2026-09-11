@@ -13,7 +13,7 @@ const deleteArchiveClassification = async (req, res) => {
   try {
     const nUpdated = await DB("mst_klasifikasi_arsip")
       .where("id_klasifikasi", cIdKlasifikasi)
-      .update({ status: "deleted", updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
+      .update({ status: "deleted", updated_at: new Date() });
 
     if (!nUpdated) return res.status(404).json({ status: status.NOT_FOUND, message: "Data tidak ditemukan", datetime: formatDateSystem() });
     return res.status(200).json({ status: status.SUKSES, message: "Berhasil dihapus!", datetime: formatDateSystem() });

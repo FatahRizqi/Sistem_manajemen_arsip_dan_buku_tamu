@@ -62,7 +62,7 @@ const reviewDestructionProposal = async (req, res) => {
       ditinjau_oleh: cReviewedBy,
       ditinjau_pada: dNow,
       catatan_tinjauan: cReviewNotes,
-      updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: dNow,
     };
 
     await DB("trx_usulan_pemusnahan")

@@ -190,7 +190,7 @@ export const generateNomorSurat = async (trx, {
         nomor_terakhir: Number(config.nomor_awal || 1) - 1,
         created_at: new Date(),
         updated_at: new Date()
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
       });
     } catch (error) {
       if (!["ER_DUP_ENTRY", "23505"].includes(error.code)) throw error;
@@ -205,7 +205,7 @@ export const generateNomorSurat = async (trx, {
   await trx("trx_sequence_penomoran_surat").where("id_sequence_penomoran_surat", sequence.id_sequence_penomoran_surat).update({
     nomor_terakhir: nextNumber,
     updated_at: new Date()
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
   });
   const {
     jenisSurat,

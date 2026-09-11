@@ -62,7 +62,7 @@ const approveDocumentVersion = async (req, res) => {
       disetujui_oleh: cApprovedBy,
       disetujui_pada: dNow,
       catatan_persetujuan: cApprovalNotes,
-      updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: dNow,
     };
 
     await DB("trx_versi_dokumen")

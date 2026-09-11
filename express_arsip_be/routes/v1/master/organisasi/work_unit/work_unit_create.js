@@ -41,7 +41,7 @@ router.post("/create", async (req, res) => {
       deskripsi: oPayload.deskripsi || null,
       status: "active",
       created_at: dNow,
-      updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: dNow,
     });
 
     return res.status(201).json({ status: status.SUKSES, message: "Berhasil ditambahkan!", datetime: formatDateSystem() });

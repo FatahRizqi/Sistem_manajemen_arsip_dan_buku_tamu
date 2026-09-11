@@ -638,7 +638,7 @@ const Table = ({
             <div className="flex align-items-center gap-3">
                 <i className="pi pi-exclamation-triangle text-red-500 text-3xl" />
                 <span>
-                    Apakah Anda yakin ingin menghapus <strong className="text-900">{state.selectedDocuments.length}</strong> dokumen yang dipilih? Tindakan ini tidak dapat dibatalkan.
+                    Apakah Anda yakin ingin menghapus <strong className="text-900">{state.selectedDocuments.length}</strong> dokumen yang dipilih? Data yang telah dihapus tidak dapat dikembalikan.
                 </span>
             </div>
         </Dialog>

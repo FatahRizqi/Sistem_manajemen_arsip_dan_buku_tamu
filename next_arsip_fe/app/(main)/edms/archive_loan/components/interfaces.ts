@@ -54,6 +54,9 @@ export interface State {
     activeTab: 'all' | 'pending' | 'borrowed' | 'returned' | 'overdue';
     startDate?: string | null;
     endDate?: string | null;
+    scanDialog?: boolean;
+    scanCode?: string;
+    scanResult?: any;
 }
 
 export interface TableProps {

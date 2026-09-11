@@ -55,7 +55,7 @@ router.post("/", async (req, res) => {
       .update({
         status_persetujuan: action,
         catatan_persetujuan: catatanPersetujuan,
-        updated_at: formatDateSystem(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: formatDateSystem(),
       });
 
     // Kirim Notifikasi WhatsApp ke Tamu jika disetujui / ditolak

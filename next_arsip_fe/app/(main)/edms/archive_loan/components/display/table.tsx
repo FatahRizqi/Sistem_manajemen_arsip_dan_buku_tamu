@@ -14,6 +14,7 @@ import { Calendar } from "primereact/calendar";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState, useRef, useMemo } from "react";
+import { Html5Qrcode } from "html5-qrcode";
 import { LoanData, TableProps } from "../interfaces";
 import { formatDateCalendar } from "@/lib/tools/dateTools";
 import Form from "./form";
@@ -37,6 +38,141 @@ const formatDateStr = (date: Date | null) => {
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
+};
+
+const ScanQrDialog = ({
+    visible,
+    onHide,
+    onScan
+}: {
+    visible: boolean;
+    onHide: () => void;
+    onScan: (codeStr: string) => Promise<void>;
+}) => {
+    const scannerRef = useRef<any>(null);
+    const [manualCode, setManualCode] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [cameraError, setCameraError] = useState(false);
+
+    useEffect(() => {
+        if (visible) {
+            setManualCode('');
+            setCameraError(false);
+            const timeoutId = setTimeout(() => {
+                try {
+                    const html5QrCode = new Html5Qrcode("loan-qr-reader");
+                    scannerRef.current = html5QrCode;
+
+                    html5QrCode.start(
+                        { facingMode: "environment" },
+                        { fps: 10, qrbox: { width: 220, height: 220 } },
+                        async (decodedText) => {
+                            if (html5QrCode.isScanning) {
+                                await html5QrCode.stop().catch(() => {});
+                            }
+                            scannerRef.current = null;
+                            handleProcessScan(decodedText);
+                        },
+                        () => {}
+                    ).catch((err: any) => {
+                        console.error("Gagal memulai scanner QR:", err);
+                        setCameraError(true);
+                    });
+                } catch (e) {
+                    setCameraError(true);
+                }
+            }, 300);
+
+            return () => {
+                clearTimeout(timeoutId);
+                if (scannerRef.current && scannerRef.current.isScanning) {
+                    scannerRef.current.stop().catch(() => {});
+                }
+            };
+        } else {
+            if (scannerRef.current && scannerRef.current.isScanning) {
+                scannerRef.current.stop().catch(() => {});
+                scannerRef.current = null;
+            }
+        }
+    }, [visible]);
+
+    const handleClose = async () => {
+        if (scannerRef.current && scannerRef.current.isScanning) {
+            try {
+                await scannerRef.current.stop();
+            } catch (err) {}
+        }
+        scannerRef.current = null;
+        onHide();
+    };
+
+    const handleProcessScan = async (code: string) => {
+        if (!code.trim()) return;
+        setLoading(true);
+        await onScan(code);
+        setLoading(false);
+        handleClose();
+    };
+
+    return (
+        <Dialog
+            header={
+                <div className="flex align-items-center gap-2">
+                    <i className="pi pi-qrcode text-primary text-xl" />
+                    <span className="font-bold text-900">Scan QR Code Peminjaman</span>
+                </div>
+            }
+            visible={visible}
+            modal
+            style={{ width: '95vw', maxWidth: '440px' }}
+            onHide={handleClose}
+            pt={{
+                header: { className: 'border-bottom-1 surface-border py-3 px-4' },
+                content: { className: 'p-4 flex flex-column align-items-center' }
+            }}>
+            <div className="text-center mb-3">
+                <p className="text-sm text-600 m-0">Arahkan QR Code dokumen ke kamera di bawah atau masukkan kode manual</p>
+            </div>
+
+            <div className="relative w-full border-round-xl overflow-hidden bg-black shadow-inner mb-3 flex align-items-center justify-content-center" style={{ minHeight: '260px' }}>
+                <div id="loan-qr-reader" className="w-full h-full" style={{ border: 'none' }}></div>
+                {cameraError && (
+                    <div className="absolute p-3 text-center text-white bg-black-alpha-70 w-full h-full flex flex-column align-items-center justify-content-center gap-2">
+                        <i className="pi pi-camera-slash text-3xl text-yellow-400" />
+                        <span className="text-xs">Kamera tidak tersedia atau tidak diizinkan. Gunakan input kode manual di bawah ini.</span>
+                    </div>
+                )}
+            </div>
+
+            <div className="w-full mt-2">
+                <label className="text-xs font-semibold text-700 mb-1 block">Input / Scan Manual Kode QR</label>
+                <div className="p-inputgroup">
+                    <span className="p-inputgroup-addon">
+                        <i className="pi pi-barcode" />
+                    </span>
+                    <InputText
+                        value={manualCode}
+                        onChange={(e) => setManualCode(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleProcessScan(manualCode);
+                            }
+                        }}
+                        placeholder="Scan atau tempel UUID / Kode QR..."
+                        className="text-sm"
+                        disabled={loading} />
+                    <Button
+                        type="button"
+                        icon={loading ? "pi pi-spin pi-spinner" : "pi pi-search"}
+                        label="Cari"
+                        onClick={() => handleProcessScan(manualCode)}
+                        disabled={!manualCode.trim() || loading} />
+                </div>
+            </div>
+        </Dialog>
+    );
 };
 
 const Table = ({
@@ -578,6 +714,14 @@ const Table = ({
                 </div>
             </div>
         </Dialog>
+
+        {/* QR Code Scanner Dialog */}
+        <ScanQrDialog
+            visible={!!state.scanDialog}
+            onHide={() => setState(p => ({ ...p, scanDialog: false }))}
+            onScan={async (codeStr) => {
+                if (handleScan) await handleScan(codeStr);
+            }} />
     </>
     );
 };

@@ -119,7 +119,7 @@ const incomingLetterUpdate = async (req, res) => {
       tingkat_kerahasiaan_id: oPayload.confidentiality_level_id,
       status: oPayload.status,
       updated_by: oPayload.updated_by || null,
-      updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: dNow,
     };
     Object.keys(oUpdate).forEach((cKey) => {
       if (oUpdate[cKey] === undefined) {
@@ -144,7 +144,7 @@ const incomingLetterUpdate = async (req, res) => {
         processed_at: dNow,
         created_by: oPayload.updated_by || null,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
     });
     return res.status(200).json({

@@ -938,7 +938,7 @@ const buildCertificatePayload = async (payload = {}, req = null) => {
     created_by: getUserId(req),
     updated_by: getUserId(req),
     created_at: now,
-    updated_at: now, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+    updated_at: now,
   };
 };
 
@@ -999,7 +999,7 @@ const recordSignatureLog = async ({
     dibuat_pada: new Date(),
     created_by: idPengguna || null,
     created_at: new Date(),
-    updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+    updated_at: new Date(),
   };
 
   const hashLog = sha256Hex(
@@ -1092,7 +1092,7 @@ const signLetterAutomatically = async ({ idSuratKeluar, actorId = null, req = nu
       berlaku_sampai: new Date(dNow.getTime() + 365 * 10 * 24 * 3600 * 1000),
       status_sertifikat: "aktif",
       created_at: dNow,
-      updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: dNow,
     });
     certificate = await DB("mst_sertifikat_elektronik").where("id_sertifikat_elektronik", insertedId).first();
   }
@@ -1142,7 +1142,7 @@ const signLetterAutomatically = async ({ idSuratKeluar, actorId = null, req = nu
       .where("status", "active")
       .update({
         status: "nonactive",
-        updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: new Date(),
       });
 
     await trx("trx_file_surat_keluar").insert({
@@ -1156,7 +1156,7 @@ const signLetterAutomatically = async ({ idSuratKeluar, actorId = null, req = nu
       created_by: actorId || null,
       updated_by: actorId || null,
       created_at: new Date(),
-      updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+      updated_at: new Date(),
     });
 
     await trx("trx_tanda_tangan_dokumen").insert({

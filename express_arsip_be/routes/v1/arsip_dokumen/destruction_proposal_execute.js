@@ -52,7 +52,7 @@ const executeDestructionProposal = async (req, res) => {
           dieksekusi_oleh: cExecutedBy,
           dieksekusi_pada: dNow,
           file_berita_acara: cBeritaAcaraPath,
-          updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: dNow,
         });
 
       // 2. Soft-delete dokumen (Status → nonactive)
@@ -60,7 +60,7 @@ const executeDestructionProposal = async (req, res) => {
         .where("kode_dokumen", oProposal.kode_dokumen)
         .update({
           status: "nonactive",
-          updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: dNow,
         });
     });
 

@@ -83,7 +83,7 @@ const updateDocumentCategory = async (req, res) => {
         nama_kategori_dokumen: oPayload.nama_kategori_dokumen,
         status: oPayload.status || "active",
         deskripsi: oPayload.deskripsi || null,
-        updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: new Date(),
       });
 
     if (!nUpdated) {

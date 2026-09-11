@@ -88,7 +88,7 @@ router.put("/:jenis_surat_id", async (req, res) => {
         arah_surat: oPayload.arah_surat,
         deskripsi: oPayload.deskripsi || null,
         status: oPayload.status || "active",
-        updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: new Date(),
       });
 
     if (!nUpdated) {

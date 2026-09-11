@@ -380,7 +380,7 @@ const Table: React.FC<TableProps> = ({
                 <div className="flex flex-column gap-3">
                     <div className="flex align-items-center gap-2 text-red-600 font-semibold mb-2">
                         <i className="pi pi-exclamation-triangle text-2xl"></i>
-                        <span>Tindakan ini tidak dapat dibatalkan</span>
+                        <span>Tindakan penolakan ini tidak dapat dibatalkan</span>
                     </div>
                     <p className="text-sm text-color-secondary m-0">
                         Harap berikan alasan yang jelas mengapa Anda menolak versi dokumen ini. Alasan ini akan disimpan di riwayat persetujuan dokumen.

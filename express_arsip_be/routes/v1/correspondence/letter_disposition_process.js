@@ -76,7 +76,7 @@ const letterDispositionProcess = async (req, res) => {
           received_at: oDisposition.received_at || dNow,
           processed_at: dNow,
           updated_by: nActorId,
-          updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: dNow,
         });
 
       await trx("trx_surat_masuk")
@@ -84,7 +84,7 @@ const letterDispositionProcess = async (req, res) => {
         .update({
           status: "diproses",
           updated_by: nActorId,
-          updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: dNow,
         });
 
       await insertIncomingLetterTracking(trx, {
@@ -99,7 +99,7 @@ const letterDispositionProcess = async (req, res) => {
         processed_at: dNow,
         created_by: nActorId,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
     });
 

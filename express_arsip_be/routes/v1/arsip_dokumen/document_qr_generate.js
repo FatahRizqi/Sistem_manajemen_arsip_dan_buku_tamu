@@ -45,7 +45,7 @@ const generateDocumentQR = async (req, res) => {
         .where("id_dokumen", nIdDokumen)
         .update({
           qr_code: cQRCodeString,
-          updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+          updated_at: new Date(),
         });
     }
 

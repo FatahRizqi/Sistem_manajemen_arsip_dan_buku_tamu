@@ -18,7 +18,7 @@ const deleteDocumentCategory = async (req, res) => {
   try {
     const nUpdated = await DB("mst_kategori_dokumen")
       .where("id_kategori_dokumen", cIdKategoriDokumen)
-      .update({ status: "deleted", updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
+      .update({ status: "deleted", updated_at: new Date() });
 
     if (!nUpdated) {
       return res.status(404).json({

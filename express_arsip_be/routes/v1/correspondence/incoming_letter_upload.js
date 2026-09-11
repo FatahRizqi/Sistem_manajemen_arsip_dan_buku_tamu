@@ -78,7 +78,7 @@ const incomingLetterUpload = async (req, res) => {
           .where("status", "active")
           .update({
             status: "nonactive",
-            updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+            updated_at: dNow,
           });
       }
 
@@ -91,7 +91,7 @@ const incomingLetterUpload = async (req, res) => {
         uploaded_by: oPayload.uploaded_by || oPayload.UploadedBy || null,
         status: "active",
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
 
       await insertIncomingLetterTracking(trx, {
@@ -109,7 +109,7 @@ const incomingLetterUpload = async (req, res) => {
         processed_at: dNow,
         created_by: oPayload.uploaded_by || oPayload.UploadedBy || null,
         created_at: dNow,
-        updated_at: dNow, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: dNow,
       });
     });
 

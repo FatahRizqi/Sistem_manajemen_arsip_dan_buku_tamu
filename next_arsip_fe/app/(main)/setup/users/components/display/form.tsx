@@ -164,7 +164,7 @@ const Form = ({ state, setState, formik, handleSave, handleDelete }: FormProps) 
                                 </>
                             )}
                             <br />
-                            Tindakan ini tidak dapat dibatalkan
+                            Data yang telah dihapus tidak dapat dikembalikan.
                         </p>
                     </div>
                 </div>

@@ -195,14 +195,16 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     </button>
                 </div>
 
-                {/* Clock & User Profile */}
+                {/* Clock, User Role & Actions */}
                 <div className="flex align-items-center gap-2">
-                    {/* Clock Text */}
-                    <div className="hidden md:flex align-items-center gap-2 px-3 py-2 border-round-3xl mr-2" style={{ background: 'rgba(79, 70, 229, 0.08)', color: '#4F46E5' }}>
-                        <i className="pi pi-clock" style={{ fontSize: '0.85rem' }}></i>
-                        <span className="font-semibold text-xs">{realZonedTime}</span>
+                    {/* Clock Text & User Role */}
+                    <div className="hidden md:flex align-items-center gap-2 mr-2">
+                        <span className="font-bold text-sm text-700">{realZonedTime}</span>
+                        <span className="text-400 font-normal mx-1">|</span>
+                        <span className="text-sm font-normal text-600">
+                            {session?.user?.name || activeRole || 'Superadmin'}
+                        </span>
                     </div>
-
 
                     {/* Notification Bell */}
                     <div className="relative flex align-items-center">
@@ -212,14 +214,11 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             text
                             severity="secondary"
                             onClick={(e) => notificationOp.current?.toggle(e)}
-                            className="p-button-secondary mr-2"
                             style={{
-                                width: '2.35rem',
-                                height: '2.35rem',
-                                position: 'relative',
-                                background: 'transparent',
-                                border: 'none',
-                                color: 'var(--text-color-secondary)'
+                                width: '2.25rem',
+                                height: '2.25rem',
+                                color: '#4b5563',
+                                fontSize: '1.1rem'
                             }}
                             aria-label="Notifikasi"
                         >
@@ -347,35 +346,21 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </OverlayPanel>
                     </div>
 
-                    {/* User Profile Card */}
-                    <div
+                    {/* User Profile Button */}
+                    <Button
+                        icon="pi pi-user"
+                        rounded
+                        text
+                        severity="secondary"
                         onClick={(e) => op?.current?.toggle(e)}
-
-                        className="flex align-items-center gap-2 cursor-pointer hover:surface-hover transition-colors transition-duration-150 py-1 px-2 border-round"
-                    >
-                        <Avatar
-                            label={(session?.user?.name || 'SA').slice(0, 2).toUpperCase()}
-                            shape="circle"
-                            style={{
-                                width: '2.25rem',
-                                height: '2.25rem',
-                                background: 'linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%)',
-                                color: '#FFFFFF',
-                                fontWeight: 'bold',
-                                fontSize: '0.85rem',
-                                boxShadow: '0 2px 6px rgba(79, 70, 229, 0.2)'
-                            }}
-                        />
-                        <div className="flex flex-column hidden md:flex" style={{ marginRight: '0.25rem' }}>
-                            <span className="font-semibold text-sm text-900" style={{ lineHeight: '1.2' }}>
-                                {session?.user?.name || 'Super Admin'}
-                            </span>
-                            <span className="text-color-secondary font-medium" style={{ fontSize: '0.65rem' }}>
-                                {activeRole}
-                            </span>
-
-                        </div>
-                    </div>
+                        style={{
+                            width: '2.25rem',
+                            height: '2.25rem',
+                            color: '#4b5563',
+                            fontSize: '1.1rem'
+                        }}
+                        aria-label="Profil Saya"
+                    />
 
                     {/* Profile OverlayPanel */}
                     <OverlayPanel ref={op} style={{ width: '240px', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}>

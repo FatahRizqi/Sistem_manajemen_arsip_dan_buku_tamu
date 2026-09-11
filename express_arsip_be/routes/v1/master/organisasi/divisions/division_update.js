@@ -43,12 +43,12 @@ router.post("/update", async (req, res) => {
         nama_divisi: oPayload.nama_divisi || null,
         deskripsi: oPayload.deskripsi || null,
         status: oPayload.status || 'active',
-        updated_at: new Date(), tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: new Date(),
       });
 
     // Cascade update to nonactive
     if (oPayload.status === 'nonactive') {
-      await DB("mst_unit_kerja").where("id_divisi", oPayload.id_divisi).update({ status: 'nonactive', updated_at: new Date() , tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'});
+      await DB("mst_unit_kerja").where("id_divisi", oPayload.id_divisi).update({ status: 'nonactive', updated_at: new Date() });
     }
 
     if (!nUpdated) return res.status(404).json({ message: "Data tidak ditemukan", datetime: formatDateSystem() });

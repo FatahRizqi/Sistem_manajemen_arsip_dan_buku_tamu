@@ -23,7 +23,7 @@ router.put("/mark-read", async (req, res) => {
     const query = DB("trx_notifikasi")
       .update({
         status_baca: 1,
-        updated_at: now, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta',
+        updated_at: now,
       })
       .where((builder) => {
         builder.where("id_pengguna", nUserId).orWhereNull("id_pengguna");

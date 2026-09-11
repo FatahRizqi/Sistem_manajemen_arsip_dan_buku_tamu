@@ -182,6 +182,7 @@ const Page = () => {
                 } else {
                     formik?.setFieldValue('kode_dokumen', doc.kode_dokumen);
                     showSuccess(toast, `Dokumen ${doc.nomor_dokumen} terpilih`);
+                    setState(p => ({ ...p, add: true, scanDialog: false }));
                 }
             } else {
                 showError(toast, res.data?.message || 'Dokumen tidak ditemukan');

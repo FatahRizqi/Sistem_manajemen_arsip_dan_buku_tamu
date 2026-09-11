@@ -239,7 +239,7 @@ router.post(
         status_persetujuan: "approved",
         created_at: currentDateTime,
         updated_at: currentDateTime
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
       };
 
       const [idKunjungan] = await DB("trx_kunjungan").insert(oData);
@@ -338,7 +338,7 @@ router.post(
             foto_identitas: memberPhotoPath,
             created_at: currentDateTime,
             updated_at: currentDateTime
-, tz: typeof req !== 'undefined' ? (req.context?.tz || req.headers?.['x-tz'] || 'Asia/Jakarta') : 'Asia/Jakarta'
+
           });
         });
         await Promise.all(insertPromises);
