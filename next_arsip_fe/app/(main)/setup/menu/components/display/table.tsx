@@ -7,7 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { Divider } from 'primereact/divider';
 import { Tag } from 'primereact/tag';
 import { State, initValueMenu } from '../interfaces';
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/layout/context/permissionContext';
 
 interface TableProps {
     state: State;

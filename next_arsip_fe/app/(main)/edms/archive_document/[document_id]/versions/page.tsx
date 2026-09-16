@@ -6,7 +6,7 @@ import formUpload from "@/lib/axios/formData";
 import getData from "@/lib/axios/getData";
 import postData from "@/lib/axios/postData";
 import { showError, showSuccess } from "@/lib/tools/generalTools";
-import { usePermissions } from "@/hooks/usePermissions";
+import { usePermissions } from "@/layout/context/permissionContext";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { Toast } from "primereact/toast";

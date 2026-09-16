@@ -85,7 +85,7 @@ router.post("/", async (req, res) => {
 
     return res.status(200).json(oResult);
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Sistem sedang maintenance harap tunggu sebentar",

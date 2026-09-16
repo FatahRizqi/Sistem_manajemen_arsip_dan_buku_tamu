@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { showError } from "@/lib/tools/generalTools";
+import { usePermissions } from "@/layout/context/permissionContext";
 
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
@@ -269,22 +270,26 @@ const DispositionView = ({
         </div>
     );
 
+    const { hasPermission } = usePermissions();
+
     const dispositionActionTemplate = (row: Record<string, any>) => {
         const status = getStatus(row.status);
         const isDone = status === "selesai";
         const isProcess = status === "diproses";
+        const canApprove = hasPermission("Disposisi Surat", "hak_setuju");
+
         return (
             <div className="flex gap-1 align-items-center justify-content-center">
                 {onOpenDetail && (
                     <Button size="small" icon="pi pi-eye" text tooltip="Lihat Detail" tooltipOptions={{ position: "top" }} onClick={() => onOpenDetail(row.surat_masuk_id)} />
                 )}
-                {!isDone && !isProcess && (
+                {canApprove && !isDone && !isProcess && (
                     <Button size="small" icon="pi pi-play" text severity="warning" tooltip="Proses" tooltipOptions={{ position: "top" }} onClick={() => onOpenAction("process", row)} />
                 )}
                 {!isDone && (
                     <Button size="small" icon="pi pi-share-alt" text severity="info" tooltip="Teruskan" tooltipOptions={{ position: "top" }} onClick={() => onOpenForward(row)} />
                 )}
-                {!isDone && (
+                {canApprove && !isDone && (
                     <Button size="small" icon="pi pi-check" text tooltip="Selesaikan" tooltipOptions={{ position: "top" }} onClick={() => onOpenAction("complete", row)} />
                 )}
                 {isDone && <span className="text-xs text-color-secondary">—</span>}

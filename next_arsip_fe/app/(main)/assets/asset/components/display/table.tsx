@@ -12,7 +12,7 @@ import { useEffect } from "react"
 import { apiEndpointGet } from "../endpoints"
 import { Divider } from "primereact/divider"
 import Form from "./form"
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/layout/context/permissionContext';
 
 const Table = ({
     state,

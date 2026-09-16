@@ -194,7 +194,7 @@ const BranchSwitcher = () => {
 
             {/* Branch Badge */}
             <div
-                className="hidden md:flex align-items-center gap-2 px-3 py-2 border-round-3xl"
+                className="flex align-items-center gap-2 px-2 md:px-3 py-2 border-round-3xl"
                 style={{
                     background: 'rgba(79, 70, 229, 0.08)',
                     color: '#4F46E5',
@@ -207,13 +207,13 @@ const BranchSwitcher = () => {
             >
                 <i className="pi pi-building" style={{ fontSize: '0.8rem' }}></i>
                 <span
-                    className="font-semibold text-xs"
+                    className="font-semibold text-xs hidden md:block"
                     style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                 >
                     {activeBranch}
                 </span>
                 {isAdmin && (
-                    <i className="pi pi-chevron-down" style={{ fontSize: '0.6rem', opacity: 0.7 }}></i>
+                    <i className="pi pi-chevron-down hidden md:block" style={{ fontSize: '0.6rem', opacity: 0.7 }}></i>
                 )}
             </div>
 

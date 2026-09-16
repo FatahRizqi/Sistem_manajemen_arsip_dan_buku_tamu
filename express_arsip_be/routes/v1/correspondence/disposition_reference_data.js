@@ -15,7 +15,7 @@ const dispositionReferenceData = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Referensi disposisi gagal diambil",

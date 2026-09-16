@@ -150,7 +150,7 @@ const incomingLetterUpload = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+
 
     if (cObjectName && !bObjectPersisted) {
       try {

@@ -138,7 +138,7 @@ const outgoingLetterUpload = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(error);
+
     if (cObjectName && !bObjectPersisted) {
       try {
         await removeFileFromMinio(cBucketName, cObjectName);

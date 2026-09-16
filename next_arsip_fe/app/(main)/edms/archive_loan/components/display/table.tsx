@@ -18,7 +18,7 @@ import { Html5Qrcode } from "html5-qrcode";
 import { LoanData, TableProps } from "../interfaces";
 import { formatDateCalendar } from "@/lib/tools/dateTools";
 import Form from "./form";
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/layout/context/permissionContext';
 
 const formatDateOnly = (value?: string | Date | null) => {
     if (!value) return '-';

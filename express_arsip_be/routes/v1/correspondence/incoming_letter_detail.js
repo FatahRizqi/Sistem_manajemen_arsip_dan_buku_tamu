@@ -89,7 +89,7 @@ const incomingLetterDetail = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Detail surat masuk gagal diambil",

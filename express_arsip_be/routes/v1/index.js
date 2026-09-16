@@ -41,8 +41,8 @@ import {
 const router = express.Router();
 
 // Auth
-router.use("/auth/token", AccessToken);
-router.use("/auth/login", Login);
+router.use("/auth/token", [validateBaseToken], AccessToken);
+router.use("/auth/login", [validateAccessToken], Login);
 router.use("/auth/reset-password", [validateAccessToken], ResetPassword);
 router.use("/auth/profile", [validateAccessToken, validateSignature, contextMiddleware], ProfileGet);
 router.use("/auth/profile/update", [validateAccessToken, validateSignature, contextMiddleware], ProfileUpdate);

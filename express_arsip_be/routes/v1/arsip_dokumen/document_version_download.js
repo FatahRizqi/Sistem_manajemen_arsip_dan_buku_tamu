@@ -72,7 +72,7 @@ const downloadDocumentVersion = async (req, res) => {
       const cRelativePath = oVersion.file_path.replace(/^\//, "");
       const cAbsolutePath = path.join(
         __dirname,
-        "../../../../public",
+        "../../../public/uploads",
         cRelativePath,
       );
 

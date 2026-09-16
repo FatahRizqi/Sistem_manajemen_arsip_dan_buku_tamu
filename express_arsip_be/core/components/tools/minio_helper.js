@@ -167,6 +167,9 @@ const uploadFileToMinio = async (bucketName, file, options = {}) => {
             );
             console.log(`[Metadata MinIO Upload] Berhasil upload -> ${bucketName}/${cObjectName}`);
         } catch (minioError) {
+            console.error("[MinIO Warning] FULL ERROR:", minioError);
+            const fsLog = await import('fs');
+            fsLog.appendFileSync('minio_error.log', new Date().toISOString() + ': ' + (minioError.stack || minioError) + '\n');
             console.warn(`[MinIO Warning] Gagal upload ke MinIO, fallback menyimpan file lokal: ${minioError.message}`);
             
             // Fallback to local storage

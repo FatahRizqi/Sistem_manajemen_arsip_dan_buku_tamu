@@ -446,7 +446,7 @@ const letterDispositionCreate = async (req, res) => {
     // Kirim notifikasi secara asynchronous
     try {
       const oPenerima = await DB("mst_pengguna")
-        .select("nama_lengkap", "telepon", "no_hp")
+        .select("nama_lengkap", "telepon")
         .where("id_pengguna", oPayload.kepada_pengguna_id)
         .first();
 
@@ -455,9 +455,10 @@ const letterDispositionCreate = async (req, res) => {
         judul: "Disposisi Surat Baru",
         pesan: `Anda menerima disposisi untuk surat: ${oLetter?.perihal || "-"}`,
         tipe: "disposisi",
-        tautan: "/correspondence/disposition",
+        tautan: "/correspondence/mail_in/disposition",
       });
 
+      // === Notifikasi ke Superadmin ===
       const superadmins = await DB("mst_pengguna as p")
         .join("mst_pengguna_peran as pp", "p.id_pengguna", "pp.id_pengguna")
         .join("mst_peran as r", "pp.id_peran", "r.id_peran")
@@ -472,7 +473,7 @@ const letterDispositionCreate = async (req, res) => {
             judul: "Disposisi Surat Baru",
             pesan: `Disposisi surat ke ${oPenerima?.nama_lengkap || "Staf"}: ${oLetter?.perihal || "-"}`,
             tipe: "disposisi",
-            tautan: "/correspondence/disposition",
+            tautan: "/correspondence/mail_in/disposition",
           });
         }
       }
@@ -511,7 +512,7 @@ Silakan buka sistem Arsip Digital Anda untuk melihat lampiran fisik surat dan me
       },
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Disposisi surat gagal dibuat",

@@ -123,7 +123,7 @@ export const Logging = async (error = null, {
   let functionName = func;
   let stack = "";
   let message = response;
-  console.log(error);
+
   if (error) {
     const stackLines = (error.stack || "").split("\n");
     const callerLine = stackLines[1] || "";

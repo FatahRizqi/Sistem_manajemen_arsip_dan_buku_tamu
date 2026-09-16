@@ -23,7 +23,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { apiEndpointGet } from "../endpoints";
 import { IncomingLetterFile, IncomingLetterStatus, TableData, TableProps } from "../interfaces";
 import Form from "./form";
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/layout/context/permissionContext';
 
 const parseDateStr = (dateStr?: string | null) => {
     if (!dateStr) return null;

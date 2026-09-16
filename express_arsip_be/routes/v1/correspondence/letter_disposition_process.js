@@ -144,7 +144,7 @@ const letterDispositionProcess = async (req, res) => {
       message: "Disposisi surat berhasil diproses",
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Disposisi surat gagal diproses",

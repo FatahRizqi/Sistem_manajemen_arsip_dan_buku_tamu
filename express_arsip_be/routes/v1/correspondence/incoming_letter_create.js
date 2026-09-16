@@ -10,14 +10,14 @@ const router = express.Router();
 const AGENDA_PREFIX = "AGD";
 const AGENDA_SEQUENCE_LENGTH = 4;
 
-const getAgendaYear = () =>
+const getAgendaYear = (tz = "Asia/Jakarta") =>
   new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Jakarta",
+    timeZone: tz,
     year: "numeric",
   }).format(new Date());
 
-const generateAgendaNumber = async (trx) => {
-  const cYear = getAgendaYear();
+const generateAgendaNumber = async (trx, tz = "Asia/Jakarta") => {
+  const cYear = getAgendaYear(tz);
   const cPrefix = `${AGENDA_PREFIX}-${cYear}-`;
   const oLastAgenda = await trx("trx_surat_masuk")
     .select("nomor_agenda")
@@ -151,7 +151,7 @@ const incomingLetterCreate = async (req, res) => {
 
     const nIncomingLetterId = await DB.transaction(async (trx) => {
       const cNomorAgenda =
-        oPayload.nomor_agenda || (await generateAgendaNumber(trx));
+        oPayload.nomor_agenda || (await generateAgendaNumber(trx, req.body?.zona_waktu || req.headers?.timezone || "Asia/Jakarta"));
       const vaInserted = await trx("trx_surat_masuk").insert({
         nomor_agenda: cNomorAgenda,
         nomor_surat: oPayload.nomor_surat,
@@ -234,7 +234,7 @@ const incomingLetterCreate = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Surat masuk gagal dibuat",

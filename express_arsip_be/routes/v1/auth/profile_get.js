@@ -28,6 +28,7 @@ router.get("/", async (req, res) => {
         "mu.nama_pengguna",
         "mu.telepon",
         "mu.surel",
+        "mr.id_peran",
         "mr.nama_peran as role"
       )
       .where("mu.id_pengguna", userId)
@@ -40,6 +41,24 @@ router.get("/", async (req, res) => {
         datetime: formatDateSystem()
       });
     }
+
+    let permissions = [];
+    if (oData.id_peran) {
+      permissions = await DB("mst_peran_menu as pm")
+        .join("mst_menu as m", "pm.id_menu", "m.id_menu")
+        .select(
+          "m.nama_menu",
+          "m.jalur_menu as url",
+          "pm.hak_lihat",
+          "pm.hak_buat",
+          "pm.hak_ubah",
+          "pm.hak_hapus",
+          "pm.hak_setuju"
+        )
+        .where("pm.id_peran", oData.id_peran);
+    }
+    
+    oData.permissions = permissions;
 
     return res.status(200).json({
       status: status.SUKSES,

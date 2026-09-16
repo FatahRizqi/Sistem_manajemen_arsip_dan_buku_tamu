@@ -14,14 +14,14 @@ const router = express.Router();
 const AGENDA_PREFIX = "SK";
 const AGENDA_SEQUENCE_LENGTH = 4;
 
-const getAgendaYear = () =>
+const getAgendaYear = (tz = "Asia/Jakarta") =>
   new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Jakarta",
+    timeZone: tz,
     year: "numeric",
   }).format(new Date());
 
-const generateAgendaNumber = async (trx) => {
-  const cYear = getAgendaYear();
+const generateAgendaNumber = async (trx, tz = "Asia/Jakarta") => {
+  const cYear = getAgendaYear(tz);
   const cPrefix = `${AGENDA_PREFIX}-${cYear}-`;
   const oLastAgenda = await trx("trx_surat_keluar")
     .select("nomor_agenda")
@@ -53,13 +53,13 @@ const checkReference = async ({ table, key, value, label }) => {
   return oData ? null : `${label} tidak ditemukan`;
 };
 
-const formatDateValue = (value) => {
+const formatDateValue = (value, tz = "Asia/Jakarta") => {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return String(value);
 
   return new Intl.DateTimeFormat("id-ID", {
-    timeZone: "Asia/Jakarta",
+    timeZone: tz,
     day: "2-digit",
     month: "long",
     year: "numeric",
@@ -212,7 +212,7 @@ const outgoingLetterCreate = async (req, res) => {
         .where("jenis_surat_id", oPayload.id_jenis_surat)
         .first();
       const cNomorAgenda =
-        oPayload.nomor_agenda || (await generateAgendaNumber(trx));
+        oPayload.nomor_agenda || (await generateAgendaNumber(trx, req.body?.zona_waktu || req.headers?.timezone || "Asia/Jakarta"));
       const cStatus = oPayload.status || "menunggu_approval";
       const bNomorSuratAuto = oPayload.nomor_surat_auto !== false;
       const cManualNomorSurat = String(oPayload.nomor_surat || "").trim();
@@ -240,8 +240,8 @@ const outgoingLetterCreate = async (req, res) => {
           ? renderTemplateContent(oTemplate.isi_template, {
               nomor_surat: cNomorSurat,
               nomor_agenda: cNomorAgenda,
-              tanggal_surat: formatDateValue(oPayload.tanggal_surat),
-              tanggal_kirim: formatDateValue(oPayload.tanggal_kirim),
+              tanggal_surat: formatDateValue(oPayload.tanggal_surat, req.body?.zona_waktu || req.headers?.timezone || "Asia/Jakarta"),
+              tanggal_kirim: formatDateValue(oPayload.tanggal_kirim, req.body?.zona_waktu || req.headers?.timezone || "Asia/Jakarta"),
               nama_jenis_surat: oJenisSurat?.nama_jenis_surat || "",
               perihal: oPayload.perihal,
               tujuan: oPayload.tujuan,

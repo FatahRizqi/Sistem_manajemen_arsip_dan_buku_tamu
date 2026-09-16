@@ -12,7 +12,7 @@ const letterTypeData = async (req, res) => {
       data: vaData
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Data jenis surat gagal diambil",

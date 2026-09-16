@@ -5,7 +5,7 @@ import getDataRequest from '@/lib/axios/getData';
 import postData from '@/lib/axios/postData';
 import putData from '@/lib/axios/putData';
 import { showError, showSuccess } from '@/lib/tools/generalTools';
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/layout/context/permissionContext';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';

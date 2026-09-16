@@ -152,7 +152,7 @@ const incomingLetterUpdate = async (req, res) => {
       message: "Surat masuk berhasil diupdate",
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Surat masuk gagal diupdate",

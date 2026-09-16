@@ -22,7 +22,7 @@ import postData from "@/lib/axios/postData";
 import { showError, showSuccess } from "@/lib/tools/generalTools";
 import { apiEndpointDocumentUpdate } from "../endpoints";
 import Form from "./form";
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/layout/context/permissionContext';
 
 const parseDateStr = (dateStr?: string | null) => {
     if (!dateStr) return null;

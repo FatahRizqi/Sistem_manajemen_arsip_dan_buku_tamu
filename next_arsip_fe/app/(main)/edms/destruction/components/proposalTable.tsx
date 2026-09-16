@@ -10,7 +10,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Tag } from 'primereact/tag';
 import { Calendar } from 'primereact/calendar';
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/layout/context/permissionContext';
 import { showError } from '@/lib/tools/generalTools';
 
 interface ProposalTableProps {

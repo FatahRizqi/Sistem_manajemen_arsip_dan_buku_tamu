@@ -182,7 +182,7 @@ const letterDispositionComplete = async (req, res) => {
         : "Disposisi surat berhasil diselesaikan",
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Disposisi surat gagal diselesaikan",

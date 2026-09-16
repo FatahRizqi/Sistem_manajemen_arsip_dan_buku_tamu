@@ -11,7 +11,7 @@ import { Divider } from 'primereact/divider';
 import { apiEndpointGet, apiEndpointCreate } from '../endpoints';
 import { Checkbox } from 'primereact/checkbox';
 import { useState, useContext, useEffect } from 'react';
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/layout/context/permissionContext';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import ExcelBulkAction from '@/app/components/excel_components/ExcelBulkAction';
 import Form from './form';
@@ -118,8 +118,8 @@ const Table = ({ state, setState, formik, getData, toast, setDataRekap, setNavBa
                     </div>
                 </div>
 
-                <div className="flex justify-content-between mb-4">
-                    <div className="flex flex-row gap-2">
+                <div className="flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                    <div className="flex flex-wrap gap-2">
                         {permissions.canCreate && (
                             <>
                                 <Button size="small"
@@ -181,7 +181,7 @@ const Table = ({ state, setState, formik, getData, toast, setDataRekap, setNavBa
                         <Button size="small" label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData(apiEndpointGet)} loading={state.load} />
                     </div>
 
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-wrap gap-2">
                         <ExcelBulkAction
                             title="Data Pengguna"
                             data={state.data}
@@ -278,6 +278,8 @@ const Table = ({ state, setState, formik, getData, toast, setDataRekap, setNavBa
 
                 <DataTable
                     value={state.data}
+                    scrollable
+                    responsiveLayout="scroll"
                     paginator
                     selectionMode={'multiple'}
                     rows={10}

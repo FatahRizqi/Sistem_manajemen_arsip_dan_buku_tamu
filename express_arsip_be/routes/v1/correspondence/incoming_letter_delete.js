@@ -59,7 +59,7 @@ const incomingLetterDelete = async (req, res) => {
       message: "Surat masuk berhasil dihapus"
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Surat masuk gagal dihapus",

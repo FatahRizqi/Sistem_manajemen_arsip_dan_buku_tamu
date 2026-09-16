@@ -5,7 +5,7 @@ import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { Divider } from 'primereact/divider';
 import { GeneratedCardData } from "@/app/(main)/buku_tamu/registrasi/components/interfaces";
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/layout/context/permissionContext';
 
 interface TableProps {
     visible: boolean;

@@ -130,7 +130,7 @@ const outgoingLetterArchive = async (req, res) => {
       data: oResult
     });
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "Surat keluar gagal diarsipkan",

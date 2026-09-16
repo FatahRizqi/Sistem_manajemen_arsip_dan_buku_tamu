@@ -12,7 +12,7 @@ import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag";
 import { useEffect, useState } from "react";
 
-import { usePermissions } from "@/hooks/usePermissions";
+import { usePermissions } from "@/layout/context/permissionContext";
 import {
     apiEndpointPending,
     apiEndpointSigned,

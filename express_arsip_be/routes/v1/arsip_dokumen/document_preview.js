@@ -60,8 +60,8 @@ const documentPreview = async (req, res) => {
         finalUrl = await minioClient.presignedGetObject(cBucketName, cObjectName, 3600);
       } catch (err) {
         console.warn("Gagal men-generate presigned URL dari MinIO, fallback ke URL lokal:", err.message);
-        const serverUrl = process.env.APP_SERVER || "http://127.0.0.1:8000";
-        finalUrl = `${serverUrl.replace(/\/$/, "")}/uploads/${cObjectName}`;
+        const serverUrl = `${req.protocol}://${req.get('host')}`;
+        finalUrl = `${serverUrl}/uploads/${cObjectName}`;
       }
 
       return res.status(200).json({
@@ -86,8 +86,8 @@ const documentPreview = async (req, res) => {
         });
       }
 
-      const serverUrl = process.env.APP_SERVER || "http://127.0.0.1:8000";
-      const finalUrl = `${serverUrl.replace(/\/$/, "")}/uploads/${cObjectName}`;
+      const serverUrl = `${req.protocol}://${req.get('host')}`;
+      const finalUrl = `${serverUrl}/uploads/${cObjectName}`;
 
       return res.status(200).json({
         status: "success",

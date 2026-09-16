@@ -169,12 +169,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </div>
                     </Link>
 
-                    <span className="text-300 mx-1">|</span>
-
-                    {/* Branch Switcher */}
-                    <BranchSwitcher />
-
-                    {/* Hamburger Button (Garis 3) di Sebelah Tombol Pusat */}
+                    {/* Hamburger Button (Garis 3) */}
                     <button
                         ref={menubuttonRef}
                         type="button"
@@ -205,6 +200,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             {session?.user?.name || activeRole || 'Superadmin'}
                         </span>
                     </div>
+
+                    {/* Branch Switcher dipindah ke kanan untuk UI yang lebih rapi */}
+                    <BranchSwitcher />
 
                     {/* Notification Bell */}
                     <div className="relative flex align-items-center">

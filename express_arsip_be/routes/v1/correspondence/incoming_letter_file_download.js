@@ -49,7 +49,7 @@ const incomingLetterFileDownload = async (req, res) => {
     res.setHeader("Content-Disposition", `inline; filename="${cFileName}"`);
     return res.sendFile(cAbsolutePath);
   } catch (error) {
-    console.log(error);
+
     const oResult = {
       status: status.BAD_REQUEST,
       message: "File surat masuk gagal dibuka",
