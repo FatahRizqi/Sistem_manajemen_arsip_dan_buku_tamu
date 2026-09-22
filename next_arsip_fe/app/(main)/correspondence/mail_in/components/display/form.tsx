@@ -80,11 +80,9 @@ const Form = ({
 
     const deleteFooterTemplate = (
         <div className="flex mt-4 pt-3 border-top-1 surface-border">
-            <Button label="Batal" icon="pi pi-times" severity="secondary" outlined size="small"
-                onClick={() => setState((p: any) => ({ ...p, add: false, edit: false, delete: false }))}
+            <Button label="Batal" icon="pi pi-times" severity="secondary" outlined onClick={() => setState((p: any) => ({ ...p, add: false, edit: false, delete: false }))}
                 disabled={state.load} />
-            <Button label="Ya, Hapus" icon="pi pi-trash" severity="danger" size="small"
-                onClick={onDelete} loading={state.load} />
+            <Button label="Ya, Hapus" icon="pi pi-trash" severity="danger" onClick={onDelete} loading={state.load} />
         </div>
     );
 
@@ -196,12 +194,14 @@ const Form = ({
                         </div>
                         <div className="col-12 flex flex-column gap-2">
                             <label htmlFor="perihal" className="text-sm">Perihal <span className="text-red-500">*</span></label>
-                            <InputText
+                            <InputTextarea
                                 id="perihal"
                                 className={`w-full ${isFormFieldInvalid("perihal") ? "p-invalid" : ""}`}
                                 value={formik.values.perihal}
                                 onChange={(e) => formik.setFieldValue("perihal", e.target.value)}
-                                placeholder="Perihal / pokok isi surat" />
+                                placeholder="Perihal / pokok isi surat"
+                                rows={3}
+                                style={{ resize: "none" }} />
                             {getFormErrorMessage("perihal")}
                         </div>
                         <div className="col-12 flex flex-column gap-2">
@@ -249,8 +249,7 @@ const Form = ({
                                 <div className="flex align-items-center gap-2 mt-1 p-2 surface-50 border-round border-1 surface-border">
                                     <i className="pi pi-file-check text-green-500" />
                                     <span className="text-xs text-900 font-semibold">{formik.values.file_surat.name}</span>
-                                    <Button icon="pi pi-times" text severity="danger" size="small"
-                                        className="ml-auto p-0"
+                                    <Button icon="pi pi-times" text severity="danger" className="ml-auto p-0"
                                         onClick={() => formik.setFieldValue("file_surat", null)} />
                                 </div>
                             )}

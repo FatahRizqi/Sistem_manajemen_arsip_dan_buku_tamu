@@ -115,7 +115,7 @@ export default function GuestDataTable({
         const isActive = rowData.status === 'in' || rowData.status === 'active' || rowData.status === 'Aktif';
         return (
             <div className="flex align-items-center justify-content-center">
-                <div 
+                <div
                     className="w-2rem h-2rem border-round flex align-items-center justify-content-center text-white shadow-1"
                     style={{ background: isActive ? '#22c55e' : '#ef4444', borderRadius: '8px' }}
                     title={isActive ? 'Aktif' : 'Tidak Aktif'}
@@ -155,7 +155,7 @@ export default function GuestDataTable({
                         placeholder="YYYY-MM-DD"
                         showIcon
                         icon="pi pi-calendar"
-                        className="text-xs w-full p-inputtext-sm"
+                        className="w-full"
                     />
                 </div>
                 <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
@@ -167,49 +167,44 @@ export default function GuestDataTable({
                         placeholder="YYYY-MM-DD"
                         showIcon
                         icon="pi pi-calendar"
-                        className="text-xs w-full p-inputtext-sm"
+                        className="w-full"
                     />
                 </div>
             </div>
 
             {/* Right: Scan QR, Filter Button, Search Bar, Reset Button */}
             <div className="flex align-items-center gap-2 flex-wrap">
-                <Button
-                    type="button"
+                <Button type="button"
                     label="Scan QR"
                     icon="pi pi-qrcode"
-                    className="p-button-sm px-3 text-white text-xs"
+                    className="px-3 text-white"
                     style={{ background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', border: 'none' }}
                     onClick={onScanQR}
                 />
 
-                <Button
-                    type="button"
+                <Button type="button"
                     icon="pi pi-filter"
                     label="Filter"
                     outlined
                     severity="secondary"
-                    size="small"
                     onClick={(e) => filterOverlayRef.current?.toggle(e)}
-                    className="text-xs px-3"
+                    className="px-3"
                 />
 
-                <div className="p-input-icon-left flex-1 sm:w-16rem">
-                    <i className="pi pi-search text-xs" />
+                <div className="p-input-icon-left flex-1 sm:w-24rem">
+                    <i className="pi pi-search" />
                     <InputText
                         value={state.searchVal || ''}
                         onChange={(e) => setState(p => ({ ...p, searchVal: e.target.value }))}
                         placeholder="Cari Nama Tamu..."
-                        className="text-xs p-inputtext-sm w-full"
+                        className="w-full"
                     />
                 </div>
 
-                <Button
-                    type="button"
+                <Button type="button"
                     icon="pi pi-filter-slash"
                     outlined
                     severity="danger"
-                    size="small"
                     tooltip="Reset Filter"
                     tooltipOptions={{ position: 'top' }}
                     onClick={() => {
@@ -253,7 +248,6 @@ export default function GuestDataTable({
                                 icon="pi pi-times"
                                 text
                                 severity="danger"
-                                size="small"
                                 className="p-0 text-xs"
                                 onClick={() => onFilterStatus('')} />
                         )}

@@ -163,8 +163,7 @@ const ProfileForm = ({ formik, state, setState }: any) => {
             </div>
 
             <div className="flex justify-content-end mt-2">
-                <Button 
-                    type="submit" 
+                <Button type="submit" 
                     label="Simpan Perubahan" 
                     icon="pi pi-check" 
                    

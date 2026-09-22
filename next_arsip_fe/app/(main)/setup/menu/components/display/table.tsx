@@ -41,7 +41,7 @@ const Table = ({ state, setState, formik, handleDelete, getData }: TableProps) =
                                 }
                                 setState(p => ({ ...p, searchVal: value, filters: _filters }));
                             }}
-                            placeholder="Cari menu..." />
+                            placeholder="Cari menu..." className="w-full sm:w-24rem" />
                     </span>
                 </div>
             </div>
@@ -104,18 +104,20 @@ const Table = ({ state, setState, formik, handleDelete, getData }: TableProps) =
     };
 
     return (
-        <div className="card">
-            <div className="flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h2 className="m-0 text-900 font-bold text-2xl mb-1">Manajemen Menu Navigasi</h2>
+        <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
+            {/* Page Header */}
+            <div className="flex flex-column gap-2 mb-4 px-1">
+                <h3 className="text-2xl font-semibold m-0 text-900">Manajemen Menu Navigasi</h3>
+                <div className="text-sm text-600">
+                    Kelola data master menu navigasi.
                 </div>
             </div>
 
-            <div className="flex flex-row flex-wrap align-items-center gap-2 mb-3">
+            <div className="flex justify-content-between mb-4">
+                <div className="flex flex-row align-items-center gap-2">
                 {canCreate && (
                     <>
-                        <Button size="small"
-                            label="Tambah"
+                        <Button label="Tambah"
                             icon="pi pi-plus"
                             outlined
                             onClick={() => {
@@ -127,8 +129,7 @@ const Table = ({ state, setState, formik, handleDelete, getData }: TableProps) =
                 )}
                 {canDelete && (
                     <>
-                        <Button size="small"
-                            label={`Hapus${state.selectedData.length> 0 ? ` (${state.selectedData.length})` : ''}`}
+                        <Button label={`Hapus${state.selectedData.length> 0 ? ` (${state.selectedData.length})` : ''}`}
                             icon="pi pi-trash"
                             outlined
                             severity="danger"
@@ -137,12 +138,12 @@ const Table = ({ state, setState, formik, handleDelete, getData }: TableProps) =
                         <Divider layout="vertical" />
                     </>
                 )}
-                <Button size="small"
-                    label="Refresh"
+                <Button label="Refresh"
                     icon="pi pi-refresh"
                     outlined
                     onClick={() => getData('/setup/menu/data')}
                     loading={state.load} />
+                </div>
             </div>
 
             {/* KETERANGAN STATUS BAR */}

@@ -170,7 +170,7 @@ const DashboardView = ({
                                 </div>
                             </div>
                             <div className="flex align-items-center justify-content-center border-circle font-extrabold text-base"
-                                style={{ width: "3rem", height: "3rem", background: "linear-gradient(135deg, #10B981 0%, #059669 100%)", color: "#fff", flexShrink: 0 }}>
+                                style={{ width: "3rem", height: "3rem", backgroundColor: "var(--primary-color)", color: "#fff", flexShrink: 0 }}>
                                 {efficiency}%
                             </div>
                         </div>
@@ -195,7 +195,7 @@ const DashboardView = ({
                                     }`}
                                     style={
                                         activeFilter === "all"
-                                            ? { backgroundColor: "#10b981", border: "none" }
+                                            ? { border: "none" }
                                             : { border: "none" }
                                     } />
                                 <Button label="Perlu Tindakan"
@@ -208,7 +208,7 @@ const DashboardView = ({
                                     }`}
                                     style={
                                         activeFilter === "needs_action"
-                                            ? { backgroundColor: "#10b981", border: "none" }
+                                            ? { border: "none" }
                                             : { border: "none" }
                                     } />
                                 <Button label="Selesai / Arsip"
@@ -221,12 +221,11 @@ const DashboardView = ({
                                     }`}
                                     style={
                                         activeFilter === "archived"
-                                            ? { backgroundColor: "#10b981", border: "none" }
+                                            ? { border: "none" }
                                             : { border: "none" }
                                     } />
                             </div>
                             <Button text
-                                size="small"
                                 icon="pi pi-refresh"
                                 label="Refresh"
                                 loading={loading}
@@ -315,7 +314,7 @@ const DashboardView = ({
                     </Card>
 
                     {/* Disposition Queue */}
-                    <Card className="border-none shadow-1 border-round-2xl text-white p-1" style={{ backgroundColor: "#10b981" }}>
+                    <Card className="border-none shadow-1 border-round-2xl text-white p-1" style={{ backgroundColor: "var(--primary-color)" }}>
                         <div className="p-3">
                             <div className="flex align-items-center justify-content-between mb-3">
                                 <span className="text-xs font-semibold uppercase text-white-alpha-80" style={{ letterSpacing: "0.1em" }}>Disposisi Queue</span>

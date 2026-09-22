@@ -199,7 +199,6 @@ const Table = ({
             <Button icon="pi pi-info-circle"
                 rounded
                 text
-                size="small"
                 tooltip="Detail Dokumen"
                 tooltipOptions={{ position: 'top' }}
                 loading={state.detailLoad}
@@ -208,7 +207,6 @@ const Table = ({
                 rounded
                 text
                 severity="info"
-                size="small"
                 tooltip="Riwayat Versi"
                 tooltipOptions={{ position: 'top' }}
                 onClick={() => router.push(`/edms/archive_document/${rowData.id_dokumen}/versions`)} />
@@ -216,7 +214,6 @@ const Table = ({
                 rounded
                 text
                 severity="help"
-                size="small"
                 tooltip="Audit Trail"
                 tooltipOptions={{ position: 'top' }}
                 onClick={() => router.push(`/edms/archive_document/${rowData.id_dokumen}/history`)} />
@@ -224,7 +221,6 @@ const Table = ({
                 rounded
                 text
                 severity="warning"
-                size="small"
                 tooltip="Lihat & Cetak Stiker QR Code"
                 tooltipOptions={{ position: 'top' }}
                 onClick={() => handleGenerateQR(rowData.id_dokumen)} />
@@ -232,7 +228,6 @@ const Table = ({
                 <Button icon="pi pi-pencil"
                     text
                     severity="secondary"
-                    size="small"
                     tooltip="Edit Metadata"
                     tooltipOptions={{ position: 'top' }}
                     onClick={() => {
@@ -258,7 +253,6 @@ const Table = ({
                 <Button icon="pi pi-trash"
                     text
                     severity="danger"
-                    size="small"
                     tooltip="Hapus Dokumen"
                     tooltipOptions={{ position: 'top' }}
                     onClick={() => setState((p) => ({ ...p, delete: true, selectedDocuments: [rowData] }))} />
@@ -270,7 +264,6 @@ const Table = ({
         <Button icon="pi pi-eye"
             text
             severity="info"
-            size="small"
             tooltip={rowData.file_path ? "Pratinjau Dokumen" : "Belum ada file berkas"}
             tooltipOptions={{ position: 'top' }}
             onClick={() => handleFetchPreviewUrl(rowData.file_path || '')}
@@ -308,19 +301,17 @@ const Table = ({
 
             {/* Right: Filter Button, Search Bar, Reset Button */}
             <div className="flex align-items-center gap-2 flex-wrap">
-                <Button
-                    type="button"
+                <Button type="button"
                     icon="pi pi-filter"
                     label="Filter"
                     outlined
                     severity="secondary"
-                    size="small"
                     onClick={(e) => filterOverlayRef.current?.toggle(e)}
-                    className="text-xs px-3"
+                    className="px-3"
                 />
 
-                <div className="p-input-icon-left flex-1 sm:w-16rem">
-                    <i className="pi pi-search text-xs" />
+                <div className="p-input-icon-left flex-1 sm:w-24rem">
+                    <i className="pi pi-search" />
                     <InputText
                         value={state.searchVal}
                         onChange={(e) => {
@@ -330,16 +321,14 @@ const Table = ({
                             setState((p) => ({ ...p, searchVal: value, filters }));
                         }}
                         placeholder="Cari Data..."
-                        className="text-xs p-inputtext-sm w-full"
+                        className="w-full"
                     />
                 </div>
 
-                <Button
-                    type="button"
+                <Button type="button"
                     icon="pi pi-filter-slash"
                     outlined
                     severity="danger"
-                    size="small"
                     tooltip="Reset Filter"
                     tooltipOptions={{ position: 'top' }}
                     onClick={() => setState(p => ({
@@ -364,31 +353,30 @@ const Table = ({
                 icon="pi pi-times"
                 severity="secondary"
                 outlined
-                size="small"
                 onClick={() => setState((p) => ({ ...p, delete: false }))}
                 disabled={state.load} />
             <Button label="Hapus"
                 icon="pi pi-trash"
                 severity="danger"
-                size="small"
                 onClick={deleteDocuments}
                 loading={state.load} />
         </div>
     );
 
     return <>
-        <Card className="shadow-1 border-round-2xl border-none">
+        <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
             {/* Page Header */}
-            <div className="mb-3">
-                <h2 className="m-0 text-900 font-bold text-2xl mb-1">Archive Documents</h2>
-                <p className="m-0 text-color-secondary text-sm font-medium">Kelola metadata dokumen dan pantau riwayat versi serta peminjaman arsip.</p>
+            <div className="flex flex-column gap-2 mb-4 px-1">
+                <h3 className="text-2xl font-semibold m-0 text-900">Archive Documents</h3>
+                <div className="text-sm text-600">
+                    Kelola metadata dokumen dan pantau riwayat versi serta peminjaman arsip.
+                </div>
             </div>
 
-            <div className="flex flex-column sm:flex-row align-items-stretch sm:align-items-center justify-content-between gap-2 mb-3">
-                <div className="flex flex-row flex-wrap align-items-center gap-2">
+            <div className="flex justify-content-between mb-4">
+                <div className="flex flex-row align-items-center gap-2">
                     {canCreate && (
                         <Button type="button"
-                            size="small"
                             label="Tambah Dokumen"
                             icon="pi pi-plus"
                             outlined
@@ -418,9 +406,8 @@ const Table = ({
                     )}
                     {canDelete && (
                         <>
-                            <Divider layout="vertical" className="hidden sm:inline" />
+                            <Divider layout="vertical" className="hidden sm:inline m-0" />
                             <Button type="button"
-                                size="small"
                                 label={`Hapus${state.selectedDocuments.length > 0 ? ` (${state.selectedDocuments.length})` : ''}`}
                                 icon="pi pi-trash"
                                 severity="danger"
@@ -429,9 +416,8 @@ const Table = ({
                                 onClick={() => setState((p) => ({ ...p, delete: true }))} />
                         </>
                     )}
-                    <Divider layout="vertical" className="hidden sm:inline" />
+                    <Divider layout="vertical" className="hidden md:inline m-0" />
                     <Button type="button"
-                        size="small"
                         label="Refresh"
                         icon="pi pi-refresh"
                         outlined
@@ -439,9 +425,8 @@ const Table = ({
                         onClick={getDocuments} />
                 </div>
 
-                <div className="flex flex-row flex-wrap align-items-center gap-2">
+                <div className="flex flex-row align-items-center gap-2">
                     <Button type="button"
-                        size="small"
                         label="Scan & Track QR"
                         icon="pi pi-qrcode"
                         outlined
@@ -449,9 +434,8 @@ const Table = ({
                         tooltip="Pindai Stiker QR Berkas Fisik dengan Kamera Live atau USB Scanner"
                         tooltipOptions={{ position: 'top' }}
                         onClick={() => setState(p => ({ ...p, trackingDialog: true, trackingCode: '', trackingResult: null }))} />
-                    <Divider layout="vertical" className="hidden sm:inline" />
+                    <Divider layout="vertical" className="hidden md:inline" />
                     <Button type="button"
-                        size="small"
                         label="Pencarian OCR & Teks"
                         icon="pi pi-search-plus"
                         outlined
@@ -501,7 +485,6 @@ const Table = ({
                                 icon="pi pi-times"
                                 text
                                 severity="danger"
-                                size="small"
                                 className="p-0 text-xs"
                                 onClick={() => setState(p => ({
                                     ...p,
@@ -617,7 +600,7 @@ const Table = ({
                 <Column header="Berkas" body={previewTemplate} style={{ width: '4rem', textAlign: 'center' }} />
                 <Column header="Aksi" body={actionTemplate} style={{ minWidth: '13rem', textAlign: 'center' }} />
             </DataTable>
-        </Card>
+        </div>
 
         {/* Modal Form Tambah / Edit Dokumen */}
         <Form
@@ -814,7 +797,6 @@ const Table = ({
                 <div className="flex justify-content-center gap-2">
                     <Button label="Scanner USB / Ketik Manual"
                         icon="pi pi-keyboard"
-                        size="small"
                         severity={scanMode === 'manual' ? 'info' : 'secondary'}
                         outlined={scanMode !== 'manual'}
                         className="font-bold text-xs px-3"
@@ -825,7 +807,6 @@ const Table = ({
                         }} />
                     <Button label="Pindai via Kamera Live"
                         icon="pi pi-camera"
-                        size="small"
                         severity={scanMode === 'camera' ? 'info' : 'secondary'}
                         outlined={scanMode !== 'camera'}
                         className="font-bold text-xs px-3"

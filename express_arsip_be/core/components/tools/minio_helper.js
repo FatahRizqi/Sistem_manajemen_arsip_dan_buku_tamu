@@ -231,7 +231,10 @@ const getPresignedUrlFromMinio = async (bucketName, objectName, expiry = 3600) =
         return url;
     } catch (error) {
         console.error("Gagal generate presigned URL dari MinIO:", error);
-        return null;
+        // Fallback to local url if minio fails
+        const cleanedObject = String(objectName).replace(/^\/uploads\//, "").replace(/^\//, "");
+        const appServer = process.env.APP_SERVER || "http://localhost:8000";
+        return `${appServer}/uploads/${cleanedObject}`;
     }
 };
 

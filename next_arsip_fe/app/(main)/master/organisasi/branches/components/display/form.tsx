@@ -3,6 +3,7 @@ import React from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
 import { TableProps } from '../interfaces';
 
@@ -54,9 +55,17 @@ const Form = ({ state, setState, formik, handleDelete, handleSave }: any) => {
                                 className={isFormFieldInvalid('id_induk') ? 'p-invalid w-full' : 'w-full'} />
                             {getFormErrorMessage('id_induk')}
                         </div>
-<div className="flex flex-column gap-2 w-full">
+                        <div className="flex flex-column gap-2 w-full">
                             <label htmlFor="alamat" className="text-sm">Alamat</label>
-                            <InputText id="alamat" name="alamat" value={formik?.values.alamat}  onChange={formik?.handleChange} className={isFormFieldInvalid('alamat') ? 'p-invalid w-full' : 'w-full'} />
+                            <InputTextarea 
+                                id="alamat" 
+                                name="alamat" 
+                                value={formik?.values.alamat}  
+                                onChange={formik?.handleChange} 
+                                autoResize 
+                                rows={3}
+                                className={isFormFieldInvalid('alamat') ? 'p-invalid w-full' : 'w-full'} 
+                            />
                             {getFormErrorMessage('alamat')}
                         </div>
                     <div className="flex flex-column gap-2 w-full">

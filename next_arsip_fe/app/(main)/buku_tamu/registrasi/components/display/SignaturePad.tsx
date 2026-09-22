@@ -148,8 +148,7 @@ export default function SignaturePad({ value, onChange }: SignaturePadProps) {
                 <label className="font-semibold text-sm">
                     Tanda Tangan Tamu (Gambarkan di Canvas) <span className="text-red-500 ml-1">*</span>
                 </label>
-                <Button 
-                    type="button"
+                <Button type="button"
                     label="Bersihkan"
                     icon="pi pi-trash"
                     className="p-button-outlined p-button-danger p-button-sm py-1 px-3 w-auto"

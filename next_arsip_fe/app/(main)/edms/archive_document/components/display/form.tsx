@@ -146,7 +146,6 @@ const Form = ({
                             <Button type="button"
                                 label="Auto-Generate Nomor"
                                 icon="pi pi-cog"
-                                size="small"
                                 text
                                 className="text-xs p-0 text-primary font-semibold hover:underline"
                                 onClick={() => handleGenerateAutoNumber()} />

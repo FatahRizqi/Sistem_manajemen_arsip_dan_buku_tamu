@@ -30,3 +30,24 @@
         padding: 0 1.5rem 1.5rem 1.5rem !important;
     }
 }
+
+/* Standardisasi Alignment untuk DataTable (Header dan Body Rata Tengah, Row Vertikal di Tengah) */
+.p-datatable .p-datatable-thead > tr > th {
+    text-align: center !important;
+}
+.p-datatable .p-datatable-thead > tr > th .p-column-header-content {
+    justify-content: center !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    vertical-align: middle !important;
+    text-align: center !important;
+}
+
+/* Memastikan elemen flex di dalam cell juga berada di tengah */
+.p-datatable .p-datatable-tbody > tr > td > div.flex {
+    justify-content: center !important;
+}
+.p-datatable .p-datatable-tbody > tr > td > div > div.flex {
+    justify-content: center !important;
+}

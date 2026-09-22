@@ -262,13 +262,11 @@ const Table = ({
     const actionTemplate = (rowData: TableData) => (
         <div className="flex gap-1 justify-content-center">
             <Button icon="pi pi-eye"
-                text size="small"
-                tooltip="Lihat Detail" tooltipOptions={{ position: "top" }}
+                text tooltip="Lihat Detail" tooltipOptions={{ position: "top" }}
                 onClick={() => onOpenDetail(rowData)} />
             {canUpdate && (
                 <Button icon="pi pi-pencil"
-                    text severity="secondary" size="small"
-                    tooltip="Edit" tooltipOptions={{ position: "top" }}
+                    text severity="secondary" tooltip="Edit" tooltipOptions={{ position: "top" }}
                     onClick={() => {
                         formik.setValues({
                             surat_masuk_id: rowData.surat_masuk_id,
@@ -294,8 +292,7 @@ const Table = ({
             )}
             {canDelete && (
                 <Button icon="pi pi-trash"
-                    text severity="danger" size="small"
-                    tooltip="Hapus" tooltipOptions={{ position: "top" }}
+                    text severity="danger" tooltip="Hapus" tooltipOptions={{ position: "top" }}
                     onClick={() => setState((p) => ({ ...p, delete: true, selectedLetters: [rowData] }))} />
             )}
         </div>
@@ -329,7 +326,7 @@ const Table = ({
                         placeholder="YYYY-MM-DD"
                         showIcon
                         icon="pi pi-calendar"
-                        className="text-xs w-full p-inputtext-sm"
+                        className="w-full"
                     />
                 </div>
                 <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
@@ -341,40 +338,36 @@ const Table = ({
                         placeholder="YYYY-MM-DD"
                         showIcon
                         icon="pi pi-calendar"
-                        className="text-xs w-full p-inputtext-sm"
+                        className="w-full"
                     />
                 </div>
             </div>
 
             {/* Right: Filter Button, Search Bar, Reset Button */}
             <div className="flex align-items-center gap-2 flex-wrap">
-                <Button
-                    type="button"
+                <Button type="button"
                     icon="pi pi-filter"
                     label="Filter"
                     outlined
                     severity="secondary"
-                    size="small"
                     onClick={(e) => filterOverlayRef.current?.toggle(e)}
-                    className="text-xs px-3"
+                    className="px-3"
                 />
 
-                <div className="p-input-icon-left flex-1 sm:w-16rem">
-                    <i className="pi pi-search text-xs" />
+                <div className="p-input-icon-left flex-1 sm:w-24rem">
+                    <i className="pi pi-search" />
                     <InputText
                         value={state.searchVal || ''}
                         onChange={(e) => setState(p => ({ ...p, searchVal: e.target.value }))}
                         placeholder="Cari Data..."
-                        className="text-xs p-inputtext-sm w-full"
+                        className="w-full"
                     />
                 </div>
 
-                <Button
-                    type="button"
+                <Button type="button"
                     icon="pi pi-filter-slash"
                     outlined
                     severity="danger"
-                    size="small"
                     tooltip="Reset Filter"
                     tooltipOptions={{ position: 'top' }}
                     onClick={() => setState(p => ({ ...p, searchVal: '', statusFilter: '', startDate: '', endDate: '' }))}
@@ -386,30 +379,30 @@ const Table = ({
     return (
         <>
             <ConfirmDialog />
-            <Card className="shadow-1 border-round-2xl border-none">
+            <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
                 {/* Page Header */}
-                <div className="mb-3">
-                    <span className="text-primary font-bold text-xs uppercase" style={{ letterSpacing: "0.1em" }}>Korespondensi</span>
-                    <h2 className="m-0 text-900 font-bold text-2xl mb-1" style={{ letterSpacing: "-0.02em" }}>Surat Masuk</h2>
-                    <p className="m-0 text-color-secondary text-sm font-medium">Kelola seluruh surat masuk, upload file, dan pantau status disposisi.</p>
+                <div className="flex flex-column gap-2 mb-4 px-1">
+                    <h3 className="text-2xl font-semibold m-0 text-900">Surat Masuk</h3>
+                    <div className="text-sm text-600">
+                        Kelola seluruh surat masuk, upload file, dan pantau status disposisi.
+                    </div>
                 </div>
 
-                <div className="flex flex-row flex-wrap align-items-center gap-2 mb-3">
+                <div className="flex justify-content-between mb-4">
+                    <div className="flex flex-row align-items-center gap-2">
                     {canCreate && (
                         <>
-                            <Button size="small"
-                                label="Tambah Surat"
+                            <Button label="Tambah Surat"
                                 icon="pi pi-plus"
                                 outlined
                                
                                 onClick={() => { formik.resetForm(); setState((p) => ({ ...p, selectedLetters: [], add: true, edit: false, delete: false })); }} />
-                            <Divider layout="vertical" />
                         </>
                     )}
+                    {canCreate && canDelete && <Divider layout="vertical" className="hidden md:inline m-0" />}
                     {canDelete && (
                         <>
-                            <Button size="small"
-                                label={`Hapus${state.selectedLetters.length > 0 ? ` (${state.selectedLetters.length})` : ""}`}
+                            <Button label={`Hapus${state.selectedLetters.length > 0 ? ` (${state.selectedLetters.length})` : ""}`}
                                 icon="pi pi-trash"
                                 severity="danger"
                                 outlined
@@ -418,15 +411,15 @@ const Table = ({
                                     if (state.selectedLetters.length < 1) return;
                                     setState((p) => ({ ...p, delete: true }));
                                 }} />
-                            <Divider layout="vertical" />
                         </>
                     )}
-                    <Button size="small"
-                        label="Refresh"
+                    {(canCreate || canDelete) && <Divider layout="vertical" className="hidden md:inline m-0" />}
+                    <Button label="Refresh"
                         icon="pi pi-refresh"
                         outlined
                         loading={state.load}
                         onClick={refreshData} />
+                    </div>
                 </div>
 
                 {/* KETERANGAN STATUS BAR */}
@@ -461,7 +454,6 @@ const Table = ({
                                     icon="pi pi-times"
                                     text
                                     severity="danger"
-                                    size="small"
                                     className="p-0 text-xs"
                                     onClick={() => setState(p => ({ ...p, statusFilter: '' }))} />
                             )}
@@ -473,7 +465,7 @@ const Table = ({
                                 options={statusOptions}
                                 onChange={(e) => setState(p => ({ ...p, statusFilter: e.value }))}
                                 placeholder="Pilih Status"
-                                className="w-full text-xs p-inputtext-sm" />
+                                className="w-full" />
                         </div>
                     </div>
                 </OverlayPanel>
@@ -515,7 +507,7 @@ const Table = ({
                     <Column field="created_at" header="Dibuat" sortable body={(r) => formatDateCalendar(r.created_at)} style={{ width: "120px" }} />
                     <Column align="center" header="Aksi" body={actionTemplate} style={{ width: "130px", textAlign: "center" }} />
                 </DataTable>
-            </Card>
+            </div>
 
                 <Form 
                     getData={getData} 
@@ -564,14 +556,11 @@ const Table = ({
                                 {archivedDocument ? (
                                     <Button label="Lihat Arsip"
                                         icon="pi pi-folder-open"
-                                        size="small"
                                         outlined
                                         onClick={() => router.push(`/edms/archive_document/${archivedDocument.id_dokumen}/versions`)} />
                                 ) : (
                                     <Button label="Arsipkan"
                                         icon="pi pi-archive"
-                                        size="small"
-                                       
                                         loading={state.load}
                                         disabled={detailFiles.length < 1}
                                         onClick={confirmArchiveLetter}
@@ -626,8 +615,8 @@ const Table = ({
                                                             </div>
                                                         </div>
                                                         <div className="flex gap-1">
-                                                            <Button icon="pi pi-eye" text size="small" tooltip="Lihat file" onClick={() => previewUploadedFile(file)} />
-                                                            <Button icon="pi pi-download" rounded text size="small" tooltip="Download" onClick={() => downloadUploadedFile(file)} />
+                                                            <Button icon="pi pi-eye" text tooltip="Lihat file" onClick={() => previewUploadedFile(file)} />
+                                                            <Button icon="pi pi-download" rounded text tooltip="Download" onClick={() => downloadUploadedFile(file)} />
                                                         </div>
                                                     </div>
                                                 </div>

@@ -449,7 +449,6 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
         <div className="flex gap-1 justify-content-center">
             <Button icon="pi pi-eye"
                 text
-                size="small"
                 tooltip="Lihat Detail"
                 tooltipOptions={{ position: "top" }}
                 onClick={() => openDetail(rowData)} />
@@ -458,7 +457,6 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
                     rounded
                     text
                    
-                    size="small"
                     tooltip="Proses Persetujuan"
                     tooltipOptions={{ position: "top" }}
                     onClick={() => openProcessDialog(rowData)} />
@@ -478,7 +476,7 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
                         placeholder="YYYY-MM-DD"
                         showIcon
                         icon="pi pi-calendar"
-                        className="text-xs w-full p-inputtext-sm"
+                        className="w-full"
                     />
                 </div>
                 <span className="text-xs font-semibold text-color-secondary px-1">s.d</span>
@@ -490,40 +488,36 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
                         placeholder="YYYY-MM-DD"
                         showIcon
                         icon="pi pi-calendar"
-                        className="text-xs w-full p-inputtext-sm"
+                        className="w-full"
                     />
                 </div>
             </div>
 
             {/* Right: Filter Button, Search Bar, Reset Button */}
             <div className="flex align-items-center gap-2 flex-wrap">
-                <Button
-                    type="button"
+                <Button type="button"
                     icon="pi pi-filter"
                     label="Filter"
                     outlined
                     severity="secondary"
-                    size="small"
                     onClick={(e) => filterOverlayRef.current?.toggle(e)}
-                    className="text-xs px-3"
+                    className="px-3"
                 />
 
-                <div className="p-input-icon-left flex-1 sm:w-16rem">
-                    <i className="pi pi-search text-xs" />
+                <div className="p-input-icon-left flex-1 sm:w-24rem">
+                    <i className="pi pi-search" />
                     <InputText
                         value={state.searchVal || ''}
                         onChange={(e) => setState((p: any) => ({ ...p, searchVal: e.target.value }))}
                         placeholder="Cari Data..."
-                        className="text-xs p-inputtext-sm w-full"
+                        className="w-full"
                     />
                 </div>
 
-                <Button
-                    type="button"
+                <Button type="button"
                     icon="pi pi-filter-slash"
                     severity="danger"
                     outlined
-                    size="small"
                     onClick={() => setState((p: any) => ({ ...p, startDate: null, endDate: null, statusFilter: '', jenisSuratFilter: null, searchVal: '' }))}
                     tooltip="Reset Filter"
                     className="p-button-icon-only"
@@ -566,34 +560,30 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
 
     return (
         <>
-            <Card className="shadow-1 border-round-2xl border-none">
-                <div className="mb-3">
-                    <span className="text-primary font-bold text-xs uppercase" style={{ letterSpacing: "0.1em" }}>
-                        Korespondensi
-                    </span>
-                    <h2 className="m-0 text-900 font-bold text-2xl mb-1">
-                        Approval Surat Keluar
-                    </h2>
-                    <p className="m-0 text-color-secondary text-sm font-medium">
+            <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
+                {/* Page Header */}
+                <div className="flex flex-column gap-2 mb-4 px-1">
+                    <h3 className="text-2xl font-semibold m-0 text-900">Approval Surat Keluar</h3>
+                    <div className="text-sm text-600">
                         Tinjau permohonan surat keluar, setujui atau berikan rekomendasi perbaikan (tolak).
-                    </p>
+                    </div>
                 </div>
 
-                <div className="flex flex-row flex-wrap align-items-center gap-2 mb-3">
-                    <Button size="small"
-                        label={`Proses Terpilih${state.selectedLetters.length ? ` (${state.selectedLetters.length})` : ""}`}
+                <div className="flex justify-content-between mb-4">
+                    <div className="flex flex-row align-items-center gap-2">
+                        <Button label={`Proses Terpilih${state.selectedLetters.length ? ` (${state.selectedLetters.length})` : ""}`}
                         icon="pi pi-check-square"
                        
                         outlined
                         disabled={state.selectedLetters.length === 0}
                         onClick={() => openProcessDialog("bulk")} />
-                    <Divider layout="vertical" />
-                    <Button size="small"
-                        label="Refresh"
+                    <Divider layout="vertical" className="hidden md:inline m-0" />
+                    <Button label="Refresh"
                         icon="pi pi-refresh"
                         outlined
                         loading={state.load}
                         onClick={refreshData} />
+                    </div>
                 </div>
 
                 {/* KETERANGAN STATUS BAR */}
@@ -633,7 +623,7 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
                                 options={statusOptions}
                                 onChange={(e) => setState((p: any) => ({ ...p, statusFilter: e.value }))}
                                 placeholder="Pilih Status"
-                                className="w-full text-xs p-inputtext-sm"
+                                className="w-full"
                             />
                         </div>
                         <div>
@@ -645,7 +635,7 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
                                 optionValue="jenis_surat_id"
                                 onChange={(e) => setState((p: any) => ({ ...p, jenisSuratFilter: e.value || null }))}
                                 placeholder="Pilih Jenis"
-                                className="w-full text-xs p-inputtext-sm"
+                                className="w-full"
                             />
                         </div>
                     </div>
@@ -682,7 +672,7 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
                     <Column field="tanggal_kirim" header="Tanggal Kirim" sortable body={(r) => formatDate(r.tanggal_kirim)} style={{ width: "130px" }} />
                     <Column header="Aksi" body={actionTemplate} style={{ width: "120px", textAlign: "center" }} />
                 </DataTable>
-            </Card>
+            </div>
 
             {/* Approval Action Dialog (Unified Approve/Reject) */}
             <Dialog
@@ -786,7 +776,6 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
                                 <Button icon="pi pi-file-pdf"
                                     label="Preview PDF"
                                     outlined
-                                    size="small"
                                     disabled={!detailLetter?.isi_surat_final}
                                     loading={pdfPreviewLoading}
                                     onClick={openPdfPreview} />
@@ -886,7 +875,7 @@ const Table = ({ state, setState, getData, toast, fetchLetterTypes, fetchDetail,
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="no-underline">
-                                                    <Button icon="pi pi-download" rounded text size="small" tooltip="Download File" />
+                                                    <Button icon="pi pi-download" rounded text tooltip="Download File" />
                                                 </a>
                                             )}
                                         </div>

@@ -173,7 +173,6 @@ const HistoryPage = () => {
                     <Button label="Refresh"
                         icon="pi pi-refresh"
                         outlined
-                        size="small"
                         loading={load}
                         onClick={fetchData} />
                 </div>

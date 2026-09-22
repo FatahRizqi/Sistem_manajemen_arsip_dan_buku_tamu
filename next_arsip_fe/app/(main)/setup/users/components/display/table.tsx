@@ -51,7 +51,7 @@ const Table = ({ state, setState, formik, getData, toast, setDataRekap, setNavBa
                             _filters['global'].value = value;
                             setState((p) => ({ ...p, searchVal: value, filters: _filters }));
                         }}
-                        placeholder="Cari..." />
+                        placeholder="Cari..." className="w-full sm:w-24rem" />
                 </span>
             </div>
         </div>
@@ -111,30 +111,28 @@ const Table = ({ state, setState, formik, getData, toast, setDataRekap, setNavBa
     return (
         <>
             <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
-                <div className="flex flex-column gap-2 mb-6 px-1">
+                <div className="flex flex-column gap-2 mb-4 px-1">
                     <h3 className="text-2xl font-semibold m-0 text-900">Data Master User</h3>
                     <div className="text-sm text-600">
                         Kelola master user tenant dan admin.
                     </div>
                 </div>
 
-                <div className="flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-                    <div className="flex flex-wrap gap-2">
+                <div className="flex justify-content-between mb-4">
+                    <div className="flex flex-row align-items-center gap-2">
                         {permissions.canCreate && (
                             <>
-                                <Button size="small"
-                                    label="Tambah"
+                                <Button label="Tambah"
                                     icon="pi pi-plus"
                                     outlined
-                                   
+
                                     onClick={() => {
                                         setState((p) => ({ ...p, selectedUser: [], add: true }));
                                     }} />
-                                <Divider layout="vertical" className="hidden sm:inline-block" />
+                                <Divider layout="vertical" className="hidden sm:inline-block m-0" />
                             </>
                         )}
-                        <Button size="small"
-                            label="Cetak"
+                        <Button label="Cetak"
                             icon="pi pi-print"
                             outlined
                             onClick={() => {
@@ -158,11 +156,10 @@ const Table = ({ state, setState, formik, getData, toast, setDataRekap, setNavBa
                                     columnStyles
                                 }));
                             }} />
-                        <Divider layout="vertical" className="hidden sm:inline-block" />
+                        <Divider layout="vertical" className="hidden sm:inline-block m-0" />
                         {permissions.canDelete && (
                             <>
-                                <Button size="small"
-                                    label={`Hapus${state.selectedUsers.length> 0 ? ` (${state.selectedUsers.length})` : ''}`}
+                                <Button label={`Hapus${state.selectedUsers.length > 0 ? ` (${state.selectedUsers.length})` : ''}`}
                                     icon="pi pi-trash"
                                     severity="danger"
                                     outlined
@@ -175,13 +172,13 @@ const Table = ({ state, setState, formik, getData, toast, setDataRekap, setNavBa
                                         setState((p) => ({ ...p, delete: true }));
                                     }}
                                     disabled={state.selectedUsers.length === 0} />
-                                <Divider layout="vertical" className="hidden sm:inline-block" />
+                                <Divider layout="vertical" className="hidden sm:inline-block m-0" />
                             </>
                         )}
-                        <Button size="small" label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData(apiEndpointGet)} loading={state.load} />
+                        <Button label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData(apiEndpointGet)} loading={state.load} />
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-row align-items-center gap-2">
                         <ExcelBulkAction
                             title="Data Pengguna"
                             data={state.data}
@@ -278,8 +275,6 @@ const Table = ({ state, setState, formik, getData, toast, setDataRekap, setNavBa
 
                 <DataTable
                     value={state.data}
-                    scrollable
-                    responsiveLayout="scroll"
                     paginator
                     selectionMode={'multiple'}
                     rows={10}
@@ -301,7 +296,7 @@ const Table = ({ state, setState, formik, getData, toast, setDataRekap, setNavBa
                             const isActive = rowData.status === 'active' || rowData.status === 'in' || rowData.status === 'Aktif';
                             return (
                                 <div className="flex align-items-center justify-content-center">
-                                    <div 
+                                    <div
                                         className="w-2rem h-2rem border-round flex align-items-center justify-content-center text-white shadow-1"
                                         style={{ background: isActive ? '#22c55e' : '#ef4444', borderRadius: '8px' }}
                                         title={isActive ? 'Aktif' : 'Tidak Aktif'}

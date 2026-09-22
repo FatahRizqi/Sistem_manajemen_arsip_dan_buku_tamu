@@ -235,10 +235,9 @@ const DispositionView = ({
     );
 
     const pendingActionTemplate = (rowData: TableData) => (
-        <Button size="small"
-            icon="pi pi-send"
+        <Button icon="pi pi-send"
             label={rowData.status === "baru" ? "Disposisikan" : "Tambah"}
-            style={{ backgroundColor: "#10b981", border: "none", fontSize: "0.75rem" }}
+            style={{ border: "none", fontSize: "0.75rem" }}
             onClick={() => onOpenCreate(rowData)} />
     );
 
@@ -281,16 +280,16 @@ const DispositionView = ({
         return (
             <div className="flex gap-1 align-items-center justify-content-center">
                 {onOpenDetail && (
-                    <Button size="small" icon="pi pi-eye" text tooltip="Lihat Detail" tooltipOptions={{ position: "top" }} onClick={() => onOpenDetail(row.surat_masuk_id)} />
+                    <Button icon="pi pi-eye" text tooltip="Lihat Detail" tooltipOptions={{ position: "top" }} onClick={() => onOpenDetail(row.surat_masuk_id)} />
                 )}
                 {canApprove && !isDone && !isProcess && (
-                    <Button size="small" icon="pi pi-play" text severity="warning" tooltip="Proses" tooltipOptions={{ position: "top" }} onClick={() => onOpenAction("process", row)} />
+                    <Button icon="pi pi-play" text severity="warning" tooltip="Proses" tooltipOptions={{ position: "top" }} onClick={() => onOpenAction("process", row)} />
                 )}
                 {!isDone && (
-                    <Button size="small" icon="pi pi-share-alt" text severity="info" tooltip="Teruskan" tooltipOptions={{ position: "top" }} onClick={() => onOpenForward(row)} />
+                    <Button icon="pi pi-share-alt" text severity="info" tooltip="Teruskan" tooltipOptions={{ position: "top" }} onClick={() => onOpenForward(row)} />
                 )}
                 {canApprove && !isDone && (
-                    <Button size="small" icon="pi pi-check" text tooltip="Selesaikan" tooltipOptions={{ position: "top" }} onClick={() => onOpenAction("complete", row)} />
+                    <Button icon="pi pi-check" text tooltip="Selesaikan" tooltipOptions={{ position: "top" }} onClick={() => onOpenAction("complete", row)} />
                 )}
                 {isDone && <span className="text-xs text-color-secondary">—</span>}
             </div>
@@ -302,12 +301,13 @@ const DispositionView = ({
     return (
         <>
             {/* ─── Page Header ──────────────────────────────────────────────── */}
-            <Card className="shadow-1 border-round-2xl border-none mb-4">
+            <Card className="shadow-2 border-1 surface-border border-round-xl p-4 bg-white border-none mb-4">
                 <div className="flex flex-column md:flex-row md:align-items-center justify-content-between gap-3 mb-4">
-                    <div>
-                        <span className="text-primary font-bold text-xs uppercase" style={{ letterSpacing: "0.1em" }}>Mail In · Korespondensi</span>
-                        <h2 className="m-0 text-900 font-extrabold text-2xl mt-1 mb-2" style={{ letterSpacing: "-0.02em" }}>Workflow Disposisi</h2>
-                        <p className="m-0 text-color-secondary text-sm font-medium">Kelola disposisi berjenjang, instruksi pimpinan, catatan, dan tracking status surat masuk.</p>
+                    <div className="flex flex-column gap-2 mb-2 px-1">
+                        <h3 className="text-2xl font-semibold m-0 text-900">Workflow Disposisi</h3>
+                        <div className="text-sm text-600">
+                            Kelola disposisi berjenjang, instruksi pimpinan, catatan, dan tracking status surat masuk.
+                        </div>
                     </div>
                     <div className="flex flex-wrap align-items-center gap-2 flex-shrink-0">
                         <span className="p-input-icon-left">
@@ -316,13 +316,11 @@ const DispositionView = ({
                                 value={search}
                                 onChange={(e) => onSearchChange(e.target.value)}
                                 placeholder="Cari surat atau disposisi..."
-                                className="text-sm" style={{ height: "2.25rem" }} />
+                                className="w-full sm:w-24rem" />
                         </span>
-                        <Button icon="pi pi-send" label="Buat Disposisi" size="small"
-                            style={{ backgroundColor: "#10b981", border: "none", boxShadow: "0 4px 12px rgba(16,185,129,0.2)" }}
+                        <Button icon="pi pi-send" label="Buat Disposisi" style={{ border: "none" }}
                             onClick={() => onOpenCreate()} />
-                        <Button icon="pi pi-refresh" label="Refresh" text size="small"
-                            loading={loading} onClick={onRefresh} />
+                        <Button icon="pi pi-refresh" label="Refresh" outlined loading={loading} onClick={onRefresh} />
                     </div>
                 </div>
 
@@ -350,7 +348,7 @@ const DispositionView = ({
                         <div className="text-color-secondary text-sm">Status surat bergerak otomatis berdasarkan aksi disposisi.</div>
                     </div>
                     <div className="flex align-items-center justify-content-center border-circle font-extrabold text-lg"
-                        style={{ width: "4rem", height: "4rem", backgroundColor: "#10b981", color: "#fff", flexShrink: 0 }}>
+                        style={{ width: "4rem", height: "4rem", backgroundColor: "var(--primary-color)", color: "#fff", flexShrink: 0 }}>
                         {completionRate}%
                     </div>
                 </div>
@@ -555,11 +553,13 @@ const DispositionView = ({
 
                         <div className="flex flex-column gap-1 mb-3">
                             <label htmlFor="disp_instruction" className="font-semibold text-900">Instruksi Tambahan</label>
-                            <InputText
+                            <InputTextarea
                                 id="disp_instruction"
                                 value={form.instruksi}
                                 onChange={(e) => onFormChange("instruksi", e.target.value)}
                                 placeholder="Contoh: Mohon telaah dan siapkan bahan tindak lanjut"
+                                rows={3}
+                                style={{ resize: "none" }}
                                 className="w-full" />
                         </div>
 
@@ -588,10 +588,9 @@ const DispositionView = ({
                         <Divider className="my-2" />
 
                         <div className="flex mt-4 pt-3 border-top-1 surface-border">
-                            <Button label="Batal" icon="pi pi-times" severity="secondary" outlined size="small" onClick={onCloseDialog} disabled={loading} />
+                            <Button label="Batal" icon="pi pi-times" severity="secondary" outlined onClick={onCloseDialog} disabled={loading} />
                             <Button label={dialogMode === "forward" ? "Teruskan" : "Buat Disposisi"}
-                                icon="pi pi-send" size="small"
-                                style={{ backgroundColor: "#10b981", border: "none" }}
+                                icon="pi pi-send" style={{ border: "none" }}
                                 onClick={onSaveDisposition} loading={loading} />
                         </div>
                     </div>
@@ -629,11 +628,10 @@ const DispositionView = ({
                         <Divider className="my-2" />
 
                         <div className="flex mt-4 pt-3 border-top-1 surface-border">
-                            <Button label="Batal" icon="pi pi-times" severity="secondary" outlined size="small" onClick={onCloseDialog} disabled={loading} />
+                            <Button label="Batal" icon="pi pi-times" severity="secondary" outlined onClick={onCloseDialog} disabled={loading} />
                             <Button label={dialogMode === "complete" ? "Selesaikan" : "Proses"}
                                 icon={dialogMode === "complete" ? "pi pi-check" : "pi pi-play"}
                                 severity={dialogMode === "complete" ? "success" : "warning"}
-                                size="small"
                                 onClick={onSaveAction} loading={loading} />
                         </div>
                     </div>
@@ -714,8 +712,8 @@ const DispositionView = ({
                                                             </div>
                                                         </div>
                                                         <div className="flex gap-1">
-                                                            <Button icon="pi pi-eye" text size="small" tooltip="Lihat file" onClick={() => previewUploadedFile(file)} />
-                                                            <Button icon="pi pi-download" rounded text size="small" tooltip="Download" onClick={() => downloadUploadedFile(file)} />
+                                                            <Button icon="pi pi-eye" text tooltip="Lihat file" onClick={() => previewUploadedFile(file)} />
+                                                            <Button icon="pi pi-download" rounded text tooltip="Download" onClick={() => downloadUploadedFile(file)} />
                                                         </div>
                                                     </div>
                                                 </div>

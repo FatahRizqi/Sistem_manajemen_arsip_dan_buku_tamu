@@ -11,6 +11,7 @@ import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
+import { Divider } from 'primereact/divider';
 import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
@@ -209,7 +210,6 @@ const Page = () => {
       {canUpdate && (
         <Button icon="pi pi-pencil"
           outlined
-          size="small"
           tooltip="Edit"
           onClick={() => {
             formik.setValues({
@@ -229,7 +229,7 @@ const Page = () => {
           }} />
       )}
       {canDelete && (
-        <Button icon="pi pi-trash" outlined severity="danger" size="small" tooltip="Nonaktifkan" onClick={() => confirmDelete(row)} />
+        <Button icon="pi pi-trash" outlined severity="danger" tooltip="Nonaktifkan" onClick={() => confirmDelete(row)} />
       )}
     </div>
   );
@@ -245,25 +245,30 @@ const Page = () => {
 
       <Toast ref={toast} position="top-right" />
 
-      <div className="card shadow-2 border-round-lg p-4 bg-white">
-        <div className="flex justify-content-between align-align-items-center gap-3 mb-4 flex-wrap">
-          <div>
-            <h3 className="text-2xl font-bold m-0 text-900">Master Penomoran Surat</h3>
-            <p className="text-sm text-600 mt-1">Kelola format nomor surat keluar berdasarkan jenis surat.</p>
+      <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
+        <div className="flex flex-column gap-2 mb-6 px-1">
+          <h3 className="text-2xl font-semibold m-0 text-900">Master Penomoran Surat</h3>
+          <div className="text-sm text-600">
+            Kelola format nomor surat keluar berdasarkan jenis surat.
           </div>
-          {canCreate && (
-            <Button type="button"
-              size="small"
-              label="Tambah"
-              icon="pi pi-plus"
-              outlined
-             
-              onClick={() => {
-                formik.resetForm();
-                setPreview('');
-                setDialogVisible(true);
-              }} />
-          )}
+        </div>
+
+        <div className="flex justify-content-between mb-4">
+          <div className="flex flex-row gap-2">
+            {canCreate && (
+              <Button type="button"
+                label="Tambah"
+                icon="pi pi-plus"
+                outlined
+                onClick={() => {
+                  formik.resetForm();
+                  setPreview('');
+                  setDialogVisible(true);
+                }} />
+            )}
+            {canCreate && <Divider layout="vertical" className="hidden md:inline" />}
+            <Button type="button" label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData()} loading={load} />
+          </div>
         </div>
 
         {/* KETERANGAN STATUS BAR */}
@@ -397,7 +402,7 @@ const Page = () => {
               )}
               <div className="flex flex-wrap gap-2">
                 {tokens.map((token) => (
-                  <Button key={token} type="button" size="small" text label={token} onClick={() => insertToken(token)} />
+                  <Button key={token} type="button" text label={token} onClick={() => insertToken(token)} />
                 ))}
               </div>
             </div>
@@ -450,7 +455,7 @@ const Page = () => {
                 <div className="text-sm font-mono">{preview || '-'}</div>
                 {selectedLetterType && <div className="text-xs text-color-secondary mt-1">{selectedLetterType.kode_jenis_surat}</div>}
               </div>
-              <Button type="button" size="small" icon="pi pi-eye" label="Preview" outlined onClick={getPreview} />
+              <Button type="button" icon="pi pi-eye" label="Preview" outlined onClick={getPreview} />
             </div>
           </div>
 

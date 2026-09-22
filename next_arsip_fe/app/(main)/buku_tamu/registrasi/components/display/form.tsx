@@ -139,13 +139,11 @@ export default function RegistrasiForm({
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <Button 
-                        type="button" 
+                    <Button type="button" 
                         icon="pi pi-external-link" 
                         label="Halaman Visitor (Publik)" 
                         severity="info" 
                         outlined 
-                        size="small"
                         onClick={() => window.open('/visitor/booking', '_blank')} 
                     />
                 </div>
@@ -246,8 +244,7 @@ export default function RegistrasiForm({
                                                 className="border-round-lg shadow-2"
                                                 style={{ maxWidth: '100%', maxHeight: '130px', objectFit: 'contain' }} 
                                             />
-                                            <Button 
-                                                type="button" 
+                                            <Button type="button" 
                                                 label="Hapus Foto Identitas" 
                                                 icon="pi pi-trash" 
                                                 className="p-button-danger p-button-text p-button-sm mt-1"
@@ -277,15 +274,13 @@ export default function RegistrasiForm({
                                                 style={{ width: '130px', height: '130px', objectFit: 'cover' }} 
                                             />
                                             <div className="flex gap-2 mt-1">
-                                                <Button 
-                                                    type="button" 
+                                                <Button type="button" 
                                                     label="Hapus Foto" 
                                                     icon="pi pi-trash" 
                                                     className="p-button-danger p-button-text p-button-sm"
                                                     onClick={() => setSelfieFile(null)} 
                                                 />
-                                                <Button 
-                                                    type="button" 
+                                                <Button type="button" 
                                                     label="Ambil Ulang" 
                                                     icon="pi pi-refresh" 
                                                     className="p-button-secondary p-button-text p-button-sm"
@@ -295,8 +290,7 @@ export default function RegistrasiForm({
                                         </div>
                                     ) : (
                                         <div className="flex flex-column sm:flex-row gap-2">
-                                            <Button 
-                                                type="button" 
+                                            <Button type="button" 
                                                 label="Ambil Live Kamera" 
                                                 icon="pi pi-camera" 
                                                 className="p-button-outlined p-button-primary flex-1 p-button-sm"
@@ -411,8 +405,7 @@ export default function RegistrasiForm({
                                     <div className="col-12 flex flex-column gap-3 mt-2 border-top-1 border-300 pt-3 mb-2">
                                         <div className="flex justify-content-between align-items-center mb-2">
                                             <span className="font-semibold text-color text-sm">Daftar Anggota Rombongan</span>
-                                            <Button 
-                                                type="button"
+                                            <Button type="button"
                                                 label="Tambah Anggota"
                                                 icon="pi pi-plus"
                                                 className="p-button-outlined p-button-sm py-1 px-2 text-xs"
@@ -427,8 +420,7 @@ export default function RegistrasiForm({
 
                                         {(formData.group_members || []).map((member, index) => (
                                             <div key={index} className="p-3 surface-50 border-round-lg border-1 border-200 flex flex-column gap-2 mb-2 relative">
-                                                <Button 
-                                                    type="button"
+                                                <Button type="button"
                                                     icon="pi pi-times"
                                                     className="p-button-rounded p-button-text p-button-danger absolute p-1 text-xs"
                                                     style={{ top: '8px', right: '8px', width: '24px', height: '24px' }}
@@ -441,8 +433,7 @@ export default function RegistrasiForm({
                                                 />
                                                 <div className="font-semibold text-xs text-600 mb-1 flex align-items-center gap-2">
                                                     <span>Anggota #{index + 1}</span>
-                                                    <Button 
-                                                        type="button"
+                                                    <Button type="button"
                                                         label="Salin dari Tamu Utama"
                                                         className="p-button-text p-button-sm p-0 text-xs font-medium text-primary hover:underline ml-2"
                                                         style={{ height: 'auto', minWidth: 'auto' }}
@@ -579,8 +570,7 @@ export default function RegistrasiForm({
 
                 {/* Footer Action Buttons */}
                 <div className="flex align-items-center justify-content-between mt-5 pt-3 border-top-1 surface-border">
-                    <Button
-                        type="button"
+                    <Button type="button"
                         label="Reset Form"
                         icon="pi pi-refresh"
                         className="p-button-outlined p-button-secondary"
@@ -589,8 +579,7 @@ export default function RegistrasiForm({
 
                     <div className="flex gap-2">
                         {activeIndex > 0 && (
-                            <Button
-                                type="button"
+                            <Button type="button"
                                 label="Kembali"
                                 icon="pi pi-arrow-left"
                                 className="p-button-outlined p-button-secondary"
@@ -599,8 +588,7 @@ export default function RegistrasiForm({
                         )}
 
                         {activeIndex === 0 && (
-                            <Button
-                                type="button"
+                            <Button type="button"
                                 label="Selanjutnya"
                                 icon="pi pi-arrow-right"
                                 iconPos="right"
@@ -613,8 +601,7 @@ export default function RegistrasiForm({
                         )}
 
                         {activeIndex > 0 && (
-                            <Button
-                                type="submit"
+                            <Button type="submit"
                                 label="Simpan & Check-In"
                                 icon="pi pi-check"
                                 className="p-button-primary px-4"
@@ -657,8 +644,7 @@ export default function RegistrasiForm({
                 </div>
                 
                 <div className="flex gap-3 w-full">
-                    <Button 
-                        type="button" 
+                    <Button type="button" 
                         label="Ambil Foto" 
                         icon="pi pi-camera" 
                         className="flex-1 py-2 font-semibold text-sm border-round-lg text-white" 

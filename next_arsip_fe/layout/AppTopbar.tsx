@@ -149,21 +149,22 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             <div className="flex justify-content-between w-full align-items-center">
                 {/* Brand Logo, Branch Switcher & Sidebar Toggle */}
                 <div className="flex align-items-center gap-2">
-                    <Link href="/" className="layout-topbar-logo flex align-items-center gap-2 no-underline mr-1" style={{ cursor: 'pointer', width: 'auto' }}>
+                    <Link href="/" className="layout-topbar-logo flex align-items-center gap-2 no-underline mr-1" style={{ cursor: 'pointer' }}>
                         <Avatar
                             icon="pi pi-shield"
                             shape="square"
                             style={{
-                                width: '2.35rem',
-                                height: '2.35rem',
-                                borderRadius: '8px',
+                                width: '2.75rem',
+                                height: '2.75rem',
+                                fontSize: '1.4rem',
+                                borderRadius: '10px',
                                 background: 'linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%)',
                                 color: '#FFFFFF',
                                 boxShadow: '0 4px 10px rgba(79, 70, 229, 0.15)'
                             }}
                         />
                         <div className="flex flex-column justify-content-center">
-                            <span className="font-semibold text-lg text-900" style={{ lineHeight: '1', letterSpacing: '-0.02em' }}>
+                            <span className="font-bold text-xl text-900" style={{ lineHeight: '1', letterSpacing: '-0.02em' }}>
                                 Arsipku
                             </span>
                         </div>
@@ -173,7 +174,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     <button
                         ref={menubuttonRef}
                         type="button"
-                        className="p-link layout-menu-button layout-topbar-button flex align-items-center justify-content-center border-round ml-1"
+                        className="p-link layout-menu-button layout-topbar-button flex align-items-center justify-content-center border-round"
                         onClick={onMenuToggle}
                         style={{
                             width: '2.25rem',

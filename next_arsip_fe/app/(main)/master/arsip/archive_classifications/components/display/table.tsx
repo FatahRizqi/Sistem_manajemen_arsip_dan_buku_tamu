@@ -22,7 +22,7 @@ const Table = ({ state, setState, formik, handleDelete, getData }: TableProps) =
                             let _filters = { ...state.filters };
                             _filters['global'].value = value;
                             setState(p => ({ ...p, searchVal: value, filters: _filters }));
-                        }} placeholder="Cari..." />
+                        }} placeholder="Cari..." className="w-full sm:w-24rem" />
                     </span>
                 </div>
             </div>
@@ -66,15 +66,17 @@ const Table = ({ state, setState, formik, handleDelete, getData }: TableProps) =
                 </div>
             </div>
 
-            <div className="flex flex-row flex-wrap align-items-center gap-2 mb-3">
-                <Button type="button" size="small" label="Tambah" icon="pi pi-plus" outlined onClick={() => {
+            <div className="flex justify-content-between mb-4">
+                <div className="flex flex-row align-items-center gap-2">
+                <Button type="button" label="Tambah" icon="pi pi-plus" outlined onClick={() => {
                     formik.resetForm();
                     setState(p => ({ ...p, add: true, selectedData: [] }));
                 }} />
-                <Divider layout="vertical" className="hidden md:inline" />
-                <Button type="button" size="small" label={"Hapus" + (state.selectedData.length> 0 ? " (" + state.selectedData.length + ")" : "")} icon="pi pi-trash" outlined severity="danger" onClick={() => setState(p => ({ ...p, delete: true }))} disabled={state.selectedData.length === 0} />
-                <Divider layout="vertical" className="hidden md:inline" />
-                <Button type="button" size="small" label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData(apiEndpointGet)} loading={state.load} />
+                <Divider layout="vertical" className="hidden md:inline m-0" />
+                <Button type="button" label={"Hapus" + (state.selectedData.length> 0 ? " (" + state.selectedData.length + ")" : "")} icon="pi pi-trash" outlined severity="danger" onClick={() => setState(p => ({ ...p, delete: true }))} disabled={state.selectedData.length === 0} />
+                <Divider layout="vertical" className="hidden md:inline m-0" />
+                <Button type="button" label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData(apiEndpointGet)} loading={state.load} />
+                </div>
             </div>
 
             {/* KETERANGAN STATUS BAR */}

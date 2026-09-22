@@ -125,13 +125,11 @@ const SearchResult: React.FC<SearchResultProps> = ({ results, load, onPreview })
                                 <div className="flex md:flex-column gap-2 justify-content-end align-items-stretch min-w-10rem">
                                     <Button label="Lihat Versi"
                                         icon="pi pi-history"
-                                        size="small"
                                         outlined
                                         className="p-button-sm font-semibold"
                                         onClick={() => router.push(`/edms/archive_document/${doc.id_dokumen}/versions`)} />
                                     <Button label="Audit Trail"
                                         icon="pi pi-clock"
-                                        size="small"
                                         severity="secondary"
                                         outlined
                                         className="p-button-sm font-semibold"
@@ -139,7 +137,6 @@ const SearchResult: React.FC<SearchResultProps> = ({ results, load, onPreview })
                                     {doc.file_path && (
                                         <Button label="Pratinjau"
                                             icon="pi pi-eye"
-                                            size="small"
                                             severity="info"
                                             className="p-button-sm font-bold shadow-1"
                                             onClick={() => onPreview(doc.file_path!)} />

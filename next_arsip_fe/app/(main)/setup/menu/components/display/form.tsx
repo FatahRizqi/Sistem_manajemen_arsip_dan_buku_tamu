@@ -45,7 +45,7 @@ const Form = ({ state, setState, formik, toast, getData, handleSave, handleDelet
         <>
         <Dialog 
             visible={state.add || state.edit} 
-            style={{ width: '70%' }} 
+            style={{ width: '45%' }} 
             header={state.edit ? "Edit Menu" : "Tambah Menu Baru"} 
             modal 
             footer={footerDialog} 

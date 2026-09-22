@@ -36,7 +36,7 @@ const Table = ({ state, setState, formik, getData, handleDelete }: any) => {
             filters.global.value = value;
             setState((p: State) => ({ ...p, searchVal: value, filters }));
           }}
-          placeholder="Cari template..." />
+          placeholder="Cari template..." className="w-full sm:w-24rem" />
       </span>
     </div>
   );
@@ -58,10 +58,10 @@ const Table = ({ state, setState, formik, getData, handleDelete }: any) => {
 
   const actionTemplate = (rowData: any) => (
     <div className="flex gap-2 justify-content-center">
-      <Button type="button" icon="pi pi-eye" outlined severity="info" size="small" tooltip="Preview" tooltipOptions={{ position: 'top' }} onClick={() => {
+      <Button type="button" icon="pi pi-eye" outlined severity="info" tooltip="Preview" tooltipOptions={{ position: 'top' }} onClick={() => {
         setState((p: State) => ({ ...p, previewVisible: true, previewContent: rowData.isi_template || '' }));
       }} />
-      {canUpdate && <Button type="button" icon="pi pi-pencil" outlined size="small" tooltip="Edit" tooltipOptions={{ position: 'top' }} onClick={() => {
+      {canUpdate && <Button type="button" icon="pi pi-pencil" outlined tooltip="Edit" tooltipOptions={{ position: 'top' }} onClick={() => {
         formik.setValues({
           id: rowData.id_template || rowData.id,
           id_template: rowData.id_template || rowData.id,
@@ -76,30 +76,32 @@ const Table = ({ state, setState, formik, getData, handleDelete }: any) => {
         });
         setState((p: State) => ({ ...p, edit: true, add: false }));
       }} />}
-      {canDelete && <Button type="button" icon="pi pi-trash" outlined severity="danger" size="small" tooltip="Nonaktifkan" tooltipOptions={{ position: 'top' }} onClick={() => setState((p: State) => ({ ...p, selectedData: [rowData], delete: true }))} />}
+      {canDelete && <Button type="button" icon="pi pi-trash" outlined severity="danger" tooltip="Nonaktifkan" tooltipOptions={{ position: 'top' }} onClick={() => setState((p: State) => ({ ...p, selectedData: [rowData], delete: true }))} />}
     </div>
   );
 
 
 
   return (
-    <div className="card shadow-2 border-round-lg p-4 bg-white">
-      <div className="flex justify-content-between align-items-center mb-3">
-        <div>
-          <h3 className="text-2xl font-bold m-0 text-900">Master Template Surat</h3>
-          <p className="text-sm text-600 mt-1">Kelola template surat resmi yang dapat dipakai berulang kali untuk surat keluar.</p>
+    <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
+      <div className="flex flex-column gap-2 mb-4 px-1">
+        <h3 className="text-2xl font-semibold m-0 text-900">Master Template Surat</h3>
+        <div className="text-sm text-600">
+          Kelola template surat resmi yang dapat dipakai berulang kali untuk surat keluar.
         </div>
       </div>
 
-      <div className="flex flex-row flex-wrap align-items-center gap-2 mb-3">
-        {canCreate && <Button type="button" size="small" label="Tambah" icon="pi pi-plus" outlined onClick={() => {
+      <div className="flex justify-content-between mb-4">
+        <div className="flex flex-row align-items-center gap-2">
+        {canCreate && <Button type="button" label="Tambah" icon="pi pi-plus" outlined onClick={() => {
           formik.resetForm();
           setState((p: State) => ({ ...p, add: true, selectedData: [] }));
         }} />}
-        {canCreate && <Divider layout="vertical" className="hidden md:inline" />}
-        {canDelete && <Button type="button" size="small" label={state.selectedData.length> 0 ? `Nonaktifkan (${state.selectedData.length})` : 'Nonaktifkan'} icon="pi pi-trash" outlined severity="danger" onClick={() => setState((p: State) => ({ ...p, delete: true }))} disabled={state.selectedData.length === 0} />}
-        {canDelete && <Divider layout="vertical" className="hidden md:inline" />}
-        <Button type="button" size="small" label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData()} loading={state.load} />
+        {canCreate && <Divider layout="vertical" className="hidden md:inline m-0" />}
+        {canDelete && <Button type="button" label={state.selectedData.length> 0 ? `Nonaktifkan (${state.selectedData.length})` : 'Nonaktifkan'} icon="pi pi-trash" outlined severity="danger" onClick={() => setState((p: State) => ({ ...p, delete: true }))} disabled={state.selectedData.length === 0} />}
+        {canDelete && <Divider layout="vertical" className="hidden md:inline m-0" />}
+        <Button type="button" label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData()} loading={state.load} />
+        </div>
       </div>
 
       {/* KETERANGAN STATUS BAR */}

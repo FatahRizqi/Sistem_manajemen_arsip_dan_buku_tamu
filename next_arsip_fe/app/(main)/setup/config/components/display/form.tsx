@@ -79,7 +79,7 @@ const Form = ({ state, setState, formik, toast, getData }: FormProps) => {
                                     <img src={state.imgPrev ? state.imgPrev : '/layout/images/profile.png'} alt="logo_perusahaan" style={{ width: '100%', height: '250px', objectFit: 'cover', objectPosition: 'center', borderRadius: '6px' }} />
                                     <input type="file" ref={fileInputRef} id="fileInput" accept="image/*" style={{ display: 'none' }} onChange={onFileSelect} />
                                 </div>
-                                <Button type="button" label="Ganti Logo" icon="pi pi-upload" outlined size="small" className="w-full" onClick={() => fileInputRef.current?.click()} />
+                                <Button type="button" label="Ganti Logo" icon="pi pi-upload" outlined className="w-full" onClick={() => fileInputRef.current?.click()} />
                             </div>
                             <div className="flex flex-column w-full gap-2">
                                 <div className="flex gap-2 w-full">
@@ -107,8 +107,9 @@ const Form = ({ state, setState, formik, toast, getData }: FormProps) => {
                                             onChange={(e) => {
                                                 formik.setFieldValue('msAlamatPerusahaan', e.target.value);
                                             }}
-                                            rows={2}
-                                            cols={30} />
+                                            rows={3}
+                                            cols={30}
+                                            className={`w-full ${isFormFieldInvalid('msAlamatPerusahaan') ? 'p-invalid' : ''}`} />
                                     {isFormFieldInvalid('msAlamatPerusahaan') ? getFormErrorMessage('msAlamatPerusahaan') : ''}
                                 </div>
                                 <div className="flex flex-column sm:flex-row gap-3 w-full">

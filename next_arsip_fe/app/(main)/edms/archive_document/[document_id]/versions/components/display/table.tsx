@@ -122,7 +122,6 @@ const Table: React.FC<TableProps> = ({
             <Button icon="pi pi-eye"
                 text
                 severity="info"
-                size="small"
                 tooltip={rowData.file_path ? "Pratinjau Dokumen" : "Belum ada file berkas"}
                 tooltipOptions={{ position: 'top' }}
                 onClick={() => handleFetchPreviewUrl(rowData.file_path || '')}
@@ -131,7 +130,6 @@ const Table: React.FC<TableProps> = ({
                 rounded
                 text
                 severity="help"
-                size="small"
                 tooltip="Teks Hasil OCR"
                 tooltipOptions={{ position: 'top' }}
                 onClick={() => handleFetchOcrText(rowData)}
@@ -149,7 +147,6 @@ const Table: React.FC<TableProps> = ({
                     rounded
                     text
                     severity="secondary"
-                    size="small"
                     tooltip="Unduh File"
                     tooltipOptions={{ position: 'top' }}
                     onClick={() => downloadVersion(rowData)} />
@@ -158,7 +155,6 @@ const Table: React.FC<TableProps> = ({
                         rounded
                         text
                         severity="warning"
-                        size="small"
                         tooltip="Rollback ke versi ini"
                         tooltipOptions={{ position: 'top' }}
                         onClick={() => rollbackVersion(rowData)} />
@@ -169,7 +165,6 @@ const Table: React.FC<TableProps> = ({
                             rounded
                             text
                            
-                            size="small"
                             tooltip="Setujui Versi"
                             tooltipOptions={{ position: 'top' }}
                             onClick={() => approveVersion(rowData.id_versi, 'approved')} />
@@ -177,7 +172,6 @@ const Table: React.FC<TableProps> = ({
                             rounded
                             text
                             severity="danger"
-                            size="small"
                             tooltip="Tolak Versi"
                             tooltipOptions={{ position: 'top' }}
                             onClick={() => {
@@ -247,15 +241,13 @@ const Table: React.FC<TableProps> = ({
                     </span>
                 </div>
                 <div className="flex gap-2">
-                    <Button size="small"
-                        label="Audit Trail (Riwayat)"
+                    <Button label="Audit Trail (Riwayat)"
                         icon="pi pi-clock"
                         severity="info"
                         outlined
                         onClick={() => router.push(`/edms/archive_document/${detailData?.document?.id_dokumen}/history`)}
                         disabled={!detailData?.document?.id_dokumen} />
-                    <Button size="small"
-                        label="Refresh"
+                    <Button label="Refresh"
                         icon="pi pi-refresh"
                         outlined
                         loading={load}
@@ -304,7 +296,6 @@ const Table: React.FC<TableProps> = ({
                     </div>
                     <Button label="Unggah"
                         icon="pi pi-upload"
-                        size="small"
                         disabled={!newVersionFile || !changeNotes.trim() || load}
                         loading={load}
                         onClick={uploadVersion} />

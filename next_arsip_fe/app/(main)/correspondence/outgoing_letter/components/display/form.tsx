@@ -1035,13 +1035,15 @@ const Form = ({ state, setState, formik, toast, getData, apiSaveLetter, apiUploa
                         <label htmlFor="perihal" className="text-sm">
                             Perihal <span className="text-red-500">*</span>
                         </label>
-                        <InputText
+                        <InputTextarea
                             id="perihal"
                             className={`w-full ${isFormFieldInvalid("perihal") ? "p-invalid" : ""}`}
                             value={formik.values.perihal}
                             onChange={(e) => formik.setFieldValue("perihal", e.target.value)}
                             onBlur={() => formik.setFieldTouched("perihal", true)}
-                            placeholder="Perihal surat" />
+                            placeholder="Perihal surat"
+                            rows={3}
+                            style={{ resize: "none" }} />
                         {getFormErrorMessage("perihal")}
                     </div>
 
@@ -1184,21 +1186,18 @@ const Form = ({ state, setState, formik, toast, getData, apiSaveLetter, apiUploa
                                 <label htmlFor="isi_surat_final" className="text-sm">Preview Naskah Final</label>
                                 <div className="flex align-items-center gap-2 flex-wrap">
                                     <Button type="button"
-                                        size="small"
                                         icon="pi pi-sync"
                                         label="Terapkan Data"
                                         outlined
                                         disabled={!selectedTemplate}
                                         onClick={applyTemplateToPreview} />
                                     <Button type="button"
-                                        size="small"
                                         icon="pi pi-file-pdf"
                                         label="Preview PDF"
                                         outlined
                                         disabled={!formik.values.isi_surat_final && !formik.values.isi_surat}
                                         onClick={generatePdfPreview} />
                                     <Button type="button"
-                                        size="small"
                                         icon="pi pi-download"
                                         label="Unduh DOCX"
                                         outlined

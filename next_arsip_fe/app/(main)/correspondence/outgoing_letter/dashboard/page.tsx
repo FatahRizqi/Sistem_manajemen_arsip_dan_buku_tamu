@@ -103,7 +103,7 @@ const Page = () => {
                         loading={loading}
                         label="Refresh Data"
                         onClick={fetchStats}
-                        size="small" />
+                        />
                 </div>
             </Card>
 

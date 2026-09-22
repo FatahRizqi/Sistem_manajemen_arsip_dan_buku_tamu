@@ -171,7 +171,6 @@ export default function ProposalTable({
                     <Button type="button"
                         label="Review"
                         icon="pi pi-shield"
-                        size="small"
                         severity="warning"
                         outlined
                         className="py-1 font-semibold text-xs"
@@ -185,7 +184,6 @@ export default function ProposalTable({
                     <Button type="button"
                         label="Eksekusi"
                         icon="pi pi-trash"
-                        size="small"
                         severity="danger"
                         className="py-1 font-semibold text-xs"
                         disabled={!canDelete && !canApprove}
@@ -255,33 +253,29 @@ export default function ProposalTable({
                 </div>
 
                 <div className="flex align-items-center gap-2 flex-wrap">
-                    <Button
-                        type="button"
+                    <Button type="button"
                         icon="pi pi-filter"
                         label="Filter"
                         outlined
                         severity="secondary"
-                        size="small"
                         onClick={(e) => filterOverlayRef.current?.toggle(e)}
-                        className="text-xs px-3"
+                        className="px-3"
                     />
 
-                    <div className="p-input-icon-left flex-1 sm:w-16rem">
-                        <i className="pi pi-search text-xs" />
+                    <div className="p-input-icon-left flex-1 sm:w-24rem">
+                        <i className="pi pi-search" />
                         <InputText
                             value={searchVal}
                             onChange={(e) => setSearchVal(e.target.value)}
                             placeholder="Cari Data..."
-                            className="text-xs p-inputtext-sm w-full"
+                            className="w-full"
                         />
                     </div>
 
-                    <Button
-                        type="button"
+                    <Button type="button"
                         icon="pi pi-filter-slash"
                         outlined
                         severity="danger"
-                        size="small"
                         tooltip="Reset Filter"
                         tooltipOptions={{ position: 'top' }}
                         onClick={() => {
@@ -302,7 +296,6 @@ export default function ProposalTable({
                                     icon="pi pi-times"
                                     text
                                     severity="danger"
-                                    size="small"
                                     className="p-0 text-xs"
                                     onClick={() => setStatusFilter('')} />
                             )}

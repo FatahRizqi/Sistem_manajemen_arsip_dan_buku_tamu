@@ -62,7 +62,7 @@ const Form = ({ state, setState, formik, handleSave, handleDelete }: FormProps) 
                 visible={state.add || state.edit}
                 header={state.edit ? 'Edit Data User' : 'Tambah Data User'}
                 modal
-                style={{ width: '70%' }}
+                style={{ width: '45%' }}
                 onHide={() => {
                     setState((p: any) => ({ ...p, add: false, edit: false, delete: false }));
                     formik?.resetForm();
@@ -81,16 +81,18 @@ const Form = ({ state, setState, formik, handleSave, handleDelete }: FormProps) 
                         </div>
                     </div>
 
-                    <div className="flex flex-column gap-2 w-full">
-                        <label htmlFor="telepon" className="text-sm">Telp</label>
-                        <InputText id="telepon" name="telepon" keyfilter={'int'} value={formik?.values.telepon} autoComplete="off" onChange={(e) => formik?.setFieldValue('telepon', e.target.value)} placeholder="089222333444" className={isFormFieldInvalid('telepon') ? 'p-invalid w-full' : 'w-full'} />
-                        {getFormErrorMessage('telepon')}
-                    </div>
-                    
-                    <div className="flex flex-column gap-2 w-full">
-                        <label htmlFor="kata_sandi" className="text-sm">Password</label>
-                        <Password id="kata_sandi" name="kata_sandi" toggleMask value={formik?.values.kata_sandi} autoComplete="new-password" onChange={(e) => formik?.setFieldValue('kata_sandi', e.target.value)} className={isFormFieldInvalid('kata_sandi') ? 'p-invalid w-full' : 'w-full'} inputClassName="w-full" />
-                        {getFormErrorMessage('kata_sandi')}
+                    <div className="flex flex-column md:flex-row gap-3 w-full">
+                        <div className="flex flex-column gap-2 w-full">
+                            <label htmlFor="telepon" className="text-sm">Telp</label>
+                            <InputText id="telepon" name="telepon" keyfilter={'int'} value={formik?.values.telepon} autoComplete="off" onChange={(e) => formik?.setFieldValue('telepon', e.target.value)} placeholder="089222333444" className={isFormFieldInvalid('telepon') ? 'p-invalid w-full' : 'w-full'} />
+                            {getFormErrorMessage('telepon')}
+                        </div>
+                        
+                        <div className="flex flex-column gap-2 w-full">
+                            <label htmlFor="kata_sandi" className="text-sm">Password</label>
+                            <Password id="kata_sandi" name="kata_sandi" toggleMask value={formik?.values.kata_sandi} autoComplete="new-password" onChange={(e) => formik?.setFieldValue('kata_sandi', e.target.value)} className={isFormFieldInvalid('kata_sandi') ? 'p-invalid w-full' : 'w-full'} inputClassName="w-full" />
+                            {getFormErrorMessage('kata_sandi')}
+                        </div>
                     </div>
 
                     <div className="flex flex-column md:flex-row gap-3 w-full">

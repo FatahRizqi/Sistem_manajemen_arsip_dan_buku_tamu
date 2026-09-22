@@ -151,7 +151,6 @@ const DocumentTable = ({ state, setState, toast, getData, openDetail, finalizeDo
         <div className="flex gap-1 justify-content-center">
             <Button icon="pi pi-eye"
                 text
-                size="small"
                 tooltip="Lihat Detail"
                 tooltipOptions={{ position: "top" }}
                 onClick={() => handleOpenDetail(rowData)} />
@@ -159,7 +158,6 @@ const DocumentTable = ({ state, setState, toast, getData, openDetail, finalizeDo
                 rounded
                 text
                 severity="secondary"
-                size="small"
                 tooltip="Buka Dokumen"
                 tooltipOptions={{ position: "top" }}
                 onClick={() => {
@@ -177,7 +175,7 @@ const DocumentTable = ({ state, setState, toast, getData, openDetail, finalizeDo
             </div>
 
             <div className="flex align-items-center gap-2 w-full xl:justify-content-end">
-                <span className="p-input-icon-left w-full" style={{ flex: "1 1 16rem", minWidth: "15rem", maxWidth: "24rem" }}>
+                <span className="p-input-icon-left w-full sm:w-24rem">
                     <i className="pi pi-search" />
                     <InputText
                         value={state.searchVal}
@@ -186,12 +184,11 @@ const DocumentTable = ({ state, setState, toast, getData, openDetail, finalizeDo
                             if (e.key === "Enter") refreshData();
                         }}
                         placeholder="Cari nomor, perihal, tujuan..."
-                        className="w-full text-sm"
-                        style={{ height: "2.5rem" }} />
+                        className="w-full"
+                    />
                 </span>
                 <Button icon="pi pi-filter"
                     outlined
-                    size="small"
                     onClick={refreshData}
                     style={{ width: "2.5rem", height: "2.5rem" }} />
             </div>
@@ -204,21 +201,23 @@ const DocumentTable = ({ state, setState, toast, getData, openDetail, finalizeDo
     }, []);
 
     const actionBar = (
-        <div className="flex flex-row flex-wrap align-items-center gap-2 mb-4">
-            <Button size="small" label="Refresh" icon="pi pi-refresh" outlined loading={state.load} onClick={refreshData} />
+        <div className="flex justify-content-between mb-4">
+            <div className="flex flex-row align-items-center gap-2">
+                <Button label="Refresh" icon="pi pi-refresh" outlined loading={state.load} onClick={refreshData} />
+            </div>
         </div>
     );
 
     return (
         <>
             <ConfirmDialog />
-            <Card className="shadow-1 border-round-2xl border-none">
-                <div className="mb-4">
-                    <span className="text-primary font-bold text-xs uppercase" style={{ letterSpacing: "0.1em" }}>
-                        Tanda Tangan Elektronik
-                    </span>
-                    <h2 className="m-0 text-900 font-extrabold text-2xl mt-1 mb-2">{title}</h2>
-                    <p className="m-0 text-color-secondary text-sm font-medium">{subtitle}</p>
+            <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
+                {/* Page Header */}
+                <div className="flex flex-column gap-2 mb-4 px-1">
+                    <h3 className="text-2xl font-semibold m-0 text-900">{title}</h3>
+                    <div className="text-sm text-600">
+                        {subtitle}
+                    </div>
                 </div>
 
                 {actionBar}
@@ -245,7 +244,7 @@ const DocumentTable = ({ state, setState, toast, getData, openDetail, finalizeDo
                     <Column field="status" header="Status" body={(r) => <Tag value={r.status || "-"} severity={statusTone(r.status)} icon={statusIcon(r.status)} />} style={{ width: "140px" }} />
                     <Column header="Aksi" body={actionTemplate} style={{ width: "120px", textAlign: "center" }} />
                 </DataTable>
-            </Card>
+            </div>
 
             <Dialog
                 header={
@@ -279,7 +278,6 @@ const DocumentTable = ({ state, setState, toast, getData, openDetail, finalizeDo
                                     {fileUrl && (
                                         <Button label="Buka Dokumen"
                                             icon="pi pi-external-link"
-                                            size="small"
                                             outlined
                                             onClick={() => window.open(fileUrl, "_blank", "noopener,noreferrer")} />
                                     )}
@@ -308,7 +306,6 @@ const DocumentTable = ({ state, setState, toast, getData, openDetail, finalizeDo
                         {mode === "pending" && (
                             <div className="flex align-items-center gap-2 flex-wrap">
                                 <Button label="Lihat Detail & TTE" 
-                                    size="small" 
                                     severity="info" 
                                     onClick={() => handleOpenDetail(detailLetter)} />
                                 <Button label="Finalisasi"

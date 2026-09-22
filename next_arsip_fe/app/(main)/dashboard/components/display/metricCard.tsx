@@ -15,7 +15,7 @@ interface MetricCardsProps {
 
 export default function MetricCards({ data, isLoading }: MetricCardsProps) {
     const router = useRouter();
-    
+
     const vaMetrics = [
         {
             label: 'Arsip Aktif',
@@ -51,7 +51,7 @@ export default function MetricCards({ data, isLoading }: MetricCardsProps) {
     ];
 
     const getColorClass = (tone: string) => {
-        switch(tone) {
+        switch (tone) {
             case 'indigo': return 'text-indigo-600 bg-indigo-50';
             case 'emerald': return 'text-green-600 bg-green-50';
             case 'amber': return 'text-orange-600 bg-orange-50';
@@ -75,8 +75,8 @@ export default function MetricCards({ data, isLoading }: MetricCardsProps) {
     return (
         <div className="grid">
             {vaMetrics.map((oMetric) => (
-                <div 
-                    className="col-12 md:col-6 xl:col-3 cursor-pointer" 
+                <div
+                    className="col-12 md:col-6 xl:col-3 cursor-pointer"
                     key={oMetric.label}
                     onClick={() => oMetric.to && router.push(oMetric.to)}
                     style={{ transition: 'all 0.2s ease-in-out' }}>

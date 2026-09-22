@@ -26,7 +26,7 @@ const Table = ({ state, setState, formik, handleDelete, getData }: TableProps) =
                             let _filters = { ...state.filters };
                             _filters['global'].value = value;
                             setState(p => ({ ...p, searchVal: value, filters: _filters }));
-                        }} placeholder="Cari..." />
+                        }} placeholder="Cari..." className="w-full sm:w-24rem" />
                     </span>
                 </div>
             </div>
@@ -68,27 +68,29 @@ const Table = ({ state, setState, formik, handleDelete, getData }: TableProps) =
     }, []);
 
     return (
-        <div className="card">
-            <div className="flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h2 className="m-0 text-900 font-bold text-2xl mb-1">Manajemen Peran</h2>
+        <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
+            <div className="flex flex-column gap-2 mb-4 px-1">
+                <h3 className="text-2xl font-semibold m-0 text-900">Data Master Peran</h3>
+                <div className="text-sm text-600">
+                    Kelola data master peran.
                 </div>
             </div>
 
-            <div className="flex flex-row flex-wrap align-items-center gap-2 mb-3">
-
-                {canCreate && (
-                    <Button size="small" label="Tambah" icon="pi pi-plus" outlined onClick={() => {
+            <div className="flex justify-content-between mb-4">
+                <div className="flex flex-row align-items-center gap-2">
+                    {canCreate && (
+                    <Button label="Tambah" icon="pi pi-plus" outlined onClick={() => {
                         formik.resetForm();
                         setState(p => ({ ...p, add: true, selectedData: [] }));
                     }} />
                 )}
-                <Divider layout="vertical" />
-                {canDelete && (
-                    <Button size="small" label={"Hapus" + (state.selectedData.length> 0 ? " (" + state.selectedData.length + ")" : "")} icon="pi pi-trash" outlined severity="danger" onClick={() => setState(p => ({ ...p, delete: true }))} disabled={state.selectedData.length === 0} />
+                    {canCreate && canDelete && <Divider layout="vertical" className="hidden md:inline m-0" />}
+                    {canDelete && (
+                    <Button label={"Hapus" + (state.selectedData.length> 0 ? " (" + state.selectedData.length + ")" : "")} icon="pi pi-trash" outlined severity="danger" onClick={() => setState(p => ({ ...p, delete: true }))} disabled={state.selectedData.length === 0} />
                 )}
-                <Divider layout="vertical" />
-                <Button size="small" label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData(apiEndpointGet)} loading={state.load} />
+                    {(canCreate || canDelete) && <Divider layout="vertical" className="hidden md:inline m-0" />}
+                    <Button label="Refresh" icon="pi pi-refresh" outlined onClick={() => getData(apiEndpointGet)} loading={state.load} />
+                </div>
             </div>
 
             {/* KETERANGAN STATUS BAR */}

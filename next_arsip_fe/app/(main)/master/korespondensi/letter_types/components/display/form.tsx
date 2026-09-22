@@ -109,8 +109,7 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
                     )}
 
                     <div className="mt-3">
-                        <Button 
-                            type="submit" 
+                        <Button type="submit" 
                             label={state?.edit ? 'Perbarui Data' : 'Simpan Data'} 
                             icon="pi pi-check" 
                             className="w-full p-button-primary" 

@@ -188,9 +188,9 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
                     <label className="font-bold text-xs text-700 uppercase tracking-wider">PLACEHOLDER VARIABEL</label>
                     <div className="flex flex-wrap gap-2">
                       {placeholderOptions.map((item) => (
-                        <Button key={item} type="button" size="small" outlined severity="secondary" onClick={() => insertPlaceholder(item)} label={item} className="p-2 text-sm text-600 bg-white" />
+                        <Button key={item} type="button" outlined severity="secondary" onClick={() => insertPlaceholder(item)} label={item} className="p-2 text-sm text-600 bg-white" />
                       ))}
-                      <Button type="button" size="small" icon="pi pi-file-edit" label="Susunan Balasan Standard" onClick={applyDefaultReplyTemplate} className="p-button-primary p-2 text-sm" />
+                      <Button type="button" icon="pi pi-file-edit" label="Susunan Balasan Standard" onClick={applyDefaultReplyTemplate} className="p-button-primary p-2 text-sm" />
                     </div>
                   </div>
 
@@ -215,8 +215,7 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
         </div>
 
         <div className="mt-4 pt-4 border-top-1 surface-border flex justify-content-between align-items-center">
-          <Button
-            type="button"
+          <Button type="button"
             icon="pi pi-arrow-left"
             label="Kembali ke Daftar"
             outlined
@@ -224,8 +223,7 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
             onClick={handleCancel}
           />
           {state.activeStep < 1 && (
-            <Button
-              type="button"
+            <Button type="button"
               label="Selanjutnya"
               icon="pi pi-arrow-right"
               iconPos="right"
@@ -237,8 +235,7 @@ const Form = ({ state, setState, formik, handleDelete }: any) => {
             />
           )}
           {state.activeStep >= 1 && (
-            <Button
-              type="submit"
+            <Button type="submit"
               label={state.edit ? "Perbarui Data" : "Simpan Data"}
               icon="pi pi-check"
               className="text-sm px-4 p-button-primary"
