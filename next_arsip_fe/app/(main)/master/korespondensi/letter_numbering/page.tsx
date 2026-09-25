@@ -247,7 +247,10 @@ const Page = () => {
 
       <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
         <div className="flex flex-column gap-2 mb-6 px-1">
-          <h3 className="text-2xl font-semibold m-0 text-900">Master Penomoran Surat</h3>
+          <h3 className="text-2xl font-bold m-0 text-900 flex align-items-center gap-2">
+            <i className="pi pi-sort-numeric-up text-primary"></i>
+            <span>Master Penomoran Surat</span>
+          </h3>
           <div className="text-sm text-600">
             Kelola format nomor surat keluar berdasarkan jenis surat.
           </div>
@@ -272,16 +275,16 @@ const Page = () => {
         </div>
 
         {/* KETERANGAN STATUS BAR */}
-        <div className="flex align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1" style={{ width: 'fit-content' }}>
+        <div className="flex align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1 w-full">
             <div className="flex align-items-center gap-2 font-bold text-xs text-700 uppercase tracking-wider">
                 <i className="pi pi-info-circle text-primary text-base"></i> KETERANGAN STATUS:
             </div>
             <div className="flex align-items-center gap-2 text-xs font-semibold">
-                <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#22c55e', borderRadius: '3px' }}></span>
+                <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#22c55e', borderRadius: '4px' }}></span>
                 <span className="text-700">Aktif</span>
             </div>
             <div className="flex align-items-center gap-2 text-xs font-semibold">
-                <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#ef4444', borderRadius: '3px' }}></span>
+                <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#ef4444', borderRadius: '4px' }}></span>
                 <span className="text-700">Tidak Aktif</span>
             </div>
         </div>
@@ -296,17 +299,35 @@ const Page = () => {
           filters={filters}
           globalFilterFields={['nama_penomoran', 'nama_jenis_surat', 'format_nomor']}
           header={
-            <span className="p-input-icon-left">
-              <i className="pi pi-search" />
-              <InputText
-                value={searchVal}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSearchVal(value);
-                  setFilters({ global: { value, matchMode: FilterMatchMode.CONTAINS } });
-                }}
-                placeholder="Cari penomoran..." />
-            </span>
+            <div className="flex flex-wrap align-items-center justify-content-between gap-3">
+              <span className="text-xl font-bold">Daftar Penomoran Surat</span>
+              <div className="flex gap-2">
+                <span className="p-input-icon-left">
+                  <i className="pi pi-search" />
+                  <InputText
+                    value={searchVal}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setSearchVal(value);
+                      setFilters({ global: { value, matchMode: FilterMatchMode.CONTAINS } });
+                    }}
+                    placeholder="Cari penomoran..." className="w-full sm:w-24rem" />
+                </span>
+                <Button
+                  type="button"
+                  icon="pi pi-filter-slash"
+                  outlined
+                  severity="danger"
+                  className="p-button-sm"
+                  onClick={() => {
+                    setSearchVal('');
+                    setFilters({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
+                  }}
+                  tooltip="Reset Filter"
+                  tooltipOptions={{ position: 'top' }}
+                />
+              </div>
+            </div>
           }
           emptyMessage="Tidak ada data penomoran surat.">
           <Column body={(row) => {

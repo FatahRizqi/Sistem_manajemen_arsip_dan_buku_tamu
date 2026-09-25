@@ -116,7 +116,7 @@ const Page = () => {
                 errors.telepon = 'Nomor HP harus dimulai dengan 08 dan panjang 9-13 digit';
             }
 
-            if (!data.id_peran) {
+            if (!data.id_peran || (Array.isArray(data.id_peran) && data.id_peran.length === 0)) {
                 errors.id_peran = 'Role wajib dipilih';
             }
 
@@ -219,7 +219,7 @@ const Page = () => {
             const vaData = await postData(cEndPoint, oBody, oHeaders);
             showSuccess(toast, vaData.data?.data?.message || 'Berhasil Menyimpan Data');
             formik.resetForm();
-            setState((p: any) => ({ ...p, add: false, edit: false, delete: false }));
+            setState((p: any) => ({ ...p, add: false, edit: false, delete: false, manageRole: false }));
 
             // Refresh tabel
             getData(apiEndpointGet);
@@ -341,9 +341,6 @@ const Page = () => {
 
             <Table getNav={getNav} dataRekap={dataRekap} setDataRekap={setDataRekap} state={state} toast={toast} setState={setState} formik={formik} getData={getData} handleSave={handleSave} handleDelete={handleDelete} />
             <Print dataRekap={dataRekap} setDataRekap={setDataRekap} state={state} toast={toast} setState={setState} formik={formik} getData={getData} />
-
-            {/* 3. KOMPONEN FORM DIPANGGIL DI SINI DENGAN PROPS YANG LENGKAP */}
-            <Form formik={formik} state={state} setState={setState} toast={toast} getData={getData} handleSave={handleSave} handleDelete={handleDelete} />
         </>
     );
 };

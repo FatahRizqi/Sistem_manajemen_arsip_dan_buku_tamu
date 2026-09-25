@@ -18,7 +18,9 @@ const getMinioPrefix = async (idCabang, idDepartemen = null, idDivisi = null, id
     let leafBranchSlug = "";
 
     try {
-        while (currentId) {
+        const visited = new Set();
+        while (currentId && !visited.has(currentId) && visited.size < 50) {
+            visited.add(currentId);
             const branch = await DB("mst_cabang")
                 .select("id_cabang", "kode_cabang", "nama_cabang", "id_induk")
                 .where("id_cabang", currentId)

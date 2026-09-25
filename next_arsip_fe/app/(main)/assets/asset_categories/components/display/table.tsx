@@ -41,6 +41,20 @@ const Table = ({
                         }}
                         placeholder="Cari kategori..." className="w-full sm:w-24rem" />
                 </span>
+                <Button
+                    type="button"
+                    icon="pi pi-filter-slash"
+                    outlined
+                    severity="danger"
+                    className="p-button-sm"
+                    onClick={() => {
+                        let _filters = { ...state.filters };
+                        _filters['global'].value = null;
+                        setState((p) => ({ ...p, searchVal: '', filters: _filters }));
+                    }}
+                    tooltip="Reset Filter"
+                    tooltipOptions={{ position: 'top' }}
+                />
             </div>
         </div>
     )
@@ -74,7 +88,10 @@ const Table = ({
     return <>
         <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
             <div className="flex flex-column gap-2 mb-6 px-1">
-                <h3 className="text-2xl font-semibold m-0 text-900">Data Master Kategori Aset</h3>
+                <h3 className="text-2xl font-bold m-0 text-900 flex align-items-center gap-2">
+                    <i className="pi pi-tags text-primary"></i>
+                    <span>Data Master Kategori Aset</span>
+                </h3>
                 <div className="text-sm text-600">
                     Kelola data master kategori aset.
                 </div>

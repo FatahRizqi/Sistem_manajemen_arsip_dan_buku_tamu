@@ -63,7 +63,7 @@ export const PermissionProvider = ({ children }: { children: React.ReactNode }) 
 
         const menu = permissions.find((p) => p.nama_menu === menuName);
         if (!menu) return false;
-        
+
         return menu[actionType] === 1 || menu[actionType] === true;
     };
 

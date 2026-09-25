@@ -18,7 +18,7 @@ export interface initValue {
     id_divisi?: string | number;
     id_departemen?: string | number;
     id_unit_kerja?: string | number;
-    id_peran?: string | number;
+    id_peran?: string | number | (string | number)[];
 }
 
 export interface TableData {
@@ -46,6 +46,7 @@ export interface State {
     add: boolean;
     edit: boolean;
     delete: boolean;
+    manageRole?: boolean;
     selectedUsers: TableData[];
     searchVal: string;
     filters: {

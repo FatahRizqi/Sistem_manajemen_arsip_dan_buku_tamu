@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
         "u.nama_lengkap",
         "u.nama_pengguna",
         "u.telepon",
-        "r.nama_peran as role",
+        DB.raw("GROUP_CONCAT(r.nama_peran SEPARATOR ', ') as role")
       )
       .where("u.status", "active");
 
@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
       query = query.where("u.id_unit_kerja", req.headers["x-filter-unit-kerja"]);
     }
 
-    const vaData = await query.orderBy("u.nama_lengkap", "asc");
+    const vaData = await query.groupBy("u.id_pengguna").orderBy("u.nama_lengkap", "asc");
 
     return res.status(200).json({
       status: status.SUKSES,

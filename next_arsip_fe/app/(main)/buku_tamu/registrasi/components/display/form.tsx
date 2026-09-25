@@ -133,7 +133,10 @@ export default function RegistrasiForm({
             {/* Header Banner */}
             <div className="flex align-items-center justify-content-between mb-4 border-bottom-1 surface-border pb-3">
                 <div>
-                    <h2 className="text-xl font-bold text-900 m-0">Registrasi Kunjungan Tamu Baru</h2>
+                    <h2 className="text-xl font-bold text-900 m-0 flex align-items-center gap-2">
+                        <i className="pi pi-id-card text-primary"></i>
+                        <span>Registrasi Kunjungan Tamu Baru</span>
+                    </h2>
                     <p className="text-color-secondary text-sm m-0 mt-1">
                         Daftarkan kunjungan tamu baru lengkap dengan data identitas, foto selfie, pegawai tujuan, serta tanda tangan.
                     </p>

@@ -107,7 +107,10 @@ export default function DestructionPage() {
             <Toast ref={toast} position="top-right" />
             
             <div className="mb-3">
-                <h2 className="m-0 text-900 font-bold text-2xl mb-1">Pemusnahan & Retensi Arsip</h2>
+                <h2 className="m-0 text-900 font-bold text-2xl mb-1 flex align-items-center gap-2">
+                    <i className="pi pi-trash text-primary"></i>
+                    <span>Pemusnahan & Retensi Arsip</span>
+                </h2>
                 <p className="m-0 text-color-secondary text-sm">Pantau arsip yang telah habis masa retensinya, ajukan usulan pemusnahan, dan tinjau berkas berita acara pemusnahan.</p>
             </div>
 

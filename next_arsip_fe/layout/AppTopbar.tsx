@@ -98,7 +98,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             if (diffHours < 24) return `${diffHours} jam lalu`;
             if (diffDays === 1) return 'Kemarin';
             if (diffDays < 7) return `${diffDays} hari lalu`;
-            
+
             return date.toLocaleDateString('id-ID', {
                 day: 'numeric',
                 month: 'short',

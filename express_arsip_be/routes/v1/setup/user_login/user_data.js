@@ -37,8 +37,8 @@ router.post("/", async (req, res) => {
         "mu.id_unit_kerja",
         "mu.status",
         "mu.created_at",
-        "mr.id_peran",
-        "mr.nama_peran as role",
+        DB.raw("GROUP_CONCAT(mr.id_peran) as id_peran"),
+        DB.raw("GROUP_CONCAT(mr.nama_peran SEPARATOR ', ') as role")
       );
 
     if (req.headers["x-filter-cabang"]) {
@@ -68,6 +68,16 @@ router.post("/", async (req, res) => {
       .whereNot("mu.status", "deleted")
       .groupBy("mu.id_pengguna")
       .orderBy("mu.id_pengguna", "asc");
+
+    vaData.forEach(user => {
+      if (user.id_peran && typeof user.id_peran === 'string') {
+        user.id_peran = user.id_peran.split(',').map(Number);
+      } else if (user.id_peran && typeof user.id_peran === 'number') {
+        user.id_peran = [user.id_peran];
+      } else {
+        user.id_peran = [];
+      }
+    });
 
     return res.status(200).json({
       status: status.SUKSES,

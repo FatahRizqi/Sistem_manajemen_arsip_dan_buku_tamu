@@ -36,7 +36,14 @@ router.post("/", async (req, res) => {
           .max(13)
           .required()
           .label("telepon"),
-        id_peran: Joi.any().required().label("id_peran"),
+        id_peran: Joi.alternatives()
+          .try(
+            Joi.array().items(Joi.alternatives().try(Joi.string(), Joi.number())).min(1),
+            Joi.string(),
+            Joi.number()
+          )
+          .required()
+          .label("id_peran"),
         kata_sandi: Joi.string().optional().allow(""),
         status: Joi.string().required().label("status"),
         id_cabang: Joi.number().integer().positive().required().label("id_cabang"),
@@ -108,8 +115,12 @@ router.post("/", async (req, res) => {
 
       // 3. Cegah admin cabang memberikan peran SUPERADMIN
       if (oPayload.id_peran) {
-        const peranData = await DB("mst_peran").where("id_peran", oPayload.id_peran).first();
-        if (peranData && (peranData.kode_peran === "SUPERADMIN")) {
+        let cInputPeran = Array.isArray(oPayload.id_peran) ? oPayload.id_peran : [oPayload.id_peran];
+        const hasSuperadmin = await DB("mst_peran")
+          .whereIn("id_peran", cInputPeran)
+          .andWhere("kode_peran", "SUPERADMIN")
+          .first();
+        if (hasSuperadmin) {
           return res.status(403).json({ status: status.FORBIDDEN, message: "Anda tidak memiliki izin memberikan peran Superadmin", datetime: datetime() });
         }
       }
@@ -145,29 +156,27 @@ router.post("/", async (req, res) => {
       // 1. Update mst_pengguna
       await trx("mst_pengguna").where("id_pengguna", nUserId).update(oDataUser);
 
-      // 2. Update/insert mst_pengguna_peran berdasarkan id_pengguna
-      const roleId = Number(oPayload.id_peran) || null;
-      if (roleId) {
-        const existingRole = await trx("mst_pengguna_peran")
-          .where("id_pengguna", nUserId)
-          .first();
+      // 2. Delete existing and insert new mst_pengguna_peran
+      if (oPayload.id_peran) {
+        let cInputPeran = Array.isArray(oPayload.id_peran) ? oPayload.id_peran : [oPayload.id_peran];
+        
+        await trx("mst_pengguna_peran").where("id_pengguna", nUserId).del();
+        
+        const peranDataList = await trx("mst_peran")
+          .whereIn("id_peran", cInputPeran)
+          .orWhereIn("nama_peran", cInputPeran)
+          .orWhereIn("kode_peran", cInputPeran);
 
-        if (existingRole) {
-          await trx("mst_pengguna_peran").where("id_pengguna", nUserId).update({
-            id_peran: roleId,
-            peran_utama: 1,
-            status: "active",
-            updated_at: formatDateSystem(),
-          });
-        } else {
-          await trx("mst_pengguna_peran").insert({
+        if (peranDataList.length > 0) {
+          const peranInserts = peranDataList.map((peran, index) => ({
             id_pengguna: nUserId,
-            id_peran: roleId,
-            peran_utama: 1,
+            id_peran: peran.id_peran,
+            peran_utama: index === 0 ? 1 : 0,
             status: "active",
             created_at: formatDateSystem(),
             updated_at: formatDateSystem(),
-          });
+          }));
+          await trx("mst_pengguna_peran").insert(peranInserts);
         }
       }
 

@@ -481,6 +481,7 @@ const Table = ({
                     outlined
                     onClick={() => setState(p => ({ ...p, startDate: null, endDate: null, statusFilter: '', jenisSuratFilter: null, searchVal: '' }))}
                     tooltip="Reset Filter"
+                    tooltipOptions={{ position: 'top' }}
                     className="p-button-icon-only"
                 />
             </div>
@@ -503,7 +504,10 @@ const Table = ({
             <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
                 {/* Page Header */}
                 <div className="flex flex-column gap-2 mb-4 px-1">
-                    <h3 className="text-2xl font-semibold m-0 text-900">Data Surat Keluar</h3>
+                    <h3 className="text-2xl font-bold m-0 text-900 flex align-items-center gap-2">
+                        <i className="pi pi-send text-primary"></i>
+                        <span>Data Surat Keluar</span>
+                    </h3>
                     <div className="text-sm text-600">
                         Kelola data surat keluar, tujuan pengiriman, dan status proses surat.
                     </div>
@@ -536,28 +540,28 @@ const Table = ({
                 </div>
 
                 {/* KETERANGAN STATUS BAR */}
-                <div className="flex flex-wrap align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1" style={{ width: 'fit-content', marginTop: '-0.25rem' }}>
+                <div className="flex flex-wrap align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1 w-full" style={{ marginTop: '-0.25rem' }}>
                     <div className="flex align-items-center gap-2 font-bold text-xs text-700 uppercase tracking-wider">
                         <i className="pi pi-info-circle text-primary text-base"></i> KETERANGAN STATUS:
                     </div>
                     <div className="flex align-items-center gap-2 text-xs font-semibold">
-                        <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#f59e0b', borderRadius: '3px' }}></span>
+                        <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#f59e0b', borderRadius: '4px' }}></span>
                         <span className="text-700">Draft / Konsep</span>
                     </div>
                     <div className="flex align-items-center gap-2 text-xs font-semibold">
-                        <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#a855f7', borderRadius: '3px' }}></span>
+                        <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#a855f7', borderRadius: '4px' }}></span>
                         <span className="text-700">Menunggu Persetujuan</span>
                     </div>
                     <div className="flex align-items-center gap-2 text-xs font-semibold">
-                        <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#3b82f6', borderRadius: '3px' }}></span>
+                        <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#3b82f6', borderRadius: '4px' }}></span>
                         <span className="text-700">Disetujui</span>
                     </div>
                     <div className="flex align-items-center gap-2 text-xs font-semibold">
-                        <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#22c55e', borderRadius: '3px' }}></span>
+                        <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#22c55e', borderRadius: '4px' }}></span>
                         <span className="text-700">Terkirim</span>
                     </div>
                     <div className="flex align-items-center gap-2 text-xs font-semibold">
-                        <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#ef4444', borderRadius: '3px' }}></span>
+                        <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#ef4444', borderRadius: '4px' }}></span>
                         <span className="text-700">Ditolak</span>
                     </div>
                 </div>

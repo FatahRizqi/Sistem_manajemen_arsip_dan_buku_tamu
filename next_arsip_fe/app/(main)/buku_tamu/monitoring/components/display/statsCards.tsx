@@ -4,14 +4,32 @@ import { DashboardStats } from '../interfaces';
 
 interface StatsCardsProps {
     stats: DashboardStats;
+    timeRange?: string;
 }
 
-export default function StatsCards({ stats }: StatsCardsProps) {
+export default function StatsCards({ stats, timeRange = 'this_week' }: StatsCardsProps) {
+    let totalLabel = 'Total Tamu Hari Ini';
+    let totalNote = 'akumulasi hari ini';
+
+    if (timeRange === 'this_week') {
+        totalLabel = 'Total Tamu Minggu Ini';
+        totalNote = 'akumulasi minggu ini';
+    } else if (timeRange === 'last_week') {
+        totalLabel = 'Total Tamu Minggu Lalu';
+        totalNote = 'akumulasi minggu lalu';
+    } else if (timeRange === 'this_month') {
+        totalLabel = 'Total Tamu Bulan Ini';
+        totalNote = 'akumulasi bulan ini';
+    } else if (timeRange === 'this_year') {
+        totalLabel = 'Total Tamu Tahun Ini';
+        totalNote = 'akumulasi tahun ini';
+    }
+
     const vaMetrics = [
         {
-            label: 'Total Tamu Hari Ini',
+            label: totalLabel,
             value: (stats.total_tamu_hari_ini || 0).toLocaleString('id-ID'),
-            note: 'akumulasi hari ini',
+            note: totalNote,
             icon: 'pi pi-users',
             colorClass: 'text-indigo-600 bg-indigo-50'
         },

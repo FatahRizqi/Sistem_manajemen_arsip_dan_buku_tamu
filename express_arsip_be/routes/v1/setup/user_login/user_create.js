@@ -34,7 +34,11 @@ router.post("/", async (req, res) => {
           .required()
           .label("telepon"),
         id_peran: Joi.alternatives()
-          .try(Joi.string(), Joi.number())
+          .try(
+            Joi.array().items(Joi.alternatives().try(Joi.string(), Joi.number())).min(1),
+            Joi.string(),
+            Joi.number()
+          )
           .required()
           .label("id_peran"),
         kata_sandi: Joi.string()
@@ -107,16 +111,15 @@ router.post("/", async (req, res) => {
     }
 
     // 1. SIAPKAN INPUT peran
-    let cInputPeran = oPayload.id_peran;
+    let cInputPeran = Array.isArray(oPayload.id_peran) ? oPayload.id_peran : [oPayload.id_peran];
 
     // 2. CARI peran DATA TERLEBIH DAHULU SEBELUM TRANSAKSI
-    const peranData = await DB("mst_peran")
-      .where("id_peran", cInputPeran)
-      .orWhere("nama_peran", cInputPeran)
-      .orWhere("kode_peran", cInputPeran)
-      .first();
+    const peranDataList = await DB("mst_peran")
+      .whereIn("id_peran", cInputPeran)
+      .orWhereIn("nama_peran", cInputPeran)
+      .orWhereIn("kode_peran", cInputPeran);
 
-    if (!peranData) {
+    if (!peranDataList || peranDataList.length === 0) {
       return res.status(400).json({
         status: status.BAD_REQUEST,
         message: "Peran tidak valid",
@@ -124,10 +127,13 @@ router.post("/", async (req, res) => {
       });
     }
 
+    const primaryPeran = peranDataList[0];
     const cPeranCode = req?.auth?.peranCode;
+    
     if (cPeranCode !== "SUPERADMIN") {
       // Cegah pembuatan user dengan role SUPERADMIN jika bukan SA
-      if (peranData.kode_peran === "SUPERADMIN") {
+      const hasSuperadmin = peranDataList.some(p => p.kode_peran === "SUPERADMIN");
+      if (hasSuperadmin) {
         return res.status(403).json({
           status: status.FORBIDDEN,
           message: "Anda tidak memiliki izin untuk memberikan peran Superadmin",
@@ -142,18 +148,18 @@ router.post("/", async (req, res) => {
       if (req?.auth?.id_unit_kerja) oPayload.id_unit_kerja = req.auth.id_unit_kerja;
     }
 
-    // 3. CARI NAVIGASI BERDASARKAN PERAN
+    // 3. CARI NAVIGASI BERDASARKAN PERAN UTAMA
     const oNavigation = await DB("mst_navigasi")
       .select("menu")
-      .where("peran", peranData.nama_peran)
-      .orWhere("peran", peranData.kode_peran)
+      .where("peran", primaryPeran.nama_peran)
+      .orWhere("peran", primaryPeran.kode_peran)
       .first();
 
     // 4. VALIDASI NAVIGASI
     if (!oNavigation || !oNavigation.menu) {
       return res.status(400).json({
         status: status.BAD_REQUEST,
-        message: "Peran tidak memiliki template menu di mst_navigasi",
+        message: "Peran utama tidak memiliki template menu di mst_navigasi",
         datetime: formatDateSystem(),
       });
     }
@@ -181,14 +187,15 @@ router.post("/", async (req, res) => {
       });
 
       // 2. Masuk ke mst_pengguna_peran (Relasi Peran)
-      await trx("mst_pengguna_peran").insert({
+      const peranInserts = peranDataList.map((peran, index) => ({
         id_pengguna: nNewUserId,
-        id_peran: peranData.id_peran,
-        peran_utama: 1,
+        id_peran: peran.id_peran,
+        peran_utama: index === 0 ? 1 : 0,
         status: "active",
         created_at: formatDateSystem(),
         updated_at: formatDateSystem(),
-      });
+      }));
+      await trx("mst_pengguna_peran").insert(peranInserts);
 
       // 3. Masuk ke navigasi_pengguna (Menu Spesifik)
       await trx("navigasi_pengguna")

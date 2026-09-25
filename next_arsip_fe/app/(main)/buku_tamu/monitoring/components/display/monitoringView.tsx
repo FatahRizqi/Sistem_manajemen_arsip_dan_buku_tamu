@@ -77,8 +77,9 @@ export default function MonitoringView({
                             Dashboard Pemantauan Buku Tamu
                         </span>
                     </div>
-                    <h2 className="m-0 text-900 font-bold text-2xl mb-1">
-                        Monitoring Buku Tamu
+                    <h2 className="m-0 text-900 font-bold text-2xl mb-1 flex align-items-center gap-2">
+                        <i className="pi pi-chart-line text-primary"></i>
+                        <span>Monitoring Buku Tamu</span>
                     </h2>
                     <p className="m-0 text-color-secondary font-medium text-sm">
                         Pantau statistik kunjungan harian, tamu aktif, dan tren mingguan secara real-time.
@@ -103,10 +104,10 @@ export default function MonitoringView({
             </div>
 
             {/* Stats Metrics Cards */}
-            <StatsCards stats={stats} />
+            <StatsCards stats={stats} timeRange={timeRange} />
 
             {/* Charts Section */}
-            <ChartDisplay stats={stats} />
+            <ChartDisplay stats={stats} timeRange={timeRange} />
 
             {/* Active Visitors List Section */}
             <ActiveGuestsTable activeGuests={activeGuests} />

@@ -5,6 +5,7 @@ import { FormProps, initValue } from '../interfaces';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 import { Button } from 'primereact/button';
 import { useEffect } from 'react';
 
@@ -122,20 +123,28 @@ const Form = ({ state, setState, formik, handleSave, handleDelete }: FormProps) 
                             <label htmlFor="id_jabatan" className="text-sm">Posisi</label>
                             <Dropdown id="id_jabatan" name="id_jabatan" value={formik?.values.id_jabatan} options={state.masterData?.positions?.filter((d: any) => d.status === 'active' || d.id_jabatan === formik?.values.id_jabatan) || []} optionLabel="nama_jabatan" optionValue="id_jabatan" onChange={(e) => formik?.setFieldValue('id_jabatan', e.value || '')} placeholder="Pilih Posisi" className="w-full" filter showClear />
                         </div>
-                        {formik.values.id_peran === 1 && state.edit ? null : (
+                        {state.add ? (
                             <div className="flex flex-column gap-2 w-full">
-                                <label htmlFor="role" className="text-sm">Role</label>
-                                <Dropdown id="role_peran" name="role_peran" options={state.masterData?.roles?.filter((d: any) => d.status === 'active' || d.id_peran === formik?.values.id_peran) || []} optionLabel="nama_peran" optionValue="id_peran" value={formik?.values.id_peran} onChange={(e) => formik?.setFieldValue('id_peran', e.value)} placeholder="Pilih Role" className={isFormFieldInvalid('id_peran') ? 'p-invalid w-full' : 'w-full'} filter />
+                                <label htmlFor="role" className="text-sm">Role Utama</label>
+                                <Dropdown id="role_peran" name="role_peran" options={state.masterData?.roles?.filter((d: any) => d.status === 'active' || d.id_peran === (Array.isArray(formik?.values.id_peran) ? formik?.values.id_peran[0] : formik?.values.id_peran)) || []} optionLabel="nama_peran" optionValue="id_peran" value={Array.isArray(formik?.values.id_peran) ? (formik?.values.id_peran[0] || '') : formik?.values.id_peran} onChange={(e) => formik?.setFieldValue('id_peran', e.value || '')} placeholder="Pilih 1 Role Utama" className={isFormFieldInvalid('id_peran') ? 'p-invalid w-full' : 'w-full'} filter showClear />
                                 {getFormErrorMessage('id_peran')}
+                            </div>
+                        ) : (
+                            <div className="flex flex-column gap-2 w-full">
+                                <label htmlFor="status" className="text-sm">Status</label>
+                                <Dropdown id="status" name="status" optionValue="kode" optionLabel="label" options={[{ kode: 'active', label: 'Aktif' }, { kode: 'nonactive', label: 'Nonaktif' }]} value={formik?.values.status} onChange={(e) => formik?.setFieldValue('status', e.value)} className={isFormFieldInvalid('status') ? 'p-invalid w-full' : 'w-full'} />
+                                {getFormErrorMessage('status')}
                             </div>
                         )}
                     </div>
 
-                    <div className="flex flex-column gap-2 w-full">
-                        <label htmlFor="status" className="text-sm">Status</label>
-                        <Dropdown id="status" name="status" optionValue="kode" optionLabel="label" options={[{ kode: 'active', label: 'Aktif' }, { kode: 'nonactive', label: 'Nonaktif' }]} value={formik?.values.status} onChange={(e) => formik?.setFieldValue('status', e.value)} className={isFormFieldInvalid('status') ? 'p-invalid w-full' : 'w-full'} />
-                        {getFormErrorMessage('status')}
-                    </div>
+                    {state.add && (
+                        <div className="flex flex-column gap-2 w-full">
+                            <label htmlFor="status" className="text-sm">Status</label>
+                            <Dropdown id="status" name="status" optionValue="kode" optionLabel="label" options={[{ kode: 'active', label: 'Aktif' }, { kode: 'nonactive', label: 'Nonaktif' }]} value={formik?.values.status} onChange={(e) => formik?.setFieldValue('status', e.value)} className={isFormFieldInvalid('status') ? 'p-invalid w-full' : 'w-full'} />
+                            {getFormErrorMessage('status')}
+                        </div>
+                    )}
 
                     <div className="mt-2">
                         <Button type="submit" label={state.edit ? 'Perbarui' : 'Simpan'} className="w-full p-button-primary" loading={state?.load} disabled={state?.load} />

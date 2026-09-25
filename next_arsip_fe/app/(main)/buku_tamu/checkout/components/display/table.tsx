@@ -220,21 +220,24 @@ export default function GuestDataTable({
         <div className="card shadow-2 border-round p-4">
             {/* Page Header */}
             <div className="mb-3">
-                <h2 className="m-0 text-900 font-bold text-2xl mb-1">Riwayat Kunjungan Tamu</h2>
+                <h2 className="m-0 text-900 font-bold text-2xl mb-1 flex align-items-center gap-2">
+                    <i className="pi pi-history text-primary"></i>
+                    <span>Riwayat Kunjungan Tamu</span>
+                </h2>
                 <p className="m-0 text-color-secondary text-sm font-medium">Pantau data kehadiran tamu, proses check-in / check-out, serta persetujuan permohonan kunjungan.</p>
             </div>
 
             {/* KETERANGAN STATUS BAR */}
-            <div className="flex align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1" style={{ width: 'fit-content' }}>
+            <div className="flex align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1 w-full">
                 <div className="flex align-items-center gap-2 font-bold text-xs text-700 uppercase tracking-wider">
                     <i className="pi pi-info-circle text-primary text-base"></i> KETERANGAN STATUS:
                 </div>
                 <div className="flex align-items-center gap-2 text-xs font-semibold">
-                    <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#22c55e', borderRadius: '3px' }}></span>
+                    <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#22c55e', borderRadius: '4px' }}></span>
                     <span className="text-700">Aktif</span>
                 </div>
                 <div className="flex align-items-center gap-2 text-xs font-semibold">
-                    <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#ef4444', borderRadius: '3px' }}></span>
+                    <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#ef4444', borderRadius: '4px' }}></span>
                     <span className="text-700">Tidak Aktif</span>
                 </div>
             </div>

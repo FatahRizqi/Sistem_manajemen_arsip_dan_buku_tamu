@@ -57,7 +57,7 @@ router.get("/", async (req, res) => {
         )
         .where("pm.id_peran", oData.id_peran);
     }
-    
+
     oData.permissions = permissions;
 
     return res.status(200).json({

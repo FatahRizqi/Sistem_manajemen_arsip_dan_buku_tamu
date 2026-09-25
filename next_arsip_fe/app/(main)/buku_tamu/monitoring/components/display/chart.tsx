@@ -7,9 +7,19 @@ import { DashboardStats } from "@/app/(main)/buku_tamu/monitoring/components/int
 
 interface ChartDisplayProps {
     stats: DashboardStats;
+    timeRange?: string;
 }
 
-export default function ChartDisplay({ stats }: ChartDisplayProps) {
+export default function ChartDisplay({ stats, timeRange = 'this_week' }: ChartDisplayProps) {
+    let trendSubhead = 'Statistik volume kunjungan minggu ini.';
+    if (timeRange === 'last_week') {
+        trendSubhead = 'Statistik volume kunjungan minggu lalu.';
+    } else if (timeRange === 'this_month') {
+        trendSubhead = 'Statistik volume kunjungan harian bulan ini.';
+    } else if (timeRange === 'this_year') {
+        trendSubhead = 'Statistik volume kunjungan bulanan tahun ini.';
+    }
+
     const lineChartData = {
         labels: stats.chart_trend_labels || ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
         datasets: [
@@ -135,7 +145,7 @@ export default function ChartDisplay({ stats }: ChartDisplayProps) {
                     <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-start mb-4 gap-3">
                         <div>
                             <h2 className="m-0 text-900 font-bold text-xl mb-1" style={{ letterSpacing: '-0.02em' }}>Tren Kunjungan Tamu</h2>
-                            <p className="m-0 text-color-secondary text-sm font-medium">Statistik volume kunjungan 7 hari terakhir.</p>
+                            <p className="m-0 text-color-secondary text-sm font-medium">{trendSubhead}</p>
                         </div>
                         <div className="flex align-items-center gap-2 bg-indigo-50 text-indigo-600 px-3 py-2 border-round-3xl font-semibold text-xs border-1 border-indigo-100 shadow-1" style={{ width: 'fit-content' }}>
                             <span className="border-circle bg-indigo-600" style={{ width: '8px', height: '8px' }}></span>

@@ -38,6 +38,20 @@ const Table = ({ state, setState, formik, handleDelete, getData, toast }: TableP
                             setState(p => ({ ...p, searchVal: value, filters: _filters }));
                         }} placeholder="Cari..." className="w-full sm:w-24rem" />
                     </span>
+                    <Button
+                        type="button"
+                        icon="pi pi-filter-slash"
+                        outlined
+                        severity="danger"
+                        className="p-button-sm"
+                        onClick={() => {
+                            let _filters = { ...state.filters };
+                            _filters['global'].value = null;
+                            setState(p => ({ ...p, searchVal: '', filters: _filters }));
+                        }}
+                        tooltip="Reset Filter"
+                        tooltipOptions={{ position: 'top' }}
+                    />
                 </div>
             </div>
         );
@@ -76,7 +90,10 @@ const Table = ({ state, setState, formik, handleDelete, getData, toast }: TableP
     return (
         <div className="card shadow-2 border-1 surface-border border-round-xl p-4 bg-white">
             <div className="flex flex-column gap-2 mb-4 px-1">
-                <h3 className="text-2xl font-semibold m-0 text-900">Data Master Cabang{titleSuffix}</h3>
+                <h3 className="text-2xl font-bold m-0 text-900 flex align-items-center gap-2">
+                    <i className="pi pi-building text-primary"></i>
+                    <span>Data Master Cabang{titleSuffix}</span>
+                </h3>
                 <div className="text-sm text-600">
                     Kelola master cabang organisasi.
                 </div>
@@ -100,16 +117,16 @@ const Table = ({ state, setState, formik, handleDelete, getData, toast }: TableP
             </div>
 
             {/* KETERANGAN STATUS BAR */}
-            <div className="flex align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1" style={{ width: 'fit-content' }}>
+            <div className="flex align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1 w-full">
                 <div className="flex align-items-center gap-2 font-bold text-xs text-700 uppercase tracking-wider">
                     <i className="pi pi-info-circle text-primary text-base"></i> KETERANGAN STATUS:
                 </div>
                 <div className="flex align-items-center gap-2 text-xs font-semibold">
-                    <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#22c55e', borderRadius: '3px' }}></span>
+                    <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#22c55e', borderRadius: '4px' }}></span>
                     <span className="text-700">Aktif</span>
                 </div>
                 <div className="flex align-items-center gap-2 text-xs font-semibold">
-                    <span className="inline-block flex-shrink-0" style={{ width: '14px', height: '14px', backgroundColor: '#ef4444', borderRadius: '3px' }}></span>
+                    <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#ef4444', borderRadius: '4px' }}></span>
                     <span className="text-700">Tidak Aktif</span>
                 </div>
             </div>

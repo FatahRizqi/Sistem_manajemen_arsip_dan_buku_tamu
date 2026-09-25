@@ -31,7 +31,9 @@ router.post("/get-data", async (req, res) => {
     for (const oRow of vaData) {
       let level = 1;
       let curr = oRow.id_induk;
-      while (curr) {
+      const visited = new Set([oRow.id_cabang]);
+      while (curr && !visited.has(curr) && level < 50) {
+        visited.add(curr);
         level++;
         curr = parentMap[curr];
       }

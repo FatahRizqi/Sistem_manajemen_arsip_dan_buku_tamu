@@ -232,33 +232,25 @@ const DashboardView = ({
                                 onClick={onRefresh} />
                         </div>
 
-                        <div className="flex align-items-center gap-3 surface-50 p-2 border-round text-sm w-fit mb-3" style={{ border: "1px solid var(--surface-200)" }}>
-                            <div className="flex align-items-center gap-2 font-semibold text-600">
-                                <i className="pi pi-info-circle"></i> KETERANGAN STATUS:
+                        <div className="flex flex-wrap align-items-center gap-3 px-3 py-2 border-1 surface-border border-round-xl bg-white mb-3 shadow-1 w-full">
+                            <div className="flex align-items-center gap-2 font-bold text-xs text-700 uppercase tracking-wider">
+                                <i className="pi pi-info-circle text-primary text-base"></i> KETERANGAN STATUS:
                             </div>
-                            <div className="flex align-items-center gap-2 ml-2">
-                                <div className="bg-gray-500 flex align-items-center justify-content-center" style={{ width: "18px", height: "18px", borderRadius: "3px" }}>
-                                    <i className="pi pi-envelope text-white" style={{ fontSize: "0.6rem" }}></i>
-                                </div>
-                                <span className="text-700 font-medium text-xs">Baru</span>
+                            <div className="flex align-items-center gap-2 text-xs font-semibold">
+                                <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#6b7280', borderRadius: '4px' }}></span>
+                                <span className="text-700">Baru</span>
                             </div>
-                            <div className="flex align-items-center gap-2 ml-2">
-                                <div className="bg-orange-500 flex align-items-center justify-content-center" style={{ width: "18px", height: "18px", borderRadius: "3px" }}>
-                                    <i className="pi pi-share-alt text-white" style={{ fontSize: "0.6rem" }}></i>
-                                </div>
-                                <span className="text-700 font-medium text-xs">Menunggu Disposisi</span>
+                            <div className="flex align-items-center gap-2 text-xs font-semibold">
+                                <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#f97316', borderRadius: '4px' }}></span>
+                                <span className="text-700">Menunggu Disposisi</span>
                             </div>
-                            <div className="flex align-items-center gap-2 ml-2">
-                                <div className="bg-orange-500 flex align-items-center justify-content-center" style={{ width: "18px", height: "18px", borderRadius: "3px" }}>
-                                    <i className="pi pi-cog text-white" style={{ fontSize: "0.6rem" }}></i>
-                                </div>
-                                <span className="text-700 font-medium text-xs">Diproses</span>
+                            <div className="flex align-items-center gap-2 text-xs font-semibold">
+                                <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#f97316', borderRadius: '4px' }}></span>
+                                <span className="text-700">Diproses</span>
                             </div>
-                            <div className="flex align-items-center gap-2 ml-2">
-                                <div className="bg-green-500 flex align-items-center justify-content-center" style={{ width: "18px", height: "18px", borderRadius: "3px" }}>
-                                    <i className="pi pi-check-circle text-white" style={{ fontSize: "0.6rem" }}></i>
-                                </div>
-                                <span className="text-700 font-medium text-xs">Selesai</span>
+                            <div className="flex align-items-center gap-2 text-xs font-semibold">
+                                <span className="inline-block flex-shrink-0 shadow-1" style={{ width: '16px', height: '16px', backgroundColor: '#22c55e', borderRadius: '4px' }}></span>
+                                <span className="text-700">Selesai</span>
                             </div>
                         </div>
 
